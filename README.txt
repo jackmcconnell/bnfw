@@ -4,6 +4,7 @@ Tags: notifications, email, roles, custom
 Requires at least: 3.5
 Tested up to: 3.5
 Stable tag: 0.1b
+License: GPLv3
 
 Send customisable HTML emails to user roles for different WordPress notifications. 
 
@@ -59,7 +60,7 @@ Check your settings to make sure all is as it should be, then check your spam fo
 
 = The email previews aren't showing the contents of the shortcodes! =
 
-This is by design. In order to show the contents, the plugin would have to retrieve information for a specific event and it's hard to tell which one you'd like to use or if there's any information in the database. The previews will show your HTML rendering, however. 
+This is by design. In order to show the contents, the plugin would have to retrieve information for a specific notification and it's hard to tell which one you'd like to use or if there's any information in the database. The previews will show your HTML rendering, however. 
 
 = Some of my shortcodes aren't working! =
 

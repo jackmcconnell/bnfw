@@ -59,7 +59,7 @@ function bnfw_get_subject_for_publish_post($the_post){
 
 	foreach ($the_post->post_category as $category_int){
 
-		$category_list .= get_term_by('id', $category_int, 'category') . ", ";
+		$temp_term = get_term_by('id', $category_int, 'category'); $category_list .= $temp_term->name .  ", ";
 
 	}
 
@@ -165,7 +165,7 @@ function bnfw_get_subject_for_comment_post($the_comment){
 
 	foreach ($the_post->post_category as $category_int){
 
-		$category_list .= get_term_by('id', $category_int, 'category') . ", ";
+		$temp_term = get_term_by('id', $category_int, 'category'); $category_list .= $temp_term->name .  ", ";
 
 	}
 
@@ -346,7 +346,7 @@ function bnfw_get_payload_for_publish_post($the_post){
 
 	foreach ($the_post->post_category as $category_int){
 
-		$category_list .= get_term_by('id', $category_int, 'category') . ", ";
+		$temp_term = get_term_by('id', $category_int, 'category'); $category_list .= $temp_term->name .  ", ";
 
 	}
 
@@ -450,7 +450,7 @@ function bnfw_get_payload_for_comment_post($the_comment){
 
 	foreach ($the_post->post_category as $category_int){
 
-		$category_list .= get_term_by('id', $category_int, 'category') . ", ";
+		$temp_term = get_term_by('id', $category_int, 'category'); $category_list .= $temp_term->name .  ", ";
 
 	}
 
