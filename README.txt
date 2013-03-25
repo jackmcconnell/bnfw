@@ -1,5 +1,5 @@
 === Better Notifications for WordPress (beta) ===
-Contributors: jackmcconnell-1, peterrocker
+Contributors: voltronik, peterrocker
 Tags: notifications, email, roles, custom
 Requires at least: 3.5
 Tested up to: 3.5
