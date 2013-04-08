@@ -174,7 +174,10 @@ function bnfw_publish_post($postID){
 function bnfw_comment_post($comment_id){
 
 	$the_comment = get_comment($comment_id);
-	bnfw_launch_payload(bnfw_get_recipients_for_type('comment_post'), bnfw_get_subject_for_comment_post($the_comment), bnfw_get_payload_for_comment_post($the_comment));
+
+	if(!bnfw_check_for_spam($the_comment)){
+		bnfw_launch_payload(bnfw_get_recipients_for_type('comment_post'), bnfw_get_subject_for_comment_post($the_comment), bnfw_get_payload_for_comment_post($the_comment));
+	}
 
 }
 
@@ -188,15 +191,17 @@ function bnfw_user_register($user_id){
 function bnfw_trackback_post($comment_id){
 
 	$the_comment = get_comment($comment_id);
-	bnfw_launch_payload(bnfw_get_recipients_for_type('trackback_post'), bnfw_get_subject_for_trackback_post($the_comment), bnfw_get_payload_for_trackback_post($the_comment));
-
+	if(!bnfw_check_for_spam($the_comment)){
+		bnfw_launch_payload(bnfw_get_recipients_for_type('trackback_post'), bnfw_get_subject_for_trackback_post($the_comment), bnfw_get_payload_for_trackback_post($the_comment));
+	}
 }
 
 function bnfw_pingback_post($comment_id){
 	
 	$the_comment = get_comment($comment_id);
-	bnfw_launch_payload(bnfw_get_recipients_for_type('pingback_post'), bnfw_get_subject_for_pingback_post($the_comment), bnfw_get_payload_for_pingback_post($the_comment));
-
+	if(!bnfw_check_for_spam($the_comment)){
+		bnfw_launch_payload(bnfw_get_recipients_for_type('pingback_post'), bnfw_get_subject_for_pingback_post($the_comment), bnfw_get_payload_for_pingback_post($the_comment));
+	}
 }
 
 function bnfw_lostpassword_post(){
