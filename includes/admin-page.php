@@ -109,6 +109,11 @@ function bnfw_settings_page() {
 					
 				</div>
 
+				<div id="other-options" class="twelvecol first">
+					<label for="bnfw_settings[bnfw_settings_spam]">Suppress notifications for comments marked as spam?</label>
+					<input id="bnfw_settings[bnfw_settings_spam]" name="bnfw_settings[bnfw_settings_spam]" type="checkbox" value="1" <?php checked(1, $bnfw_options['bnfw_settings_spam']); ?> />
+				</div>
+
 				<p class="submit clearfix">
 					<input type="submit" class="button-primary" value="Save Settings" />
 				</p>

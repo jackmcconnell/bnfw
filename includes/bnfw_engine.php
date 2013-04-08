@@ -1,5 +1,14 @@
 <?php
 
+function bnfw_check_for_spam($the_comment){
+
+	//returns true if the comment is marked as spam AND admin has enabled suppression of spam
+	$bnfw_options = get_option('bnfw_settings');
+	return((strcmp($the_comment->comment_approved, "spam") === 0) && $bnfw_options['bnfw_settings_spam'] === "1" );
+
+}
+
+
 /*
 Logic to retrieve to whom the notif should be sent
 */
