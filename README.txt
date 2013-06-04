@@ -3,7 +3,7 @@ Contributors: voltronik, peterrocker
 Tags: notifications, email, roles, custom
 Requires at least: 3.5
 Tested up to: 3.5
-Stable tag: 0.2b
+Stable tag: 0.2.1b
 License: GPLv3
 
 Send customisable HTML emails to user roles for different WordPress notifications. 
@@ -93,6 +93,9 @@ It's possible you're inserting a shortcode into an email for a notification that
 
 
 == Changelog ==
+
+= 0.2.1 beta =
+* minor bugfixes
 
 = 0.2 beta =
 * Added an option to suppress spam comment notifications.
