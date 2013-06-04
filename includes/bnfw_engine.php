@@ -1,5 +1,14 @@
 <?php
 
+function bnfw_check_for_spam($the_comment){
+
+	//returns true if the comment is marked as spam AND admin has enabled suppression of spam
+	$bnfw_options = get_option('bnfw_settings');
+	return((strcmp($the_comment->comment_approved, "spam") === 0) && $bnfw_options['bnfw_settings_spam'] === "1" );
+
+}
+
+
 /*
 Logic to retrieve to whom the notif should be sent
 */
@@ -59,19 +68,19 @@ function bnfw_get_subject_for_publish_post($the_post){
 
 	foreach ($the_post->post_category as $category_int){
 
-		$category_list .= get_term_by('id', $category_int, 'category') . ", ";
+		$temp_term = get_term_by('id', $category_int, 'category'); $category_list .= $temp_term->name .  ", ";
 
 	}
 
 	$message_body = str_replace("[post_category]", $category_list, $message_body);
-	$message_body = str_replace("[post_excerpt]", implode(", ", $the_post->post_excerpt), $message_body);
+	$message_body = str_replace("[post_excerpt]", $the_post->post_excerpt, $message_body);
 	$message_body = str_replace("[post_status]", $the_post->post_status, $message_body);
 	$message_body = str_replace("[comment_status]", $the_post->comment_status, $message_body);
 	$message_body = str_replace("[ping_status]", $the_post->ping_status, $message_body);
 	$message_body = str_replace("[post_password]", $the_post->post_password, $message_body);
 	$message_body = str_replace("[post_name]", $the_post->post_name, $message_body);
 	$message_body = str_replace("[to_ping]", $the_post->to_ping, $message_body);
-	$message_body = str_replace("[pinged]", implode(", ", $the_post->pinged), $message_body);
+	$message_body = str_replace("[pinged]", $the_post->pinged, $message_body);
 	$message_body = str_replace("[post_modified]", $the_post->post_modified, $message_body);
 	$message_body = str_replace("[post_modified_gmt]", $the_post->post_modified_gmt, $message_body);
 	$message_body = str_replace("[post_content_filtered]", $the_post->post_content_filtered, $message_body);
@@ -92,10 +101,10 @@ function bnfw_get_subject_for_publish_post($the_post){
 	$message_body = str_replace("[user_lastname]", $user_info->user_lastname, $message_body);
 	$message_body = str_replace("[nickname]", $user_info->nickname, $message_body);
 	$message_body = str_replace("[user_description]", $user_info->user_description, $message_body);
-	$message_body = str_replace("[wp_capabilities]", implode(", ", $user_info->wp_capabilities), $message_body);
+	$message_body = str_replace("[wp_capabilities]", $user_info->wp_capabilities, $message_body);
 	$message_body = str_replace("[admin_color]", $user_info->admin_color, $message_body);
 	$message_body = str_replace("[closedpostboxes_page]", $user_info->closedpostboxes_page, $message_body);
-	$message_body = str_replace("[primary_blog]", implode(", ", $user_info->primary_blog), $message_body);
+	$message_body = str_replace("[primary_blog]", $user_info->primary_blog, $message_body);
 	$message_body = str_replace("[rich_editing]", $user_info->rich_editing, $message_body);
 	$message_body = str_replace("[source_domain]", $user_info->source_domain, $message_body);
 
@@ -149,10 +158,10 @@ function bnfw_get_subject_for_comment_post($the_comment){
 	$message_body = str_replace("[user_lastname]", $user_info->user_lastname, $message_body);
 	$message_body = str_replace("[nickname]", $user_info->nickname, $message_body);
 	$message_body = str_replace("[user_description]", $user_info->user_description, $message_body);
-	$message_body = str_replace("[wp_capabilities]", implode(", ", $user_info->wp_capabilities), $message_body);
+	$message_body = str_replace("[wp_capabilities]", $user_info->wp_capabilities, $message_body);
 	$message_body = str_replace("[admin_color]", $user_info->admin_color, $message_body);
 	$message_body = str_replace("[closedpostboxes_page]", $user_info->closedpostboxes_page, $message_body);
-	$message_body = str_replace("[primary_blog]", implode(", ", $user_info->primary_blog), $message_body);
+	$message_body = str_replace("[primary_blog]", $user_info->primary_blog, $message_body);
 	$message_body = str_replace("[rich_editing]", $user_info->rich_editing, $message_body);
 	$message_body = str_replace("[source_domain]", $user_info->source_domain, $message_body);
 
@@ -165,19 +174,19 @@ function bnfw_get_subject_for_comment_post($the_comment){
 
 	foreach ($the_post->post_category as $category_int){
 
-		$category_list .= get_term_by('id', $category_int, 'category') . ", ";
+		$temp_term = get_term_by('id', $category_int, 'category'); $category_list .= $temp_term->name .  ", ";
 
 	}
 
 	$message_body = str_replace("[post_category]", $category_list, $message_body);
-	$message_body = str_replace("[post_excerpt]", implode(", ", $the_post->post_excerpt), $message_body);
+	$message_body = str_replace("[post_excerpt]", $the_post->post_excerpt, $message_body);
 	$message_body = str_replace("[post_status]", $the_post->post_status, $message_body);
 	$message_body = str_replace("[comment_status]", $the_post->comment_status, $message_body);
 	$message_body = str_replace("[ping_status]", $the_post->ping_status, $message_body);
 	$message_body = str_replace("[post_password]", $the_post->post_password, $message_body);
 	$message_body = str_replace("[post_name]", $the_post->post_name, $message_body);
 	$message_body = str_replace("[to_ping]", $the_post->to_ping, $message_body);
-	$message_body = str_replace("[pinged]", implode(", ", $the_post->pinged), $message_body);
+	$message_body = str_replace("[pinged]", $the_post->pinged, $message_body);
 	$message_body = str_replace("[post_modified]", $the_post->post_modified, $message_body);
 	$message_body = str_replace("[post_modified_gmt]", $the_post->post_modified_gmt, $message_body);
 	$message_body = str_replace("[post_content_filtered]", $the_post->post_content_filtered, $message_body);
@@ -206,10 +215,10 @@ function bnfw_get_subject_for_user_register($user_info){
 	$message_body = str_replace("[user_lastname]", $user_info->user_lastname, $message_body);
 	$message_body = str_replace("[nickname]", $user_info->nickname, $message_body);
 	$message_body = str_replace("[user_description]", $user_info->user_description, $message_body);
-	$message_body = str_replace("[wp_capabilities]", implode(", ", $user_info->wp_capabilities), $message_body);
+	$message_body = str_replace("[wp_capabilities]", $user_info->wp_capabilities, $message_body);
 	$message_body = str_replace("[admin_color]", $user_info->admin_color, $message_body);
 	$message_body = str_replace("[closedpostboxes_page]", $user_info->closedpostboxes_page, $message_body);
-	$message_body = str_replace("[primary_blog]", implode(", ", $user_info->primary_blog), $message_body);
+	$message_body = str_replace("[primary_blog]", $user_info->primary_blog, $message_body);
 	$message_body = str_replace("[rich_editing]", $user_info->rich_editing, $message_body);
 	$message_body = str_replace("[source_domain]", $user_info->source_domain, $message_body);
 
@@ -248,10 +257,10 @@ function bnfw_get_subject_for_trackback_post($the_comment){
 	$message_body = str_replace("[user_lastname]", $user_info->user_lastname, $message_body);
 	$message_body = str_replace("[nickname]", $user_info->nickname, $message_body);
 	$message_body = str_replace("[user_description]", $user_info->user_description, $message_body);
-	$message_body = str_replace("[wp_capabilities]", implode(", ", $user_info->wp_capabilities), $message_body);
+	$message_body = str_replace("[wp_capabilities]", $user_info->wp_capabilities, $message_body);
 	$message_body = str_replace("[admin_color]", $user_info->admin_color, $message_body);
 	$message_body = str_replace("[closedpostboxes_page]", $user_info->closedpostboxes_page, $message_body);
-	$message_body = str_replace("[primary_blog]", implode(", ", $user_info->primary_blog), $message_body);
+	$message_body = str_replace("[primary_blog]", $user_info->primary_blog, $message_body);
 	$message_body = str_replace("[rich_editing]", $user_info->rich_editing, $message_body);
 	$message_body = str_replace("[source_domain]", $user_info->source_domain, $message_body);
 
@@ -289,10 +298,10 @@ function bnfw_get_subject_for_pingback_post($the_comment){
 	$message_body = str_replace("[user_lastname]", $user_info->user_lastname, $message_body);
 	$message_body = str_replace("[nickname]", $user_info->nickname, $message_body);
 	$message_body = str_replace("[user_description]", $user_info->user_description, $message_body);
-	$message_body = str_replace("[wp_capabilities]", implode(", ", $user_info->wp_capabilities), $message_body);
+	$message_body = str_replace("[wp_capabilities]", $user_info->wp_capabilities, $message_body);
 	$message_body = str_replace("[admin_color]", $user_info->admin_color, $message_body);
 	$message_body = str_replace("[closedpostboxes_page]", $user_info->closedpostboxes_page, $message_body);
-	$message_body = str_replace("[primary_blog]", implode(", ", $user_info->primary_blog), $message_body);
+	$message_body = str_replace("[primary_blog]", $user_info->primary_blog, $message_body);
 	$message_body = str_replace("[rich_editing]", $user_info->rich_editing, $message_body);
 	$message_body = str_replace("[source_domain]", $user_info->source_domain, $message_body);
 
@@ -314,10 +323,10 @@ function bnfw_get_subject_for_lostpassword_post($user_info){
 	$message_body = str_replace("[user_lastname]", $user_info->user_lastname, $message_body);
 	$message_body = str_replace("[nickname]", $user_info->nickname, $message_body);
 	$message_body = str_replace("[user_description]", $user_info->user_description, $message_body);
-	$message_body = str_replace("[wp_capabilities]", implode(", ", $user_info->wp_capabilities), $message_body);
+	$message_body = str_replace("[wp_capabilities]", $user_info->wp_capabilities, $message_body);
 	$message_body = str_replace("[admin_color]", $user_info->admin_color, $message_body);
 	$message_body = str_replace("[closedpostboxes_page]", $user_info->closedpostboxes_page, $message_body);
-	$message_body = str_replace("[primary_blog]", implode(", ", $user_info->primary_blog), $message_body);
+	$message_body = str_replace("[primary_blog]", $user_info->primary_blog, $message_body);
 	$message_body = str_replace("[rich_editing]", $user_info->rich_editing, $message_body);
 	$message_body = str_replace("[source_domain]", $user_info->source_domain, $message_body);
 
@@ -346,19 +355,19 @@ function bnfw_get_payload_for_publish_post($the_post){
 
 	foreach ($the_post->post_category as $category_int){
 
-		$category_list .= get_term_by('id', $category_int, 'category') . ", ";
+		$temp_term = get_term_by('id', $category_int, 'category'); $category_list .= $temp_term->name .  ", ";
 
 	}
 
 	$message_body = str_replace("[post_category]", $category_list, $message_body);
-	$message_body = str_replace("[post_excerpt]", implode(", ", $the_post->post_excerpt), $message_body);
+	$message_body = str_replace("[post_excerpt]", $the_post->post_excerpt, $message_body);
 	$message_body = str_replace("[post_status]", $the_post->post_status, $message_body);
 	$message_body = str_replace("[comment_status]", $the_post->comment_status, $message_body);
 	$message_body = str_replace("[ping_status]", $the_post->ping_status, $message_body);
 	$message_body = str_replace("[post_password]", $the_post->post_password, $message_body);
 	$message_body = str_replace("[post_name]", $the_post->post_name, $message_body);
 	$message_body = str_replace("[to_ping]", $the_post->to_ping, $message_body);
-	$message_body = str_replace("[pinged]", implode(", ", $the_post->pinged), $message_body);
+	$message_body = str_replace("[pinged]", $the_post->pinged, $message_body);
 	$message_body = str_replace("[post_modified]", $the_post->post_modified, $message_body);
 	$message_body = str_replace("[post_modified_gmt]", $the_post->post_modified_gmt, $message_body);
 	$message_body = str_replace("[post_content_filtered]", $the_post->post_content_filtered, $message_body);
@@ -379,10 +388,10 @@ function bnfw_get_payload_for_publish_post($the_post){
 	$message_body = str_replace("[user_lastname]", $user_info->user_lastname, $message_body);
 	$message_body = str_replace("[nickname]", $user_info->nickname, $message_body);
 	$message_body = str_replace("[user_description]", $user_info->user_description, $message_body);
-	$message_body = str_replace("[wp_capabilities]", implode(", ", $user_info->wp_capabilities), $message_body);
+	$message_body = str_replace("[wp_capabilities]", $user_info->wp_capabilities, $message_body);
 	$message_body = str_replace("[admin_color]", $user_info->admin_color, $message_body);
 	$message_body = str_replace("[closedpostboxes_page]", $user_info->closedpostboxes_page, $message_body);
-	$message_body = str_replace("[primary_blog]", implode(", ", $user_info->primary_blog), $message_body);
+	$message_body = str_replace("[primary_blog]", $user_info->primary_blog, $message_body);
 	$message_body = str_replace("[rich_editing]", $user_info->rich_editing, $message_body);
 	$message_body = str_replace("[source_domain]", $user_info->source_domain, $message_body);
 
@@ -434,10 +443,10 @@ function bnfw_get_payload_for_comment_post($the_comment){
 	$message_body = str_replace("[user_lastname]", $user_info->user_lastname, $message_body);
 	$message_body = str_replace("[nickname]", $user_info->nickname, $message_body);
 	$message_body = str_replace("[user_description]", $user_info->user_description, $message_body);
-	$message_body = str_replace("[wp_capabilities]", implode(", ", $user_info->wp_capabilities), $message_body);
+	$message_body = str_replace("[wp_capabilities]", $user_info->wp_capabilities, $message_body);
 	$message_body = str_replace("[admin_color]", $user_info->admin_color, $message_body);
 	$message_body = str_replace("[closedpostboxes_page]", $user_info->closedpostboxes_page, $message_body);
-	$message_body = str_replace("[primary_blog]", implode(", ", $user_info->primary_blog), $message_body);
+	$message_body = str_replace("[primary_blog]", $user_info->primary_blog, $message_body);
 	$message_body = str_replace("[rich_editing]", $user_info->rich_editing, $message_body);
 	$message_body = str_replace("[source_domain]", $user_info->source_domain, $message_body);
 
@@ -450,19 +459,19 @@ function bnfw_get_payload_for_comment_post($the_comment){
 
 	foreach ($the_post->post_category as $category_int){
 
-		$category_list .= get_term_by('id', $category_int, 'category') . ", ";
+		$temp_term = get_term_by('id', $category_int, 'category'); $category_list .= $temp_term->name .  ", ";
 
 	}
 
 	$message_body = str_replace("[post_category]", $category_list, $message_body);
-	$message_body = str_replace("[post_excerpt]", implode(", ", $the_post->post_excerpt), $message_body);
+	$message_body = str_replace("[post_excerpt]", $the_post->post_excerpt, $message_body);
 	$message_body = str_replace("[post_status]", $the_post->post_status, $message_body);
 	$message_body = str_replace("[comment_status]", $the_post->comment_status, $message_body);
 	$message_body = str_replace("[ping_status]", $the_post->ping_status, $message_body);
 	$message_body = str_replace("[post_password]", $the_post->post_password, $message_body);
 	$message_body = str_replace("[post_name]", $the_post->post_name, $message_body);
 	$message_body = str_replace("[to_ping]", $the_post->to_ping, $message_body);
-	$message_body = str_replace("[pinged]", implode(", ", $the_post->pinged), $message_body);
+	$message_body = str_replace("[pinged]", $the_post->pinged, $message_body);
 	$message_body = str_replace("[post_modified]", $the_post->post_modified, $message_body);
 	$message_body = str_replace("[post_modified_gmt]", $the_post->post_modified_gmt, $message_body);
 	$message_body = str_replace("[post_content_filtered]", $the_post->post_content_filtered, $message_body);
@@ -492,10 +501,10 @@ function bnfw_get_payload_for_user_register($user_info){
 	$message_body = str_replace("[user_lastname]", $user_info->user_lastname, $message_body);
 	$message_body = str_replace("[nickname]", $user_info->nickname, $message_body);
 	$message_body = str_replace("[user_description]", $user_info->user_description, $message_body);
-	$message_body = str_replace("[wp_capabilities]", implode(", ", $user_info->wp_capabilities), $message_body);
+	$message_body = str_replace("[wp_capabilities]", $user_info->wp_capabilities, $message_body);
 	$message_body = str_replace("[admin_color]", $user_info->admin_color, $message_body);
 	$message_body = str_replace("[closedpostboxes_page]", $user_info->closedpostboxes_page, $message_body);
-	$message_body = str_replace("[primary_blog]", implode(", ", $user_info->primary_blog), $message_body);
+	$message_body = str_replace("[primary_blog]", $user_info->primary_blog, $message_body);
 	$message_body = str_replace("[rich_editing]", $user_info->rich_editing, $message_body);
 	$message_body = str_replace("[source_domain]", $user_info->source_domain, $message_body);
 
@@ -535,10 +544,10 @@ function bnfw_get_payload_for_trackback_post($the_comment){$message_body = $bnfw
 	$message_body = str_replace("[user_lastname]", $user_info->user_lastname, $message_body);
 	$message_body = str_replace("[nickname]", $user_info->nickname, $message_body);
 	$message_body = str_replace("[user_description]", $user_info->user_description, $message_body);
-	$message_body = str_replace("[wp_capabilities]", implode(", ", $user_info->wp_capabilities), $message_body);
+	$message_body = str_replace("[wp_capabilities]", $user_info->wp_capabilities, $message_body);
 	$message_body = str_replace("[admin_color]", $user_info->admin_color, $message_body);
 	$message_body = str_replace("[closedpostboxes_page]", $user_info->closedpostboxes_page, $message_body);
-	$message_body = str_replace("[primary_blog]", implode(", ", $user_info->primary_blog), $message_body);
+	$message_body = str_replace("[primary_blog]", $user_info->primary_blog, $message_body);
 	$message_body = str_replace("[rich_editing]", $user_info->rich_editing, $message_body);
 	$message_body = str_replace("[source_domain]", $user_info->source_domain, $message_body);
 
@@ -577,10 +586,10 @@ function bnfw_get_payload_for_pingback_post($the_comment){
 	$message_body = str_replace("[user_lastname]", $user_info->user_lastname, $message_body);
 	$message_body = str_replace("[nickname]", $user_info->nickname, $message_body);
 	$message_body = str_replace("[user_description]", $user_info->user_description, $message_body);
-	$message_body = str_replace("[wp_capabilities]", implode(", ", $user_info->wp_capabilities), $message_body);
+	$message_body = str_replace("[wp_capabilities]", $user_info->wp_capabilities, $message_body);
 	$message_body = str_replace("[admin_color]", $user_info->admin_color, $message_body);
 	$message_body = str_replace("[closedpostboxes_page]", $user_info->closedpostboxes_page, $message_body);
-	$message_body = str_replace("[primary_blog]", implode(", ", $user_info->primary_blog), $message_body);
+	$message_body = str_replace("[primary_blog]", $user_info->primary_blog, $message_body);
 	$message_body = str_replace("[rich_editing]", $user_info->rich_editing, $message_body);
 	$message_body = str_replace("[source_domain]", $user_info->source_domain, $message_body);
 
@@ -603,10 +612,10 @@ function bnfw_get_payload_for_lostpassword_post($user_info){
 	$message_body = str_replace("[user_lastname]", $user_info->user_lastname, $message_body);
 	$message_body = str_replace("[nickname]", $user_info->nickname, $message_body);
 	$message_body = str_replace("[user_description]", $user_info->user_description, $message_body);
-	$message_body = str_replace("[wp_capabilities]", implode(", ", $user_info->wp_capabilities), $message_body);
+	$message_body = str_replace("[wp_capabilities]", $user_info->wp_capabilities, $message_body);
 	$message_body = str_replace("[admin_color]", $user_info->admin_color, $message_body);
 	$message_body = str_replace("[closedpostboxes_page]", $user_info->closedpostboxes_page, $message_body);
-	$message_body = str_replace("[primary_blog]", implode(", ", $user_info->primary_blog), $message_body);
+	$message_body = str_replace("[primary_blog]", $user_info->primary_blog, $message_body);
 	$message_body = str_replace("[rich_editing]", $user_info->rich_editing, $message_body);
 	$message_body = str_replace("[source_domain]", $user_info->source_domain, $message_body);
 
