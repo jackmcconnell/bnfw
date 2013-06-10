@@ -95,7 +95,7 @@ It's possible you're inserting a shortcode into an email for a notification that
 == Changelog ==
 
 = 0.2.1 beta =
-* minor bugfixes
+* Minor Bugfixes
 
 = 0.2 beta =
 * Added an option to suppress spam comment notifications.

@@ -109,6 +109,16 @@ function bnfw_settings_page() {
 					
 				</div>
 
+				<div id="other-options" class="twelvecol first">
+					<label for="bnfw_settings[bnfw_settings_spam]">Suppress notifications for comments marked as spam?</label>
+					<input id="bnfw_settings[bnfw_settings_spam]" name="bnfw_settings[bnfw_settings_spam]" type="checkbox" value="1" <?php checked(1, $bnfw_options['bnfw_settings_spam']); ?> />
+				</div>
+
+				<div id="other-options" class="twelvecol first">
+					<label for="bnfw_settings[bnfw_settings_disable_wp]">Suppress default Wordpress notifications</label>
+					<input id="bnfw_settings[bnfw_settings_disable_wp]" name="bnfw_settings[bnfw_settings_disable_wp]" type="checkbox" value="1" <?php checked(1, $bnfw_options['bnfw_settings_disable_wp']); ?> />
+				</div>
+
 				<p class="submit clearfix">
 					<input type="submit" class="button-primary" value="Save Settings" />
 				</p>
@@ -180,6 +190,22 @@ function bnfw_email_customise_page() {
 
 								<div class="bnfw-preview left">
 									<h4>Email Message Body Preview</h4>
+
+									<script type="text/javascript">
+									function do_bnfw_custom_email_settingspayload_subject_<?php echo $bnfw_events; ?>(){
+									var data = {};
+    data.subject = document.getElementById("bnfw_custom_email_settings[payload-subject-<?php echo $bnfw_events; ?>]").value;
+    data.message = document.getElementById("bnfw_custom_email_settings[payload-body-<?php echo $bnfw_events; ?>]").value;
+
+    data.to = "<?php $current_user = wp_get_current_user(); echo $current_user->user_email;?>";
+    data.action = "bnfw_mail_action";
+        jQuery.post('<?php echo admin_url( 'admin-ajax.php' ) ?>',data);
+    }
+									</script>
+
+	<button type="button" onclick="do_bnfw_custom_email_settingspayload_subject_<?php echo $bnfw_events; ?>()">Send test email</button>
+
+
 
 									<div class="bnfw-preview-content">
 										<?php echo $bnfw_options['payload-body-'.$bnfw_events] ?>

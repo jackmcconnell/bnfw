@@ -76,9 +76,18 @@ Admin Page Styling
 
 /***** Notifications Page *****/
 
+/* Other Options */
+#other-options {
+	margin: 20px 0 50px 0;
+}
+
+	#other-options label {
+		padding-right: 10px;
+	}
+
 /* Grid of checkboxes on Settings page */
 #role-settings {
-	margin: 20px 0 50px 0;
+	margin: 20px 0;
 }
 
 	#role-settings .twocol {

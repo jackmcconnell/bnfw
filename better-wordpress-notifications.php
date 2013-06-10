@@ -3,7 +3,7 @@
 Plugin Name: Better Notifications for WordPress
 Plugin URI: http://wordpress.org/extend/plugins/bnfw/
 Description: Send customisable HTML emails to user roles for different WordPress notifications.
-Version: 0.2 Beta
+Version: 0.2.1 Beta
 Author: Voltronik
 Author URI: http://www.voltronik.co.uk/
 Author Email: hello@voltronik.co.uk
@@ -54,6 +54,8 @@ if(is_admin()){
 
 //add_filter('the_content', 'bnfw_debug');
 
+add_action('wp_ajax_bnfw_mail_action', 'bnfw_mail_action');
+add_action('wp_ajax_nopriv_bnfw_mail_action', 'bnfw_mail_action');
 add_action('create_term', 'bnfw_term_created');
 add_action('publish_post', 'bnfw_publish_post');
 add_action('comment_post', 'bnfw_comment_post');
@@ -66,9 +68,28 @@ add_filter('wp_mail', 'bnfw_disable_emails');
 
 register_activation_hook( __FILE__, 'bnfw_activate' );
 
+function bnfw_mail_action(){
+	 if(isset($_POST['to']))
+    {
+        
+        $subject = $_POST['subject'];
+        $message = $_POST['message']; 
+
+     $headers[] = 'content-type: text/html';
+	$headers[] = 'Bcc: '.$to = $_POST['to'];
+	$headers[] = 'From: '.get_option('blogname').' <'.get_option('admin_email').'>';
+	wp_mail("", $subject, $message, $headers);
+    }
+}
 
 function bnfw_disable_emails($result = '') {
+
+	$bnfw_options = get_option('bnfw_settings');
+	
 	extract($result);
+
+	if($bnfw_options['bnfw_settings_disable_wp'] === "1"){
+
 	$blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
 	if (strstr(sprintf(__('[%s] New User Registration'), $blogname), $subject)) {
 		$to = '';
@@ -103,7 +124,7 @@ function bnfw_disable_emails($result = '') {
 		return compact('to', 'subject', 'message', 'headers', 'attachments');
 	}
 
- 
+ 	}
 	return $result;
 }
 
@@ -119,7 +140,8 @@ function bnfw_activate(){
 			'user_register-administrator' => '1',
 			'trackback_post-administrator' => '1',
 			'pingback_post-administrator' => '1',
-			'lostpassword_post-administrator' => '1'
+			'lostpassword_post-administrator' => '1',
+			'bnfw_settings_disable_wp' => '1'
 		 );
 
 		update_option('bnfw_settings', $bnfw_options);
