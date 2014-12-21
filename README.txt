@@ -3,7 +3,7 @@ Contributors: voltronik
 Tags: notifications, email, alerts, roles, users, HTML
 Requires at least: 3.5
 Tested up to: 4.1
-Stable tag: 1.0
+Stable tag: 1.0.1
 License: GPLv3
 
 Send customisable HTML emails to your users for different WordPress notifications.
@@ -118,6 +118,11 @@ It might do but this is untested.
 
 
 == Changelog ==
+
+= 1.0.1 =
+* Bug fix for notifications not being sent to custom user roles or individual users of custom roles.
+* Added a 'Notification Type' column to the notifications screen.
+* Renamed 'User Roles' column in notifications screen to 'User Roles/Users'.
 
 = 1.0 =
 * First major release - we're no longer in beta!

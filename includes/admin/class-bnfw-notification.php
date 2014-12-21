@@ -523,8 +523,9 @@ class BNFW_Notification {
      * @filter manage_{post_type}_posts_columns
      */
     public function columns_header( $columns ) {
+        $columns['type']       = __( 'Notification Type', 'bnfw' );
         $columns['subject']    = __( 'Subject', 'bnfw' );
-        $columns['user-roles'] = __( 'User Roles', 'bnfw' );
+        $columns['user-roles'] = __( 'User Roles/Users', 'bnfw' );
 
         return $columns;
     }
@@ -541,6 +542,9 @@ class BNFW_Notification {
     public function custom_column_row( $column, $post_id ) {
         $setting = $this->read_settings( $post_id );
         switch ( $column ) {
+            case 'type':
+                echo $this->get_notifications_name( $setting['notification'] );
+                break;
             case 'subject':
                 echo ! empty( $setting['subject'] ) ? $setting['subject'] : '';
                 break;
@@ -554,6 +558,57 @@ class BNFW_Notification {
                     echo implode( ', ', $users );
                 } else {
                     echo ! empty( $setting['user-roles'] ) ? implode( ', ', $setting['user-roles'] ) : '';
+                }
+                break;
+        }
+    }
+
+    /**
+     * Get name of the notification based on slug.
+     *
+     * @param mixed $slug
+     */
+    private function get_notifications_name( $slug ) {
+        switch ($slug) {
+            case 'new-comment':
+                return __( 'New Comment', 'bnfw' );
+                break;
+            case 'new-trackback':
+                return __( 'New Trackback', 'bnfw' );
+                break;
+            case 'new-pingback':
+                return __( 'New Pingback', 'bnfw' );
+                break;
+            case 'user-password':
+                return __( 'Password Reset', 'bnfw' );
+                break;
+            case 'new-user':
+                return __( 'User Registration', 'bnfw' );
+                break;
+            case 'new-post':
+                return __( 'New Post Published', 'bnfw' );
+                break;
+            case 'update-post':
+                return __( 'Post Updated', 'bnfw' );
+                break;
+            case 'pending-post':
+                return __( 'Post Pending Review', 'bnfw' );
+                break;
+            case 'new-category':
+                return __( 'New Category', 'bnfw' );
+                break;
+            default:
+                $splited = explode( '-', $slug );
+                switch ( $splited[1] ) {
+                    case 'new':
+                        return __( 'New ', 'bnfw' ) . $splited[1];
+                        break;
+                    case 'update':
+                        return __( 'Updated ', 'bnfw' ) . $splited[1];
+                        break;
+                    case 'pending':
+                        return $splited[1] . __( ' Pending Review', 'bnfw' );
+                        break;
                 }
                 break;
         }

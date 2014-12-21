@@ -190,15 +190,15 @@ class BNFW_Engine {
             $emails['to'] = $this->get_emails_from_role( $setting['user-roles'] );
         }
 
-        $emails['cc'] = $this->get_emails_from_role( $setting['cc-roles'] );
-        if ( ! empty( $setting['cc-email'] ) ) {
-            $emails['cc'][] = $setting['cc-email'];
-        }
+        //$emails['cc'] = $this->get_emails_from_role( $setting['cc-roles'] );
+        //if ( ! empty( $setting['cc-email'] ) ) {
+            //$emails['cc'][] = $setting['cc-email'];
+        //}
 
-        $emails['bcc'] = $this->get_emails_from_role( $setting['bcc-roles'] );
-        if ( ! empty( $setting['bcc-email'] ) ) {
-            $emails['bcc'][] = $setting['bcc-email'];
-        }
+        //$emails['bcc'] = $this->get_emails_from_role( $setting['bcc-roles'] );
+        //if ( ! empty( $setting['bcc-email'] ) ) {
+            //$emails['bcc'][] = $setting['bcc-email'];
+        //}
 
         return $emails;
     }
@@ -230,8 +230,9 @@ class BNFW_Engine {
 
         $email_list = array();
         foreach ( $roles as $role ) {
+            $role_name = $this->get_role_name_by_label( $role );
             $users = get_users( array(
-                'role' => $role,
+                'role' => $role_name,
                 'fields' => array( 'user_email' ),
             ));
 
@@ -241,6 +242,23 @@ class BNFW_Engine {
         }
 
         return $email_list;
+    }
+
+    /**
+     * Get User role name by label.
+     *
+     * @param mixed $role_label
+     */
+    protected function get_role_name_by_label( $role_label ) {
+        global $wp_roles;
+        foreach ( $wp_roles->roles as $role_name => $role_info ) {
+            if ( $role_label == $role_info['name'] ) {
+                return $role_name;
+            }
+        }
+
+        // There is something wrong
+        return '';
     }
 
     /**
