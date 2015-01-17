@@ -94,8 +94,11 @@ class BNFW_Engine {
         $message = str_replace( '[post_mime_type]', $post->post_mime_type, $message );
         $message = str_replace( '[comment_count]', $post->comment_count, $message );
 
-        $category_list = implode( ',', wp_get_post_categories( $post_id, array( 'fields' => 'name') ) );
+        $category_list = implode( ',', wp_get_post_categories( $post_id, array( 'fields' => 'names') ) );
         $message = str_replace( '[post_category]', $category_list, $message );
+
+		$tag_list = implode( ',', wp_get_post_tags( $post_id, array( 'fields' => 'names') ) );
+		$message = str_replace( '[post_tag]', $tag_list, $message );
 
         return $message;
     }
@@ -136,6 +139,7 @@ class BNFW_Engine {
     private function user_shortcodes( $message, $user_id ) {
         $user_info = get_userdata( $user_id );
 
+        $message = str_replace( '[ID]', $user_info->ID, $message );
         $message = str_replace( '[user_login]', $user_info->user_login, $message );
         $message = str_replace( '[user_nicename]', $user_info->user_nicename, $message );
         $message = str_replace( '[user_email]', $user_info->user_email, $message );
