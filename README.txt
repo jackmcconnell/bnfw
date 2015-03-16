@@ -2,9 +2,9 @@
 Contributors: voltronik
 Tags: notifications, email, alerts, roles, users, HTML
 Requires at least: 3.5
-Tested up to: 4.1
-Stable tag: 1.0.2
-License: GPLv3
+Tested up to: 4.1.1
+Stable tag: 1.1
+License: GPLv2 or later
 
 Send customisable HTML emails to your users for different WordPress notifications.
 
@@ -19,19 +19,38 @@ You want a user with the editor role (or all users using the Editor role) to be 
 
 Notifications that are currently available to use are: 
 
-* New category
-* New Post
-* Post updated
-* New comment (and it's corresponding status)
-* New trackback
-* New pingback
-* New user registration (admin)
-* Lost password reset (admin)
-* New custom taxonomy
+**WordPress Defaults**
+
+* New Comment / Comment Awaiting Moderation
+* New Trackback
+* New Pingback
+* Lost Password (For Admin)
+* New User Registration (For Admin)
+
+**Transactional**
+
+* Lost Password (For User)
+* New User Registration (For User)
+* New User - Welcome Email
+
+**Posts / Custom Post Types**
+
+* New Post Published
+* Post Updated
+* Post Pending Review
+
+**Posts**
+
+* New Category
+* New Tag
+
+**Custom Post Types**
+
+* New Taxonomy / Term
 
 If you'd like to see a notification in the list above, please drop me a line in the forums and we'll see what we can do to add it.
 
-A long and handy list of shortcodes you can use is available [here](http://www.voltronik.co.uk/wordpress-plugins/better-notifications-for-wordpress/ "Shortcodes for use in Better Notifications for WordPress").
+> A long and handy list of shortcodes you can use is available [here](http://www.voltronik.co.uk/wordpress-plugins/better-notifications-for-wordpress/ "Shortcodes for use in Better Notifications for WordPress").
 
 
 Having problems? Please let me know via this plugin's forum so we can address them and let it act as a source of information for future reference and other users.
@@ -49,7 +68,7 @@ Don't think the plugin is worthy of 5 stars? Let me know on the forum and we'll 
 1. Upload the 'bnfw' plugin folder to the '/wp-content/plugins/' directory or download it via your WordPress installation.
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Use the settings in the new 'Notifications' Menu item in the sidebar to configure the plugin.
-4. (Optional) Install a plugin to use SMTP instead of wp_mail(). We recommend WP-Mail-SMTP.
+4. (Optional) Install a plugin to use SMTP instead of `wp_mail()`. We recommend WP-Mail-SMTP.
 5. Test by creating a notification.
 
 
@@ -60,16 +79,16 @@ Don't think the plugin is worthy of 5 stars? Let me know on the forum and we'll 
 
 Shortcodes are little blocks of content inserted by WordPress, contained in square brackets. For example, if you want to add the content of a post to a notification for 'New Post Published', you can use the `[post_content]` shortcode to display this in the email that is sent out. 
 
-Shortcodes can be used in the 'Subject' and 'Message Body' of your notifications.
+Shortcodes can be used in the 'Subject' and 'Message Body' of your notifications, except for a select few (due to a restriction in WordPress).
 
-A long and handy list of shortcodes you can use is available [here](http://www.voltronik.co.uk/wordpress-plugins/better-notifications-for-wordpress/ "Shortcodes for use in Better Notifications for WordPress").
+> A long and handy list of shortcodes you can use is available [here](http://www.voltronik.co.uk/wordpress-plugins/better-notifications-for-wordpress/ "Shortcodes for use in Better Notifications for WordPress").
 
 = What are some scenarios this plugin could be used for? =
 
 * Outreach: A blog/news site with hundreds of subscribers and want to use it to alert them of new blog posts. 
-* Communication: A small, internal WordPress site and use it to alert staff of new comments.
+* Communication: A small, internal WordPress site and use it to alert staff of new posts or comments.
 * Monitor: A website for an awesome new product or service and use it for notifications of pingbacks and trackbacks.
-* Security: To receive alerts of password reset requests and their corresponding email address.
+* Security: To receive alerts of password reset requests and their corresponding user.
 
 The possibilities are endless! 
 
@@ -95,7 +114,7 @@ Many hosts place a limit on the number of emails that can be sent out within an 
 
 = Some of my shortcodes aren't working! =
 
-It's possible you're inserting a shortcode into a notification that cannot use it. For example: the 'New Category' email notification cannot use any of the author or time shortcodes as WordPress only stores the category name, category slug and category description in the database. It's also worth checking the spelling and hyphens in any shortcodes as well as if they are wrapped in square brackets '[]'.
+It's possible you're inserting a shortcode into a notification that cannot use it. For example: the 'New Category' email notification cannot use any of the author or time shortcodes as WordPress only stores the category name, category slug and category description in the database. It's also worth checking the spelling and hyphens in any shortcodes as well as if they are wrapped in square brackets `[]`.
 
 = Can I translate this plugin? =
 
@@ -119,8 +138,22 @@ It might do but this is untested.
 
 == Changelog ==
 
+= 1.1 =
+* Lots of cool new stuff and more to come soon!
+* Transactional notifications (notifications intended only for the end user) have been added as a new group in the notifications select box.
+* New Notification: Post Pending Review (for all post types).
+* New Notification: New User Registration (Transactional).
+* New Notification: Password Reset (Transactional).
+* New Notification: New User Welcome Email (Transactional).
+* Added an option to enable or disable each notification.
+* Better support for custom taxonomies and terms.
+* Fixed: A few PHP warnings were showing when using `WP_DEBUG`.
+* Fixed: HTML tags being stripped from `[post_content]` and `[comment_content]`.
+* Removed: Some WordPress Multisite shortcodes that didn't work properly. Proper support for Multisite will come later.
+* If you liked this plugin, please leave a review. If you didn't or have a problem, please send me a message in the Support Forum.
+
 = 1.0.2 =
-* Bug fix for [ID] shortcode not outputting anything.
+* Bug fix for `[ID]` shortcode not outputting anything.
 * Bug fix for `[post_category]` showing as empty.
 * Added tags shortcode for use in certain notifications using `[post_tag]`.
 
