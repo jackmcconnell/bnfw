@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: http://wordpress.org/plugins/bnfw/
  * Description: Send customisable HTML emails to your users for different WordPress notifications.
- * Version: 1.1
+ * Version: 1.1.5
  * Author: Voltronik
  * Author URI: http://www.voltronik.co.uk/
  * Author Email: plugins@voltronik.co.uk
@@ -96,9 +96,13 @@ class BNFW {
 		add_action( 'draft_to_publish'          , array( $this, 'publish_post' ) );
 		add_action( 'publish_to_publish'        , array( $this, 'update_post' ) );
 
-		add_action( 'draft_to_pending'          , array( $this, 'pending_post' ) );
-		add_action( 'new_to_pending'            , array( $this, 'pending_post' ) );
-		add_action( 'auto-draft_to_pending'     , array( $this, 'pending_post' ) );
+		$post_types = get_post_types( array( '_builtin' => true ), 'names' );
+		$post_types = array_diff( $post_types, array( BNFW_Notification::POST_TYPE ) );
+
+		foreach ( $post_types as $post_type ) {
+			add_action( 'pending_' . $post_type, array( $this, 'on_post_pending' ), 10, 2 );
+			add_action( 'future_' . $post_type, array( $this, 'on_post_scheduled' ), 10, 2 );
+		}
 
 		add_action( 'comment_post'              , array( $this, 'comment_post' ) );
 		add_action( 'trackback_post'            , array( $this, 'trackback_post' ) );
@@ -194,10 +198,10 @@ class BNFW {
 	 * Fires when a post is pending for review.
 	 *
 	 * @since 1.1
-	 * @param unknown $post
+	 * @param int $post_id Post ID
+	 * @param object $post Post object
 	 */
-	function pending_post( $post ) {
-		$post_id   = $post->ID;
+	function on_post_pending( $post_id, $post ) {
 		$post_type = $post->post_type;
 
 		if ( BNFW_Notification::POST_TYPE != $post_type ) {
@@ -206,15 +210,35 @@ class BNFW {
 	}
 
 	/**
+	 * Fires when a post is scheduled.
+	 *
+	 * @since 1.1.5
+	 * @param int $post_id Post ID
+	 * @param object $post Post object
+	 */
+	function on_post_scheduled( $post_id, $post ) {
+		$post_type = $post->post_type;
+
+		if ( BNFW_Notification::POST_TYPE != $post_type ) {
+			$this->send_notification( 'future-' . $post_type, $post_id );
+		}
+	}
+
+	/**
 	 * Send notification for new comments
 	 *
 	 * @since 1.0
-	 * @param unknown $comment_id
+	 * @param int $comment_id
 	 */
 	function comment_post( $comment_id ) {
 		$the_comment = get_comment( $comment_id );
 		if ( $this->can_send_comment_notification( $the_comment ) ) {
-			$this->send_notification( 'new-comment', $comment_id );
+			$post = get_post( $the_comment->comment_post_ID );
+			$notification_type = 'new-comment'; // old notification name
+			if ( 'post' != $post->post_type ) {
+				$notification_type = 'comment-' . $post->post_type;
+			}
+			$this->send_notification( $notification_type, $comment_id );
 		}
 	}
 

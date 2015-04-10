@@ -3,7 +3,7 @@ Contributors: voltronik
 Tags: notifications, email, alerts, roles, users, HTML
 Requires at least: 3.5
 Tested up to: 4.1.1
-Stable tag: 1.1
+Stable tag: 1.1.5
 License: GPLv2 or later
 
 Send customisable HTML emails to your users for different WordPress notifications.
@@ -38,6 +38,15 @@ Notifications that are currently available to use are:
 * New Post Published
 * Post Updated
 * Post Pending Review
+* Post Scheduled
+
+**Pages**
+
+* New Page Published
+* Page Updated
+* Page Pending Review
+* Page Scheduled
+* Page - New Comment
 
 **Posts**
 
@@ -46,7 +55,7 @@ Notifications that are currently available to use are:
 
 **Custom Post Types**
 
-* New Taxonomy / Term
+* New Term
 
 If you'd like to see a notification in the list above, please drop me a line in the forums and we'll see what we can do to add it.
 
@@ -137,6 +146,16 @@ It might do but this is untested.
 
 
 == Changelog ==
+
+= 1.1.5 =
+* New Shortcode: [permalink].
+* New Notifications: 'Scheduled Posts' and 'Scheduled Pages'.
+* New Shortcodes for the above Notifications: [post_scheduled_date] and [post_scheduled_date_gmt].
+* New Notification: 'New Page Published'.
+* New Notification: 'Page 'Updated'.
+* New Notification: 'Page Pending Review'.
+* New Notification: 'New Page - Comment'.
+* Fixed: A few bugs reported via the forums and some others that i've found - thanks everyone!
 
 = 1.1 =
 * Lots of cool new stuff and more to come soon!

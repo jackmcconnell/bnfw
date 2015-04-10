@@ -171,9 +171,17 @@ class BNFW_Notification {
                     <option value="new-post" <?php selected( 'new-post', $setting['notification'] );?>><?php _e( 'New Post Published', 'bnfw' );?></option>
                     <option value="update-post" <?php selected( 'update-post', $setting['notification'] );?>><?php _e( 'Post Updated', 'bnfw' );?></option>
 					<option value="pending-post" <?php selected( 'pending-post', $setting['notification'] );?>><?php _e( 'Post Pending Review', 'bnfw' );?></option>
+					<option value="future-post" <?php selected( 'future-post', $setting['notification'] );?>><?php _e( 'Post Scheduled', 'bnfw' );?></option>
 					<option value="new-category" <?php selected( 'new-category', $setting['notification'] );?>><?php _e( 'New Category', 'bnfw' ); ?></option>
 					<option value="new-post_tag" <?php selected( 'new-post_tag', $setting['notification'] );?>><?php _e( 'New Tag', 'bnfw' ); ?></option>
                     </optgroup>
+					<optgroup label="Page">
+					<option value="new-page" <?php selected( 'new-page', $setting['notification'] );?>><?php _e( 'New Page Published', 'bnfw' );?></option>
+					<option value="update-page" <?php selected( 'update-page', $setting['notification'] );?>><?php _e( 'Page Updated', 'bnfw' );?></option>
+					<option value="pending-page" <?php selected( 'pending-page', $setting['notification'] );?>><?php _e( 'Page Pending Review', 'bnfw' );?></option>
+					<option value="future-page" <?php selected( 'future-page', $setting['notification'] );?>><?php _e( 'Page Scheduled', 'bnfw' );?></option>
+					<option value="comment-page" <?php selected( 'comment-page', $setting['notification'] );?>><?php _e( 'Page - New Comment', 'bnfw' );?></option>
+					</optgroup>
 <?php
 		$types = get_post_types( array(
 				'_builtin' => false,
@@ -189,6 +197,8 @@ class BNFW_Notification {
                         <option value="new-<?php echo $type; ?>" <?php selected( 'new-' . $type, $setting['notification'] );?>><?php echo __( 'New ', 'bnfw' ), "'$label'"; ?></option>
                         <option value="update-<?php echo $type; ?>" <?php selected( 'update-' . $type, $setting['notification'] );?>><?php echo "'$label' " . __( 'Update ', 'bnfw' ); ?></option>
                         <option value="pending-<?php echo $type; ?>" <?php selected( 'pending-' . $type, $setting['notification'] );?>><?php echo "'$label' ", __( 'Pending Review', 'bnfw' ); ?></option>
+                        <option value="future-<?php echo $type; ?>" <?php selected( 'future-' . $type, $setting['notification'] );?>><?php echo "'$label' ", __( 'Scheduled', 'bnfw' ); ?></option>
+                        <option value="comment-<?php echo $type; ?>" <?php selected( 'comment-' . $type, $setting['notification'] );?>><?php echo "'$label' ", __( 'New Comment', 'bnfw' ); ?></option>
                     </optgroup>
 <?php
 			}
@@ -370,7 +380,7 @@ class BNFW_Notification {
 			'notification' => $_POST['notification'],
 			'subject'      => sanitize_text_field( $_POST['subject'] ),
 			'message'      => $_POST['message'],
-			'disabled'     => sanitize_text_field( $_POST['disabled'] ),
+			'disabled'     => isset( $_POST['disabled'] ) ? sanitize_text_field( $_POST['disabled'] ) : 'false',
 			//'show-fields'  => sanitize_text_field( $_POST['show-fields'] ),
 		);
 
@@ -656,6 +666,9 @@ class BNFW_Notification {
 			case 'pending-post':
 				return __( 'Post Pending Review', 'bnfw' );
 				break;
+			case 'future-post':
+				return __( 'Post Scheduled', 'bnfw' );
+				break;
 			case 'new-category':
 				return __( 'New Category', 'bnfw' );
 				break;
@@ -664,16 +677,29 @@ class BNFW_Notification {
 				break;
 			default:
 				$splited = explode( '-', $slug );
-				switch ( $splited[1] ) {
+				$label = $splited[1];
+				$post_obj = get_post_type_object( $splited[1] );
+
+				if ( null != $post_obj ) {
+					$label = $post_obj->labels->singular_name;
+				}
+
+				switch ( $splited[0] ) {
 					case 'new':
-						return __( 'New ', 'bnfw' ) . $splited[1];
+						return __( 'New ', 'bnfw' ) . $label;
 						break;
 					case 'update':
-						return __( 'Updated ', 'bnfw' ) . $splited[1];
+						return __( 'Updated ', 'bnfw' ) . $label;
 						break;
 					case 'pending':
-						return $splited[1] . __( ' Pending Review', 'bnfw' );
-							break;
+						return $label . __( ' Pending Review', 'bnfw' );
+						break;
+					case 'future':
+						return $label . __( ' Scheduled', 'bnfw' );
+						break;
+					case 'comment':
+						return $label . __( ' Comment', 'bnfw' );
+						break;
 				}
 				break;
 		}

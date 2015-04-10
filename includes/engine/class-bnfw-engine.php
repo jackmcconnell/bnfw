@@ -109,17 +109,20 @@ class BNFW_Engine {
 					// handle new terms
 					$message = $this->taxonomy_shortcodes( $message, $type[1], $id );
 
-				} else if ( 'new' == $type[0] || 'update' == $type[0] ) {
+				} else if ( 'new' == $type[0] || 'update' == $type[0] || 'pending' == $type[0] || 'future' == $type[0] ) {
 					// handle new, update and pending posts
-					$post_types = get_post_types( array( '_builtin' => false ), 'names' );
+					$post_types = get_post_types( array( '_builtin' => true ), 'names' );
 					$post_types = array_diff( $post_types, array( BNFW_Notification::POST_TYPE ) );
-					array_push( $post_types, 'post' );
 
 					if ( in_array( $type[1], $post_types ) ) {
 						$message = $this->post_shortcodes( $message, $id );
 						$post = get_post( $id );
 						$message = $this->user_shortcodes( $message, $post->post_author );
 					}
+				} else if ( 'comment' == $type[0] ) {
+					$message = $this->comment_shortcodes( $message, $id );
+					$comment = get_comment( $id );
+					$message = $this->post_shortcodes( $message, $comment->comment_post_ID );
 				}
 				break;
 		}
@@ -164,6 +167,14 @@ class BNFW_Engine {
 		$message = str_replace( '[post_type]', $post->post_type, $message );
 		$message = str_replace( '[post_mime_type]', $post->post_mime_type, $message );
 		$message = str_replace( '[comment_count]', $post->comment_count, $message );
+		$message = str_replace( '[permalink]', get_permalink( $post->ID ), $message );
+		if ( 'future' == $post->post_status ) {
+			$message = str_replace( '[post_scheduled_date]', $post->post_date, $message );
+			$message = str_replace( '[post_scheduled_date_gmt]', $post->post_date_gmt, $message );
+		} else {
+			$message = str_replace( '[post_scheduled_date]', 'Published', $message );
+			$message = str_replace( '[post_scheduled_date_gmt]', 'Published', $message );
+		}
 
 		$category_list = implode( ',', wp_get_post_categories( $post_id, array( 'fields' => 'names' ) ) );
 		$message = str_replace( '[post_category]', $category_list, $message );
@@ -200,6 +211,7 @@ class BNFW_Engine {
 		$message = str_replace( '[comment_type]', $comment->comment_type, $message );
 		$message = str_replace( '[comment_parent]', $comment->comment_parent, $message );
 		$message = str_replace( '[user_id]', $comment->user_id, $message );
+		$message = str_replace( '[permalink]', get_comment_link( $comment->comment_ID ), $message );
 
 		return $message;
 	}
