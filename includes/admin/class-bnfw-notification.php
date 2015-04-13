@@ -184,6 +184,7 @@ class BNFW_Notification {
 					</optgroup>
 <?php
 		$types = get_post_types( array(
+				'public'   => true,
 				'_builtin' => false,
 			), 'names'
 		);
@@ -211,14 +212,18 @@ class BNFW_Notification {
 	);
 
 		if ( count( $taxs > 0 ) ) {
+?>
+                    <optgroup label="<?php _e( 'Custom Taxonomy', 'bnfw' );?>">
+<?php
 			foreach ( $taxs as $tax ) {
 				$tax_name = 'newterm-' . $tax->name;
 ?>
-                    <optgroup label="<?php _e( 'Custom Taxonomy', 'bnfw' );?>">
 						<option value="<?php echo $tax_name; ?>" <?php selected( $tax_name, $setting['notification'] );?>><?php printf( '%s %s', __( 'New', 'bnfw' ), $tax->labels->name ); ?></option>
-                    </optgroup>
 <?php
 			}
+?>
+                    </optgroup>
+<?php
 		}
 ?>
                 </select>

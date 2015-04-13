@@ -3,7 +3,7 @@ Contributors: voltronik
 Tags: notifications, email, alerts, roles, users, HTML
 Requires at least: 3.5
 Tested up to: 4.1.1
-Stable tag: 1.1.5
+Stable tag: 1.1.5.1
 License: GPLv2 or later
 
 Send customisable HTML emails to your users for different WordPress notifications.
@@ -146,6 +146,10 @@ It might do but this is untested.
 
 
 == Changelog ==
+
+= 1.1.5.1 =
+* Fix for Custom Post Type notifications not populating shortcodes.
+* Fix for Custom Taxonomy terms not sending out notification emails.
 
 = 1.1.5 =
 * New Shortcode: [permalink].

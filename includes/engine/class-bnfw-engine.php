@@ -111,7 +111,7 @@ class BNFW_Engine {
 
 				} else if ( 'new' == $type[0] || 'update' == $type[0] || 'pending' == $type[0] || 'future' == $type[0] ) {
 					// handle new, update and pending posts
-					$post_types = get_post_types( array( '_builtin' => true ), 'names' );
+					$post_types = get_post_types( array( 'public' => true ), 'names' );
 					$post_types = array_diff( $post_types, array( BNFW_Notification::POST_TYPE ) );
 
 					if ( in_array( $type[1], $post_types ) ) {
