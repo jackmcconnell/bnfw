@@ -194,7 +194,7 @@ class BNFW_Notification {
 				$post_obj = get_post_type_object( $type );
 				$label = $post_obj->labels->singular_name;
 ?>
-                    <optgroup label="<?php _e( 'Custom Post Type - ', 'bnfw' ); echo $type; ?>">
+                    <optgroup label="<?php printf( "%s - '%s'", __( 'Custom Post Type', 'bnfw' ), $label ); ?>">
                         <option value="new-<?php echo $type; ?>" <?php selected( 'new-' . $type, $setting['notification'] );?>><?php echo __( 'New ', 'bnfw' ), "'$label'"; ?></option>
                         <option value="update-<?php echo $type; ?>" <?php selected( 'update-' . $type, $setting['notification'] );?>><?php echo "'$label' " . __( 'Update ', 'bnfw' ); ?></option>
                         <option value="pending-<?php echo $type; ?>" <?php selected( 'pending-' . $type, $setting['notification'] );?>><?php echo "'$label' ", __( 'Pending Review', 'bnfw' ); ?></option>
@@ -218,7 +218,7 @@ class BNFW_Notification {
 			foreach ( $taxs as $tax ) {
 				$tax_name = 'newterm-' . $tax->name;
 ?>
-						<option value="<?php echo $tax_name; ?>" <?php selected( $tax_name, $setting['notification'] );?>><?php printf( '%s %s', __( 'New', 'bnfw' ), $tax->labels->name ); ?></option>
+						<option value="<?php echo $tax_name; ?>" <?php selected( $tax_name, $setting['notification'] );?>><?php printf( "%s '%s'", __( 'New', 'bnfw' ), $tax->labels->name ); ?></option>
 <?php
 			}
 ?>
@@ -705,6 +705,9 @@ class BNFW_Notification {
 					case 'comment':
 						return $label . __( ' Comment', 'bnfw' );
 						break;
+					case 'newterm':
+						return __( 'New term in ', 'bnfw' ) . $splited[1];
+						break;
 				}
 				break;
 		}
@@ -712,7 +715,6 @@ class BNFW_Notification {
 
 	/**
 	 * Custom row actions for this post type.
-	 *
 	 *
 	 * @since 1.0
 	 * @filter post_row_actions

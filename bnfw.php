@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: http://wordpress.org/plugins/bnfw/
  * Description: Send customisable HTML emails to your users for different WordPress notifications.
- * Version: 1.1.5.1
+ * Version: 1.1.5.2
  * Author: Voltronik
  * Author URI: http://www.voltronik.co.uk/
  * Author Email: plugins@voltronik.co.uk
@@ -95,14 +95,8 @@ class BNFW {
 
 		add_action( 'draft_to_publish'          , array( $this, 'publish_post' ) );
 		add_action( 'publish_to_publish'        , array( $this, 'update_post' ) );
-
-		$post_types = get_post_types( array( 'public' => true ), 'names' );
-		$post_types = array_diff( $post_types, array( BNFW_Notification::POST_TYPE ) );
-
-		foreach ( $post_types as $post_type ) {
-			add_action( 'pending_' . $post_type, array( $this, 'on_post_pending' ), 10, 2 );
-			add_action( 'future_' . $post_type, array( $this, 'on_post_scheduled' ), 10, 2 );
-		}
+		add_action( 'init'                      , array( $this, 'custom_post_type_hooks' ), 100 );
+		add_action( 'create_term'               , array( $this, 'create_term' ), 10, 3 );
 
 		add_action( 'comment_post'              , array( $this, 'comment_post' ) );
 		add_action( 'trackback_post'            , array( $this, 'trackback_post' ) );
@@ -115,16 +109,23 @@ class BNFW {
 		add_filter( 'retrieve_password_title'   , array( $this, 'change_password_email_title' ) );
 		add_filter( 'retrieve_password_message' , array( $this, 'change_password_email_message' ), 10, 4 );
 
-		add_action( 'create_term'               , array( $this, 'create_term' ), 10, 3 );
-
 		add_filter( 'plugin_action_links'       , array( $this, 'plugin_action_links' ), 10, 4 );
 	}
 
 	/**
-	 * Run this on first-time plugin activation
+	 * Setup hooks for custom post types.
 	 *
-	 * @since 1.0
+	 * @since 1.2
 	 */
+	function custom_post_type_hooks() {
+		$post_types = get_post_types( array( 'public' => true ), 'names' );
+		$post_types = array_diff( $post_types, array( BNFW_Notification::POST_TYPE ) );
+
+		foreach ( $post_types as $post_type ) {
+			add_action( 'pending_' . $post_type, array( $this, 'on_post_pending' ), 10, 2 );
+			add_action( 'future_' . $post_type, array( $this, 'on_post_scheduled' ), 10, 2 );
+		}
+	}
 
 	/**
 	 * importer

@@ -3,7 +3,7 @@ Contributors: voltronik
 Tags: notifications, email, alerts, roles, users, HTML
 Requires at least: 3.5
 Tested up to: 4.1.1
-Stable tag: 1.1.5.1
+Stable tag: 1.1.5.2
 License: GPLv2 or later
 
 Send customisable HTML emails to your users for different WordPress notifications.
@@ -146,6 +146,13 @@ It might do but this is untested.
 
 
 == Changelog ==
+
+= 1.1.5.2 =
+* Fixed: Custom Post Type Pending Posts not being sent.
+* Fixed: Post excerpt not outputting anything. 
+* Removed: `[closedpostboxes_page], [rich_editing], and [admin_color]` as was a bit defunct and causing issues. 
+* Changed: `[post_author]` now outputs the display name instead of the author ID. 
+* Improved: Clarity of custom post type and taxonomy labels. 
 
 = 1.1.5.1 =
 * Fix for Custom Post Type notifications not populating shortcodes.

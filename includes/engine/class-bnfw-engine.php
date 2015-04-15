@@ -139,18 +139,17 @@ class BNFW_Engine {
 	 * @return unknown
 	 */
 	private function post_shortcodes(  $message, $post_id  ) {
-		$post = get_post(  $post_id  );
+		$post = get_post( $post_id );
 
 		$post_content = apply_filters( 'the_content', $post->post_content );
 		$post_content = str_replace( ']]>', ']]&gt;', $post_content );
 
 		$message = str_replace( '[ID]', $post->ID, $message );
-		$message = str_replace( '[post_author]', $post->post_author, $message );
 		$message = str_replace( '[post_date]', $post->post_date, $message );
 		$message = str_replace( '[post_date_gmt]', $post->post_date_gmt, $message );
 		$message = str_replace( '[post_content]', $post_content, $message );
 		$message = str_replace( '[post_title]', $post->post_title, $message );
-		$message = str_replace( '[post_excerpt]', $post->post_excerpt, $message );
+		$message = str_replace( '[post_excerpt]', ( $post->post_excerpt ? $post->post_excerpt : wp_trim_words( $post_content ) ), $message );
 		$message = str_replace( '[post_status]', $post->post_status, $message );
 		$message = str_replace( '[comment_status]', $post->comment_status, $message );
 		$message = str_replace( '[ping_status]', $post->ping_status, $message );
@@ -168,6 +167,7 @@ class BNFW_Engine {
 		$message = str_replace( '[post_mime_type]', $post->post_mime_type, $message );
 		$message = str_replace( '[comment_count]', $post->comment_count, $message );
 		$message = str_replace( '[permalink]', get_permalink( $post->ID ), $message );
+
 		if ( 'future' == $post->post_status ) {
 			$message = str_replace( '[post_scheduled_date]', $post->post_date, $message );
 			$message = str_replace( '[post_scheduled_date_gmt]', $post->post_date_gmt, $message );
@@ -181,6 +181,9 @@ class BNFW_Engine {
 
 		$tag_list = implode( ',', wp_get_post_tags( $post_id, array( 'fields' => 'names' ) ) );
 		$message = str_replace( '[post_tag]', $tag_list, $message );
+
+		$user_info = get_userdata( $post->post_author );
+		$message = str_replace( '[post_author]', $user_info->display_name, $message );
 
 		return $message;
 	}
@@ -242,9 +245,6 @@ class BNFW_Engine {
 		if ( is_array( $user_info->wp_capabilities ) ) {
 			$message = str_replace( '[wp_capabilities]', implode( ',', $user_info->wp_capabilities ), $message );
 		}
-		$message = str_replace( '[admin_color]', $user_info->admin_color, $message );
-		$message = str_replace( '[closedpostboxes_page]', $user_info->closedpostboxes_page, $message );
-		$message = str_replace( '[rich_editing]', $user_info->rich_editing, $message );
 
 		return $message;
 	}
