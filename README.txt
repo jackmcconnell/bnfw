@@ -2,7 +2,7 @@
 Contributors: voltronik
 Tags: notifications, email, alerts, roles, users, HTML
 Requires at least: 3.5
-Tested up to: 4.1.1
+Tested up to: 4.2
 Stable tag: 1.1.5.3
 License: GPLv2 or later
 
