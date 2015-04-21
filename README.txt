@@ -3,7 +3,7 @@ Contributors: voltronik
 Tags: notifications, email, alerts, roles, users, HTML
 Requires at least: 3.5
 Tested up to: 4.1.1
-Stable tag: 1.1.5.2
+Stable tag: 1.1.5.3
 License: GPLv2 or later
 
 Send customisable HTML emails to your users for different WordPress notifications.
@@ -57,15 +57,15 @@ Notifications that are currently available to use are:
 
 * New Term
 
-If you'd like to see a notification in the list above, please drop me a line in the forums and we'll see what we can do to add it.
+If you'd like to see a notification in the list above, please drop me a line in the forums and I'll see what I can do to add it.
 
 > A long and handy list of shortcodes you can use is available [here](http://www.voltronik.co.uk/wordpress-plugins/better-notifications-for-wordpress/ "Shortcodes for use in Better Notifications for WordPress").
 
 
-Having problems? Please let me know via this plugin's forum so we can address them and let it act as a source of information for future reference and other users.
+Having problems? Please let me know via this plugin's forum so I can address them and let it act as a source of information for future reference and other users.
 
 Like this plugin? Please leave it a great review! 
-Don't think the plugin is worthy of 5 stars? Let me know on the forum and we'll do our best to help. 
+Don't think the plugin is worthy of 5 stars? Let me know on the forum and I'll do my best to help. 
 
 > Want to add categories and sub-categories via the WordPress front-end? 
 > Try my [Front-end Categories](https://wordpress.org/plugins/front-end-categories/ "Front-end Categories WordPress Plugin") plugin.
@@ -74,10 +74,10 @@ Don't think the plugin is worthy of 5 stars? Let me know on the forum and we'll 
 
 == Installation ==
 
-1. Upload the 'bnfw' plugin folder to the '/wp-content/plugins/' directory or download it via your WordPress installation.
-2. Activate the plugin through the 'Plugins' menu in WordPress
+1. Upload the 'bnfw' plugin folder to the '/wp-content/plugins/' directory or install it via your WordPress Admin.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Use the settings in the new 'Notifications' Menu item in the sidebar to configure the plugin.
-4. (Optional) Install a plugin to use SMTP instead of `wp_mail()`. We recommend WP-Mail-SMTP.
+4. (Optional) Install a plugin to use SMTP instead of `wp_mail()`.
 5. Test by creating a notification.
 
 
@@ -125,6 +125,10 @@ Many hosts place a limit on the number of emails that can be sent out within an 
 
 It's possible you're inserting a shortcode into a notification that cannot use it. For example: the 'New Category' email notification cannot use any of the author or time shortcodes as WordPress only stores the category name, category slug and category description in the database. It's also worth checking the spelling and hyphens in any shortcodes as well as if they are wrapped in square brackets `[]`.
 
+= Custom Post Type 'X' isn't showing in the list of available custom post types =
+
+This is most likely because it's `public` setting is set to `false`. Try changing this and see if it shows up in the list. If the custom post type has been created by a plugin and is set to private (such as TablePress), you'll need to get in touch with the plugin author to see if they'll consider changing it to public instead so that BNFW can send out notifications for it. 
+
 = Can I translate this plugin? =
 
 Yes, of course! The plugin is completely translation-friendly and if you send me your .po file, i'll make sure to include it in the plugin and credit you on this page.
@@ -146,6 +150,9 @@ It might do but this is untested.
 
 
 == Changelog ==
+
+== 1.1.5.3 =
+* Compatibility with WordPress 4.2.
 
 = 1.1.5.2 =
 * Fixed: Custom Post Type Pending Posts not being sent.
