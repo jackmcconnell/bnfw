@@ -17,6 +17,8 @@ Better Notifications for WordPress allows you to generate custom HTML email noti
 = For example: =
 You want a user with the editor role (or all users using the Editor role) to be alerted via email when a new post is published and you'd like to customise it to include your branding along with the author's display name and post time - with this plugin, that's easy. 
 
+> A long and handy list of shortcodes you can use is available [here](http://www.voltronik.co.uk/wordpress-plugins/better-notifications-for-wordpress/ "Shortcodes for use in Better Notifications for WordPress").
+
 Notifications that are currently available to use are: 
 
 **WordPress Defaults**
@@ -59,9 +61,6 @@ Notifications that are currently available to use are:
 
 If you'd like to see a notification in the list above, please drop me a line in the forums and I'll see what I can do to add it.
 
-> A long and handy list of shortcodes you can use is available [here](http://www.voltronik.co.uk/wordpress-plugins/better-notifications-for-wordpress/ "Shortcodes for use in Better Notifications for WordPress").
-
-
 Having problems? Please let me know via this plugin's forum so I can address them and let it act as a source of information for future reference and other users.
 
 Like this plugin? Please leave it a great review! 
@@ -78,7 +77,7 @@ Don't think the plugin is worthy of 5 stars? Let me know on the forum and I'll d
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Use the settings in the new 'Notifications' Menu item in the sidebar to configure the plugin.
 4. (Optional) Install a plugin to use SMTP instead of `wp_mail()`.
-5. Test by creating a notification.
+5. Test by creating a notification with some [shortcodes](http://www.voltronik.co.uk/wordpress-plugins/better-notifications-for-wordpress/ "Shortcodes for use in Better Notifications for WordPress").
 
 
 
@@ -123,11 +122,11 @@ Many hosts place a limit on the number of emails that can be sent out within an 
 
 = Some of my shortcodes aren't working! =
 
-It's possible you're inserting a shortcode into a notification that cannot use it. For example: the 'New Category' email notification cannot use any of the author or time shortcodes as WordPress only stores the category name, category slug and category description in the database. It's also worth checking the spelling and hyphens in any shortcodes as well as if they are wrapped in square brackets `[]`.
+It's possible you're inserting a shortcode into a notification that cannot use it. For example: the 'New Category' email notification cannot use any of the author or time shortcodes as WordPress only stores the category name, category slug and category description in the database. It's also worth checking the spelling and underscores in any shortcodes as well as if they are wrapped in square brackets `[]`.
 
 = Custom Post Type 'X' isn't showing in the list of available custom post types =
 
-This is most likely because it's `public` setting is set to `false`. Try changing this and see if it shows up in the list. If the custom post type has been created by a plugin and is set to private (such as TablePress), you'll need to get in touch with the plugin author to see if they'll consider changing it to public instead so that BNFW can send out notifications for it. 
+This is most likely because it's `public` setting is set to `false`. Try changing this and see if it shows up in the list. If the custom post type has been created by a plugin and is set to private (such as [TablePress](https://wordpress.org/plugins/tablepress/ "TablePress")), you'll need to get in touch with the plugin author to see if they'll consider changing it to public instead so that BNFW can send out notifications for it. 
 
 = Can I translate this plugin? =
 
@@ -151,7 +150,7 @@ It might do but this is untested.
 
 == Changelog ==
 
-== 1.1.5.3 =
+= 1.1.5.3 =
 * Compatibility with WordPress 4.2.
 
 = 1.1.5.2 =
