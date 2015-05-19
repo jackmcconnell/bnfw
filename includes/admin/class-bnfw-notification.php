@@ -137,7 +137,6 @@ class BNFW_Notification {
 	 * @param unknown $post
 	 */
 	public function render_settings_meta_box( $post ) {
-		global $wp_roles;
 		wp_nonce_field(
 			// Action
 			self::POST_TYPE,
@@ -209,7 +208,7 @@ class BNFW_Notification {
 			'public'   => true,
 			'_builtin' => false,
 		), 'objects'
-	);
+		);
 
 		if ( count( $taxs > 0 ) ) {
 ?>
@@ -239,49 +238,58 @@ class BNFW_Notification {
 			</td>
         </tr>
 
-        <tr valign="top" id="user-role">
+        <tr valign="top" id="toggle-fields">
+			<th>
+				<?php esc_attr_e( 'Additional Email Fields', 'bnfw' ); ?>
+			</th>
+			<td>
+				<input type="checkbox" id="show-fields" name="show-fields" value="true" <?php checked( $setting['show-fields'], 'true', true ); ?>>
+				<label for="show-fields"><?php esc_html_e( 'Show additional email fields', 'bnfw' ); ?></label>
+			</td>
+        </tr>
+
+        <tr valign="top" id="email">
             <th scope="row">
-                <?php _e( 'User Roles', 'bnfw' ); ?>
+                <?php _e( 'From Name and Email', 'bnfw' ); ?>
             </th>
-<?php
-		$roles_style = '';
-		$user_style = 'display:none';
-
-		if ( count( $setting['users'] ) > 0 ) {
-			$roles_style = 'display:none';
-			$user_style = '';
-		}
-?>
             <td>
-                <div id="bnfw_user_role_container" style="<?php echo $roles_style; ?>">
-                <select multiple name="user-roles[]" class="select2" data-placeholder="Select User Role" style="width:75%">
-<?php
-		$roles = $wp_roles->get_names();
+            	<input type="text" name="from-name" value="<?php echo $setting['from-name']; ?>" placeholder="Site Name" style="width: 37.35%">
+                <input type="email" name="from-email" value="<?php echo $setting['from-email']; ?>" placeholder="Admin Email" style="width: 37.3%">
+            </td>
+        </tr>
 
-		foreach ( $roles as $role ) {
-			$selected = selected( true, in_array( $role, $setting['user-roles'] ), false );
-			echo '<option value="', $role, '" ', $selected, '>', $role, '</option>';
-		}
-?>
-                </select><br>
-                <a id="bnfw_user_role_toggle" href="#"><?php _e( 'Define individual users instead', 'bnfw' );?></a>
-                </div>
+        <tr valign="top" id="cc">
+            <th scope="row">
+                <?php _e( 'CC', 'bnfw' ); ?>
+            </th>
 
-                <div id="bnfw_user_container" style="<?php echo $user_style; ?>">
+            <td>
+                <select multiple name="cc[]" class="select2" data-placeholder="Select Users" style="width:75%">
+					<?php $this->render_users_dropdown( $setting['cc'] ); ?>
+                </select>
+            </td>
+        </tr>
+
+        <tr valign="top" id="bcc">
+            <th scope="row">
+                <?php _e( 'BCC', 'bnfw' ); ?>
+            </th>
+
+            <td>
+                <select multiple name="bcc[]" class="select2" data-placeholder="Select Users" style="width:75%">
+					<?php $this->render_users_dropdown( $setting['bcc'] ); ?>
+                </select>
+            </td>
+        </tr>
+
+        <tr valign="top" id="users">
+            <th scope="row">
+                <?php _e( 'Users', 'bnfw' ); ?>
+            </th>
+            <td>
                 <select multiple name="users[]" class="select2" data-placeholder="Select Users" style="width:75%">
-<?php
-		$users = get_users( array(
-				'order_by' => 'email',
-			) );
-
-		foreach ( $users as $user ) {
-			$selected = selected( true, in_array( $user->ID, $setting['users'] ), false );
-			echo '<option value="', $user->ID, '" ', $selected, '>', $user->user_login, '</option>';
-		}
-?>
-                </select><br>
-                <a id="bnfw_user_toggle" href="#"><?php _e( 'Define user roles instead', 'bnfw' );?></a>
-                </div>
+					<?php $this->render_users_dropdown( $setting['users'] ); ?>
+                </select>
             </td>
         </tr>
 
@@ -299,7 +307,7 @@ class BNFW_Notification {
                 <?php _e( 'Message Body', 'bnfw' ); ?>
             </th>
             <td>
-                <textarea name="message" rows="10" style="width:75%;"><?php echo esc_textarea( $setting['message'] ); ?></textarea>
+				<?php wp_editor( $setting['message'], 'notification_message', array( 'media_buttons' => false ) ); ?>
             </td>
         </tr>
     </tbody>
@@ -308,32 +316,33 @@ class BNFW_Notification {
 	}
 
 	/**
-	 * Render user roles dropdown.
+	 * Render users dropdown.
 	 *
-	 * @since 1.0
-	 * @param unknown $field
-	 * @param unknown $value
-	 * @param unknown $multiple (optional)
-	 * @param unknown $width    (optional)
+	 * @since 1.2
 	 */
-	private function render_roles_dropdown( $field, $value, $multiple = '', $width = 25 ) {
+	private function render_users_dropdown( $selected_users ) {
 		global $wp_roles;
 ?>
-    <select <?php echo $multiple; ?> name="<?php echo $field; if ( ! empty( $multiple ) ) echo '[]';?>" id="<?php echo $field;?>" class="select2" data-placeholder="Select User Role" style="width:<?php echo $width; ?>%">
+		<optgroup label="User Roles">
 <?php
 		$roles = $wp_roles->get_names();
 
 		foreach ( $roles as $role ) {
-			if ( empty( $multiple ) ) {
-				$selected = selected( $value, $role, false );
-			} else {
-				$selected = selected( true, in_array( $role, $value ), false );
-			}
-			echo '<option value="', $role, '" ', $selected, '>', $role, '</option>';
+			$selected = selected( true, in_array( 'role-' . $role, $selected_users ), false );
+			echo '<option value="role-', $role, '" ', $selected, '>', $role, '</option>';
 		}
 ?>
-        </select>
+		</optgroup>
+		<optgroup label="Users">
 <?php
+		$users = get_users( array(
+				'order_by' => 'email',
+			) );
+
+		foreach ( $users as $user ) {
+			$selected = selected( true, in_array( $user->ID, $selected_users ), false );
+			echo '<option value="', $user->ID, '" ', $selected, '>', $user->user_login, '</option>';
+		}
 	}
 
 	/**
@@ -384,29 +393,28 @@ class BNFW_Notification {
 		$setting = array(
 			'notification' => $_POST['notification'],
 			'subject'      => sanitize_text_field( $_POST['subject'] ),
-			'message'      => $_POST['message'],
+			'message'      => $_POST['notification_message'],
 			'disabled'     => isset( $_POST['disabled'] ) ? sanitize_text_field( $_POST['disabled'] ) : 'false',
-			//'show-fields'  => sanitize_text_field( $_POST['show-fields'] ),
+			'users'        => $_POST['users'],
 		);
 
-		if ( isset( $_POST['user-roles'] ) ) {
-			$setting['user-roles'] = $_POST['user-roles'];
-			$setting['users']      = array();
+		if ( isset( $_POST['show-fields'] ) && 'true' == $_POST['show-fields'] ) {
+			$setting['show-fields'] = 'true';
+			$setting['from-name']   = sanitize_text_field( $_POST['from-name'] );
+			$setting['from-email']  = sanitize_email( $_POST['from-email'] );
+			$setting['cc']          = $_POST['cc'];
+			$setting['bcc']         = $_POST['bcc'];
 		} else {
-			$setting['user-roles'] = array();
-			$setting['users']      = $_POST['users'];
+			$setting['show-fields'] = 'false';
 		}
 
-		//if ( 'true' == $setting['show-fields'] ) {
-			//$setting['from-name']  = sanitize_text_field( $_POST['from-name'] );
-			//$setting['from-email'] = sanitize_email( $_POST['from-email'] );
-			//$setting['cc-email']   = sanitize_email( $_POST['cc-email'] );
-			//$setting['cc-roles']   = $_POST['cc-roles'];
-			//$setting['bcc-email']  = sanitize_email( $_POST['bcc-email'] );
-			//$setting['bcc-roles']  = $_POST['bcc-roles'];
-		//}
-
 		$this->save_settings( $post_id, $setting );
+
+		if ( isset( $_POST['send-test-email'] ) ) {
+			if ( 'true' == $_POST['send-test-email'] ) {
+				BNFW::factory()->engine->send_test_email( $setting );
+			}
+		}
 	}
 
 	/**
@@ -436,15 +444,12 @@ class BNFW_Notification {
 			'notification' => '',
 			'from-name'    => '',
 			'from-email'   => '',
-			'cc-email'     => '',
-			'cc-roles'     => '',
-			'bcc-email'    => '',
-			'bcc-roles'    => '',
-			'user-roles'   => array(),
+			'cc'           => array(),
+			'bcc'          => array(),
 			'users'        => array(),
 			'subject'      => '',
 			'message'      => '',
-			//'show-fields'  => 'false',
+			'show-fields'  => 'false',
 			'disabled'     => 'false',
 		);
 
@@ -455,6 +460,17 @@ class BNFW_Notification {
 			} else {
 				$setting[ $key ] = $default_value;
 			}
+		}
+
+		// compatibility code. This will be removed subsequently
+		$user_roles = get_post_meta( $post_id, self::META_KEY_PREFIX . 'user-roles', true );
+		if ( ! empty( $user_roles ) && is_array( $user_roles ) ) {
+			foreach ( $user_roles as $role ) {
+				$setting['users'][] = 'role-' . $role;
+			}
+
+			update_post_meta( $post_id, self::META_KEY_PREFIX . 'users', $setting['users'] );
+			delete_post_meta( $post_id, self::META_KEY_PREFIX . 'user-roles' );
 		}
 
 		return $setting;
@@ -497,6 +513,14 @@ class BNFW_Notification {
 		$setting = $this->read_settings( $post->ID );
 ?>
 		<input type="checkbox" name="disabled" value="true" <?php checked( $setting['disabled'], 'true', true ); ?>><?php _e( 'Disable Notification', 'bnfw' ); ?>
+		<br>
+		<br>
+
+<?php if ( 'publish' == $post->post_status ) { ?>
+			<input type="hidden" name="send-test-email" id="send-test-email" value="false">
+            <input name="test-email" type="submit" class="button button-secondary button-large" id="test-email" value="<?php esc_attr_e( 'Send Me a Test Email', 'bnfw' ); ?>">
+<?php } ?>
+
 	</div>
 
     <div id="major-publishing-actions">
@@ -577,17 +601,16 @@ class BNFW_Notification {
 	/**
 	 * Custom columns for this post type.
 	 *
-	 *
 	 * @since 1.0
 	 * @filter manage_{post_type}_posts_columns
 	 * @param array   $columns
 	 * @return array
 	 */
 	public function columns_header( $columns ) {
-		$columns['type']       = __( 'Notification Type', 'bnfw' );
-		$columns['disabled']   = __( 'Enabled?', 'bnfw' );
-		$columns['subject']    = __( 'Subject', 'bnfw' );
-		$columns['user-roles'] = __( 'User Roles/Users', 'bnfw' );
+		$columns['type']     = __( 'Notification Type', 'bnfw' );
+		$columns['disabled'] = __( 'Enabled?', 'bnfw' );
+		$columns['subject']  = __( 'Subject', 'bnfw' );
+		$columns['users']    = __( 'User Roles/Users', 'bnfw' );
 
 		return $columns;
 	}
@@ -615,19 +638,40 @@ class BNFW_Notification {
 			case 'subject':
 				echo ! empty( $setting['subject'] ) ? $setting['subject'] : '';
 				break;
-			case 'user-roles':
-				if ( ! empty( $setting['users'] ) ) {
-					$users = array();
-					$user_query = new WP_User_Query( array( 'include' => $setting['users'] ) );
-					foreach ( $user_query->results as $user ) {
-						$users[] = $user->user_login;
-					}
-					echo implode( ', ', $users );
-				} else {
-					echo ! empty( $setting['user-roles'] ) ? implode( ', ', $setting['user-roles'] ) : '';
-				}
+			case 'users':
+				$users = $this->get_names_from_users( $setting['users'] );
+				echo implode( ', ', $users );
 				break;
 		}
+	}
+
+	/**
+	 * Get names from users.
+	 *
+	 * @since 1.2
+	 */
+	private function get_names_from_users( $users ) {
+		$email_list = array();
+		$user_ids = array();
+		$user_roles = array();
+		$names_from_user_ids = array();
+
+		foreach ( $users as $user ) {
+			if ( $this->starts_with( $user, 'role-' ) ) {
+				$user_roles[] = str_replace( 'role-', '', $user );
+			} else {
+				$user_ids[] = absint( $user );
+			}
+		}
+
+		if ( ! empty( $user_ids ) ) {
+			$user_query = new WP_User_Query( array( 'include' => $user_ids ) );
+			foreach ( $user_query->results as $user ) {
+				$names_from_user_ids[] = $user->user_login;
+			}
+		}
+
+		return array_merge( $user_roles, $names_from_user_ids );
 	}
 
 	/**
@@ -730,5 +774,15 @@ class BNFW_Notification {
 		}
 
 		return $actions;
+	}
+
+	/**
+	 * Find if a string starts with another string.
+	 *
+	 * @since 1.2
+	 */
+	private function starts_with( $haystack, $needle ) {
+		// search backwards starting from haystack length characters from the end
+		return $needle === '' || strrpos( $haystack, $needle, -strlen( $haystack ) ) !== false;
 	}
 }

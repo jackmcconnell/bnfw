@@ -1,9 +1,9 @@
 === Better Notifications for WordPress ===
 Contributors: voltronik
-Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger
+Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from
 Requires at least: 3.5
-Tested up to: 4.2.1
-Stable tag: 1.1.5.3
+Tested up to: 4.2.2
+Stable tag: 1.2
 License: GPLv2 or later
 
 Send customisable HTML emails to your users for different WordPress notifications.
@@ -124,6 +124,10 @@ Many hosts place a limit on the number of emails that can be sent out within an 
 
 It's possible you're inserting a shortcode into a notification that cannot use it. For example: the 'New Category' email notification cannot use any of the author or time shortcodes as WordPress only stores the category name, category slug and category description in the database. It's also worth checking the spelling and underscores in any shortcodes as well as if they are wrapped in square brackets `[]`.
 
+= I press the 'Send Me a Test Email' button but nothing happens! =
+
+Check that you've saved your notification first, then try again. It may take a second for the email to come through. Please also check your email SPAM filter.
+
 = Custom Post Type 'X' isn't showing in the list of available custom post types =
 
 This is most likely because it's `public` setting is set to `false`. Try changing this and see if it shows up in the list. If the custom post type has been created by a plugin and is set to private (such as [TablePress](https://wordpress.org/plugins/tablepress/ "TablePress")), you'll need to get in touch with the plugin author to see if they'll consider changing it to public instead so that BNFW can send out notifications for it. 
@@ -149,6 +153,18 @@ It might do but this is untested.
 
 
 == Changelog ==
+
+= 1.2 =
+* New: WYSIWYG Editor for notifications!
+* New: From Name, From Email, CC and BCC options are now available to use for each notification!
+* New: 'Send Me a Test Email' button. Save your notification first and then send yourself a test email! This will only go to you and not to any of the other users selected in the notification. Shortcodes will not be expanded but will be shown in place. 
+* Improved: The User Role / Users drop down box has been unified for simplicity.
+* Fixed: Lost Password (For User) notifications were being sent in plain text.
+* Fixed: Not all custom post types were showing when setting up a new notification.
+* Fixed: Notifications for New Terms not generating notification emails.
+* Fixed: Custom Taxonomies missing from columns in the All Notifications screen.
+* Fixed: Added a space after lists of tags, categories, and terms.
+* Thank you again for all of your support, feedback, and awesome reviews. You people make WordPress great!
 
 = 1.1.5.3 =
 * Compatibility with WordPress 4.2.

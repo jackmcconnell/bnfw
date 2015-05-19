@@ -8,6 +8,24 @@
 class BNFW_Engine {
 
 	/**
+	 * Send test email.
+	 *
+	 * @since 1.2
+	 */
+	public function send_test_email( $setting ) {
+		$subject = $setting['subject'];
+		$message = '<p><strong>This is a test email. All shortcodes below will show in place but not be replaced with content.</strong></p>' . $setting['message'];
+
+		$current_user = wp_get_current_user();
+		$email = $current_user->user_email;
+
+		$headers = array();
+		$headers[] = 'Content-type: text/html';
+
+		wp_mail( $email, stripslashes( $subject ), wpautop( $message ), $headers );
+	}
+
+	/**
 	 * Send the notification email.
 	 *
 	 * @since 1.0
@@ -22,7 +40,7 @@ class BNFW_Engine {
 		$headers[] = 'Content-type: text/html';
 
 		foreach ( $emails['to'] as $email ) {
-			wp_mail( $email, $subject, $message, $headers );
+			wp_mail( $email, stripslashes( $subject ), wpautop( $message ), $headers );
 		}
 	}
 
@@ -48,7 +66,7 @@ class BNFW_Engine {
 
 		$headers = array( 'Content-type: text/html' );
 
-		wp_mail( $user->user_email, $subject, $message, $headers );
+		wp_mail( $user->user_email, stripslashes( $subject ), wpautop( $message ), $headers );
 	}
 
 	/**
@@ -176,10 +194,10 @@ class BNFW_Engine {
 			$message = str_replace( '[post_scheduled_date_gmt]', 'Published', $message );
 		}
 
-		$category_list = implode( ',', wp_get_post_categories( $post_id, array( 'fields' => 'names' ) ) );
+		$category_list = implode( ', ', wp_get_post_categories( $post_id, array( 'fields' => 'names' ) ) );
 		$message = str_replace( '[post_category]', $category_list, $message );
 
-		$tag_list = implode( ',', wp_get_post_tags( $post_id, array( 'fields' => 'names' ) ) );
+		$tag_list = implode( ', ', wp_get_post_tags( $post_id, array( 'fields' => 'names' ) ) );
 		$message = str_replace( '[post_tag]', $tag_list, $message );
 
 		$user_info = get_userdata( $post->post_author );
@@ -278,29 +296,52 @@ class BNFW_Engine {
 	 */
 	private function get_emails( $setting ) {
 		$emails = array();
-		if ( ! empty( $setting['from-name'] ) && ! empty( $setting['from-email'] ) ) {
-			$emails['from'] = $setting['from-name'] . ' <' . $setting['from-email'] . '>' ;
-		} else {
-			$emails['from'] = get_option( 'blogname' ) . ' <' . get_option( 'admin_email' ) . '>' ;
-		}
 
 		if ( ! empty( $setting['users'] ) ) {
-			$emails['to'] = $this->get_emails_from_id( $setting['users'] );
-		} else {
-			$emails['to'] = $this->get_emails_from_role( $setting['user-roles'] );
+			$emails['to'] = $this->get_emails_from_users( $setting['users'] );
 		}
 
-		$emails['cc'] = $this->get_emails_from_role( $setting['cc-roles'] );
-		if ( ! empty( $setting['cc-email'] ) ) {
-			$emails['cc'][] = $setting['cc-email'];
-		}
+		if ( 'true' == $setting['show-fields'] ) {
+			if ( ! empty( $setting['from-name'] ) && ! empty( $setting['from-email'] ) ) {
+				$emails['from'] = $setting['from-name'] . ' <' . $setting['from-email'] . '>' ;
+			} else {
+				$emails['from'] = get_option( 'blogname' ) . ' <' . get_option( 'admin_email' ) . '>' ;
+			}
 
-		$emails['bcc'] = $this->get_emails_from_role( $setting['bcc-roles'] );
-		if ( ! empty( $setting['bcc-email'] ) ) {
-			$emails['bcc'][] = $setting['bcc-email'];
+			if ( ! empty( $setting['cc'] ) ) {
+				$emails['cc'] = $this->get_emails_from_users( $setting['cc'] );
+			}
+
+			if ( ! empty( $setting['bcc'] ) ) {
+				$emails['bcc'] = $this->get_emails_from_users( $setting['bcc'] );
+			}
 		}
 
 		return $emails;
+	}
+
+	/**
+	 * Get emails from users.
+	 *
+	 * @since 1.2
+	 */
+	private function get_emails_from_users( $users ) {
+		$email_list = array();
+		$user_ids = array();
+		$user_roles = array();
+
+		foreach ( $users as $user ) {
+			if ( $this->starts_with( $user, 'role-' ) ) {
+				$user_roles[] = str_replace( 'role-', '', $user );
+			} else {
+				$user_ids[] = absint( $user );
+			}
+		}
+
+		$emails_from_user_ids   = $this->get_emails_from_id( $user_ids );
+		$emails_from_user_roles = $this->get_emails_from_role( $user_roles );
+
+		return array_merge( $emails_from_user_roles, $emails_from_user_ids );
 	}
 
 	/**
@@ -312,9 +353,11 @@ class BNFW_Engine {
 	 */
 	private function get_emails_from_id( $user_ids ) {
 		$email_list = array();
-		$user_query = new WP_User_Query( array( 'include' => $user_ids ) );
-		foreach ( $user_query->results as $user ) {
-			$email_list[] = $user->user_email;
+		if ( is_array( $user_ids ) && count( $user_ids ) > 0 ) {
+			$user_query = new WP_User_Query( array( 'include' => $user_ids ) );
+			foreach ( $user_query->results as $user ) {
+				$email_list[] = $user->user_email;
+			}
 		}
 		return $email_list;
 	}
@@ -348,6 +391,16 @@ class BNFW_Engine {
 	}
 
 	/**
+	 * Find if a string starts with another string.
+	 *
+	 * @since 1.2
+	 */
+	private function starts_with( $haystack, $needle ) {
+		// search backwards starting from haystack length characters from the end
+		return '' === $needle || strrpos( $haystack, $needle, -strlen( $haystack ) ) !== false;
+	}
+
+	/**
 	 * Get User role name by label.
 	 *
 	 * @param mixed   $role_label
@@ -369,20 +422,24 @@ class BNFW_Engine {
 	 * Generate email headers based on the emails.
 	 *
 	 * @since 1.0
-	 * @param unknown $emails
-	 * @return unknown
+	 * @param array $emails
+	 * @return array
 	 */
 	private function get_headers( $emails ) {
 		$headers = array();
-		return $headers;
 
-		$headers[] = 'From:' . $emails['from'];
+		if ( ! empty( $emails['from'] ) ) {
+			$headers[] = 'From:' . $emails['from'];
+		}
+
 		if ( ! empty( $emails['cc'] ) ) {
 			$headers[] = 'Cc:' . implode( ',', $emails['cc'] );
 		}
 		if ( ! empty( $emails['bcc'] ) ) {
 			$headers[] = 'Bcc:' . implode( ',', $emails['bcc'] );
 		}
+
+		return $headers;
 	}
 }
 ?>

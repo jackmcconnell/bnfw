@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: http://wordpress.org/plugins/bnfw/
  * Description: Send customisable HTML emails to your users for different WordPress notifications.
- * Version: 1.1.5.3
+ * Version: 1.2
  * Author: Voltronik
  * Author URI: http://www.voltronik.co.uk/
  * Author Email: plugins@voltronik.co.uk
@@ -108,6 +108,7 @@ class BNFW {
 		add_action( 'lostpassword_post'         , array( $this, 'on_lost_password' ) );
 		add_filter( 'retrieve_password_title'   , array( $this, 'change_password_email_title' ) );
 		add_filter( 'retrieve_password_message' , array( $this, 'change_password_email_message' ), 10, 4 );
+		add_filter( 'wp_mail_content_type'      , array( $this, 'change_email_content_type' ) );
 
 		add_filter( 'plugin_action_links'       , array( $this, 'plugin_action_links' ), 10, 4 );
 	}
@@ -314,6 +315,15 @@ class BNFW {
 		}
 
 		return $message;
+	}
+
+	/**
+	 * Change the email content type to HTML.
+	 *
+	 * @since 1.2
+	 */
+	public function change_email_content_type() {
+		return 'text/html';
 	}
 
 	/**
