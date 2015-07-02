@@ -3,7 +3,7 @@ Contributors: voltronik
 Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from
 Requires at least: 3.5
 Tested up to: 4.2.2
-Stable tag: 1.2
+Stable tag: 1.3
 License: GPLv2 or later
 
 Send customisable HTML emails to your users for different WordPress notifications.
@@ -112,7 +112,9 @@ It's not designed to send out newsletters. There is no send-this-out-on-this-dat
 
 This will very much depend on what notifications you're using the plugin for. Out-of-the-box, this plugin works very well but there are a few tweaks that you will need to ensure 100% compatibility. All the below points refer to this plugin: 
 
-* If you want to use the new comment notifications in BNFW, you need to switch off 'Email me whenever anyone posts a comment' and 'A comment is held for moderation' under Settings > Discussion. It's ok if you don't do this but you might receive WordPress's own email notifications along with the ones you configure using BNFW too. It also goes without saying that you need to enable comments for your posts if you want the email notifications to come through. 
+* If you want to use the new comment notifications in BNFW, you need to un-tick 'Email me whenever anyone posts a comment' and 'A comment is held for moderation' under Settings > Discussion. It's ok if you don't do this but you might receive WordPress's own email notifications along with the ones you've configure using BNFW. It also goes without saying that you need to enable comments for your posts if you want the email notifications to come through. 
+
+* If you want to use the 'Comment Reply' transactional email, you need to ensure that comments are only set-up to be 2-levels deep. You can do this by going to Settings > Discussion and changing the option 'Enable threaded (nested) comments 'X' levels deep' to '2'. Please also ensure this option is ticked. 
 
 = Configured emails aren't coming through! =
 
@@ -131,6 +133,10 @@ Check that you've saved your notification first, then try again. It may take a s
 = Custom Post Type 'X' isn't showing in the list of available custom post types =
 
 This is most likely because it's `public` setting is set to `false`. Try changing this and see if it shows up in the list. If the custom post type has been created by a plugin and is set to private (such as [TablePress](https://wordpress.org/plugins/tablepress/ "TablePress")), you'll need to get in touch with the plugin author to see if they'll consider changing it to public instead so that BNFW can send out notifications for it. 
+
+= I'm using the P2 theme and my notifications are coming through twice =
+
+In order to fix a problem with P2 not triggering notifications at all, if you post from the WordPress Admin, it will trigger two notifications: one for the standard settings and one for the additional P2 settings. I recommend posting from the front-end only if you're using P2 in order to trigger just a single notification. 
 
 = Can I translate this plugin? =
 
@@ -153,6 +159,18 @@ It might do but this is untested.
 
 
 == Changelog ==
+
+= 1.3 =
+* New: Option to disable notifications going to the user that triggered them.
+* New: Comment Reply Notification. This is a transactional notification that will only trigger when replying to the original comment (i.e. Up to 2-levels deep). 
+* New: New Shortcode: Update Author. Use `[post_update_author]` in any Post or Page notifications to see which user updated the post. 
+* New: Choose between sending the notification as plain text or HTML.
+* New: A basic implementation of shortcode help has been added into the plugin. Click the link below the message body editor to see which shortcodes can be used for the currently selected notification.
+* Improved: The 'New User Registration' (For Admin & User) and 'Welcome Email' notifications now allow you to use all of the 'User' shortcodes.
+* Fixed: Formatting in emails sent from other plugins were being effected by BNFW.
+* Fixed: Notifications for Categories, Terms and Tags weren't getting triggered. 
+* Fixed: Notifications weren't getting triggered when using the P2 theme (please see the [FAQ](https://wordpress.org/plugins/bnfw/faq/) for more information about this).
+* Fixed: Additional Email fields were being shown for transactional notifications that couldn't use them.
 
 = 1.2 =
 * New: WYSIWYG Editor for notifications!

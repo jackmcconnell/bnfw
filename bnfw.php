@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: http://wordpress.org/plugins/bnfw/
  * Description: Send customisable HTML emails to your users for different WordPress notifications.
- * Version: 1.2
+ * Version: 1.3
  * Author: Voltronik
  * Author URI: http://www.voltronik.co.uk/
  * Author Email: plugins@voltronik.co.uk
@@ -93,6 +93,11 @@ class BNFW {
 	public function hooks() {
 		register_activation_hook( __FILE__      , array( $this, 'activate' ) );
 
+		// P2 theme directly inserts the post into db
+		if ( class_exists( 'P2' ) ) {
+			add_action( 'wp_insert_post'        , array( $this, 'publish_post' ) );
+		}
+
 		add_action( 'draft_to_publish'          , array( $this, 'publish_post' ) );
 		add_action( 'publish_to_publish'        , array( $this, 'update_post' ) );
 		add_action( 'init'                      , array( $this, 'custom_post_type_hooks' ), 100 );
@@ -108,7 +113,6 @@ class BNFW {
 		add_action( 'lostpassword_post'         , array( $this, 'on_lost_password' ) );
 		add_filter( 'retrieve_password_title'   , array( $this, 'change_password_email_title' ) );
 		add_filter( 'retrieve_password_message' , array( $this, 'change_password_email_message' ), 10, 4 );
-		add_filter( 'wp_mail_content_type'      , array( $this, 'change_email_content_type' ) );
 
 		add_filter( 'plugin_action_links'       , array( $this, 'plugin_action_links' ), 10, 4 );
 	}
@@ -241,6 +245,19 @@ class BNFW {
 				$notification_type = 'comment-' . $post->post_type;
 			}
 			$this->send_notification( $notification_type, $comment_id );
+
+			// comment reply notification.
+			if ( $the_comment->comment_parent > 0 ) {
+				$notifications = $this->notifier->get_notifications( 'reply-comment' );
+				if ( count( $notifications ) > 0 ) {
+					$parent = get_comment( $the_comment->comment_parent );
+					if ( $parent->comment_author_email != $the_comment->comment_author_email ) {
+						foreach ( $notifications as $notification ) {
+							$this->engine->send_comment_reply_email( $this->notifier->read_settings( $notification->ID ), $the_comment, $parent );
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -315,15 +332,6 @@ class BNFW {
 		}
 
 		return $message;
-	}
-
-	/**
-	 * Change the email content type to HTML.
-	 *
-	 * @since 1.2
-	 */
-	public function change_email_content_type() {
-		return 'text/html';
 	}
 
 	/**

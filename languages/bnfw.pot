@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Better Notifications for WordPress package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Better Notifications for WordPress 1.1\n"
+"Project-Id-Version: Better Notifications for WordPress 1.3\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/bnfw\n"
-"POT-Creation-Date: 2015-03-16 16:17:54+00:00\n"
+"POT-Creation-Date: 2015-07-02 17:40:26+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
 #: includes/admin/bnfw-settings.php:14
-#: includes/admin/class-bnfw-notification.php:117
+#: includes/admin/class-bnfw-notification.php:119
 msgid "Notification Settings"
 msgstr ""
 
@@ -33,229 +33,318 @@ msgstr ""
 msgid "Don't send notifications for comments marked as SPAM by Akismet"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:43
-#: includes/admin/class-bnfw-notification.php:46
-#: includes/admin/class-bnfw-notification.php:47
+#: includes/admin/class-bnfw-notification.php:45
+#: includes/admin/class-bnfw-notification.php:48
+#: includes/admin/class-bnfw-notification.php:49
 msgid "Notifications"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:44
+#: includes/admin/class-bnfw-notification.php:46
 msgid "Notification"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:45
+#: includes/admin/class-bnfw-notification.php:47
 msgid "Add New"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:48
+#: includes/admin/class-bnfw-notification.php:50
 msgid "Add New Notification"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:49
+#: includes/admin/class-bnfw-notification.php:51
 msgid "Edit Notification"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:50
+#: includes/admin/class-bnfw-notification.php:52
 msgid "New Notification"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:51
+#: includes/admin/class-bnfw-notification.php:53
 msgid "View Notification"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:52
+#: includes/admin/class-bnfw-notification.php:54
 msgid "Search Notifications"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:53
+#: includes/admin/class-bnfw-notification.php:55
 msgid "No Notifications found"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:54
+#: includes/admin/class-bnfw-notification.php:56
 msgid "No Notifications found in trash"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:55
+#: includes/admin/class-bnfw-notification.php:57
 msgid "All Notifications"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:125
+#: includes/admin/class-bnfw-notification.php:127
 msgid "Save Notification"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:154
+#: includes/admin/class-bnfw-notification.php:155
 msgid "Notification For"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:159
+#: includes/admin/class-bnfw-notification.php:160
 msgid "New Comment / Awaiting Moderation"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:160
-#: includes/admin/class-bnfw-notification.php:630
+#: includes/admin/class-bnfw-notification.php:161
+#: includes/admin/class-bnfw-notification.php:755
 msgid "New Trackback"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:161
-#: includes/admin/class-bnfw-notification.php:633
+#: includes/admin/class-bnfw-notification.php:162
+#: includes/admin/class-bnfw-notification.php:758
 msgid "New Pingback"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:162
-#: includes/admin/class-bnfw-notification.php:639
+#: includes/admin/class-bnfw-notification.php:163
+#: includes/admin/class-bnfw-notification.php:767
 msgid "Lost Password - For Admin"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:163
+#: includes/admin/class-bnfw-notification.php:164
 msgid "New User Registration - For Admin"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:166
-#: includes/admin/class-bnfw-notification.php:636
+#: includes/admin/class-bnfw-notification.php:167
+#: includes/admin/class-bnfw-notification.php:764
 msgid "Lost Password - For User"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:167
+#: includes/admin/class-bnfw-notification.php:168
 msgid "New User Registration - For User"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:168
+#: includes/admin/class-bnfw-notification.php:169
 msgid "New User - Welcome Email"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:171
-#: includes/admin/class-bnfw-notification.php:651
-msgid "New Post Published"
-msgstr ""
-
-#: includes/admin/class-bnfw-notification.php:172
-#: includes/admin/class-bnfw-notification.php:654
-msgid "Post Updated"
+#: includes/admin/class-bnfw-notification.php:170
+#: includes/admin/class-bnfw-notification.php:761
+msgid "Comment Reply"
 msgstr ""
 
 #: includes/admin/class-bnfw-notification.php:173
-#: includes/admin/class-bnfw-notification.php:657
-msgid "Post Pending Review"
+#: includes/admin/class-bnfw-notification.php:779
+msgid "New Post Published"
 msgstr ""
 
 #: includes/admin/class-bnfw-notification.php:174
-#: includes/admin/class-bnfw-notification.php:660
-msgid "New Category"
+#: includes/admin/class-bnfw-notification.php:782
+msgid "Post Updated"
 msgstr ""
 
 #: includes/admin/class-bnfw-notification.php:175
-#: includes/admin/class-bnfw-notification.php:663
+#: includes/admin/class-bnfw-notification.php:785
+msgid "Post Pending Review"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:176
+#: includes/admin/class-bnfw-notification.php:788
+msgid "Post Scheduled"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:177
+#: includes/admin/class-bnfw-notification.php:791
+msgid "New Category"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:178
+#: includes/admin/class-bnfw-notification.php:794
 msgid "New Tag"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:188
-msgid "Custom Post Type - "
+#: includes/admin/class-bnfw-notification.php:181
+msgid "New Page Published"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:189
-#: includes/admin/class-bnfw-notification.php:669
+#: includes/admin/class-bnfw-notification.php:182
+msgid "Page Updated"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:183
+msgid "Page Pending Review"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:184
+msgid "Page Scheduled"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:185
+msgid "Page - New Comment"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:199
+msgid "Custom Post Type"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:200
+#: includes/admin/class-bnfw-notification.php:807
 msgid "New "
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:190
+#: includes/admin/class-bnfw-notification.php:201
 msgid "Update "
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:191
+#: includes/admin/class-bnfw-notification.php:202
 msgid "Pending Review"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:207
+#: includes/admin/class-bnfw-notification.php:203
+msgid "Scheduled"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:204
+#: includes/admin/class-bnfw-notification.php:752
+msgid "New Comment"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:218
 msgid "Custom Taxonomy"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:208
+#: includes/admin/class-bnfw-notification.php:223
 msgid "New"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:222
+#: includes/admin/class-bnfw-notification.php:239
 msgid ""
 "This notification doesn't support additional email fields or shortcodes in "
 "the subject line"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:229
-msgid "User Roles"
+#: includes/admin/class-bnfw-notification.php:246
+msgid "Email formatting"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:252
-msgid "Define individual users instead"
+#: includes/admin/class-bnfw-notification.php:251
+msgid "HTML Formatting"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:268
-msgid "Define user roles instead"
+#: includes/admin/class-bnfw-notification.php:256
+msgid "Plain text"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:275
-#: includes/admin/class-bnfw-notification.php:574
+#: includes/admin/class-bnfw-notification.php:263 includes/tmp.php:3
+msgid "Additional Email Fields"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:267 includes/tmp.php:7
+msgid "Show additional email fields"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:273 includes/tmp.php:13
+msgid "From Name and Email"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:283 includes/tmp.php:23
+msgid "CC"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:295 includes/tmp.php:34
+msgid "BCC"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:307
+msgid "Users"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:321
+msgid "Disable Notification for the User that triggered it"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:328
+#: includes/admin/class-bnfw-notification.php:678
 msgid "Subject"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:284
+#: includes/admin/class-bnfw-notification.php:337
 msgid "Message Body"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:456
+#: includes/admin/class-bnfw-notification.php:341
+msgid ""
+"Looking for help with shortcodes? Click here to see which ones you can use "
+"with the selected notification."
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:477
+msgid "Test Notification Sent."
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:553
 msgid "Notification saved."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:474
-#: includes/admin/class-bnfw-notification.php:502
-#: includes/admin/class-bnfw-notification.php:503
+#: includes/admin/class-bnfw-notification.php:571
+#: includes/admin/class-bnfw-notification.php:607
+#: includes/admin/class-bnfw-notification.php:608
 msgid "Save"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:484
+#: includes/admin/class-bnfw-notification.php:581
 msgid "Disable Notification"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:492
+#: includes/admin/class-bnfw-notification.php:587
+msgid "Send Me a Test Email"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:597
 msgid "Delete Permanently"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:494
+#: includes/admin/class-bnfw-notification.php:599
 msgid "Move to Trash"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:572
+#: includes/admin/class-bnfw-notification.php:676
 msgid "Notification Type"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:573
+#: includes/admin/class-bnfw-notification.php:677
 msgid "Enabled?"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:575
+#: includes/admin/class-bnfw-notification.php:679
 msgid "User Roles/Users"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:627
-msgid "New Comment"
-msgstr ""
-
-#: includes/admin/class-bnfw-notification.php:642
+#: includes/admin/class-bnfw-notification.php:770
 msgid "User Registration - For User"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:645
+#: includes/admin/class-bnfw-notification.php:773
 msgid "New User - Welcome email"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:648
+#: includes/admin/class-bnfw-notification.php:776
 msgid "User Registration - For Admin"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:672
+#: includes/admin/class-bnfw-notification.php:810
 msgid "Updated "
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:675
+#: includes/admin/class-bnfw-notification.php:813
 msgid " Pending Review"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:816
+msgid " Scheduled"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:819
+msgid " Comment"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:822
+msgid "New term in "
 msgstr ""
 
 #: includes/import.php:60
@@ -288,26 +377,6 @@ msgstr ""
 
 #: includes/overrides.php:46
 msgid "[%s] Your username and password"
-msgstr ""
-
-#: includes/tmp.php:3
-msgid "Additional Email Fields"
-msgstr ""
-
-#: includes/tmp.php:7
-msgid "Show additional email fields"
-msgstr ""
-
-#: includes/tmp.php:13
-msgid "From Name and Email"
-msgstr ""
-
-#: includes/tmp.php:23
-msgid "CC"
-msgstr ""
-
-#: includes/tmp.php:34
-msgid "BCC"
 msgstr ""
 
 #. Plugin Name of the plugin/theme

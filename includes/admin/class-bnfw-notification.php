@@ -9,6 +9,7 @@ class BNFW_Notification {
 
 	const POST_TYPE       = 'bnfw_notification';
 	const META_KEY_PREFIX = 'bnfw_';
+	const TEST_MAIL_ARG   = 'test-mail';
 
 	/**
 	 *
@@ -19,6 +20,7 @@ class BNFW_Notification {
 		add_action( 'do_meta_boxes', array( $this, 'remove_meta_boxes' ) );
 		add_action( 'add_meta_boxes_' . self::POST_TYPE, array( $this, 'add_meta_boxes' ) );
 		add_action( 'save_post', array( $this, 'save_meta_data' ) );
+		add_action( 'edit_form_top', array( $this, 'admin_notices' ) );
 		add_filter( 'post_updated_messages', array( $this, 'post_updated_messages' ) );
 
 		// Custom row actions.
@@ -165,14 +167,15 @@ class BNFW_Notification {
                     <option value="user-password" <?php selected( 'user-password', $setting['notification'] );?>><?php _e( 'Lost Password - For User', 'bnfw' );?></option>
                     <option value="new-user" <?php selected( 'new-user', $setting['notification'] );?>><?php _e( 'New User Registration - For User', 'bnfw' );?></option>
                     <option value="welcome-email" <?php selected( 'welcome-email', $setting['notification'] );?>><?php _e( 'New User - Welcome Email', 'bnfw' );?></option>
+                    <option value="reply-comment" <?php selected( 'reply-comment', $setting['notification'] );?>><?php _e( 'Comment Reply', 'bnfw' );?></option>
                     </optgroup>
                     <optgroup label="Posts">
                     <option value="new-post" <?php selected( 'new-post', $setting['notification'] );?>><?php _e( 'New Post Published', 'bnfw' );?></option>
                     <option value="update-post" <?php selected( 'update-post', $setting['notification'] );?>><?php _e( 'Post Updated', 'bnfw' );?></option>
 					<option value="pending-post" <?php selected( 'pending-post', $setting['notification'] );?>><?php _e( 'Post Pending Review', 'bnfw' );?></option>
 					<option value="future-post" <?php selected( 'future-post', $setting['notification'] );?>><?php _e( 'Post Scheduled', 'bnfw' );?></option>
-					<option value="new-category" <?php selected( 'new-category', $setting['notification'] );?>><?php _e( 'New Category', 'bnfw' ); ?></option>
-					<option value="new-post_tag" <?php selected( 'new-post_tag', $setting['notification'] );?>><?php _e( 'New Tag', 'bnfw' ); ?></option>
+					<option value="newterm-category" <?php selected( 'newterm-category', $setting['notification'] );?>><?php _e( 'New Category', 'bnfw' ); ?></option>
+					<option value="newterm-post_tag" <?php selected( 'newterm-post_tag', $setting['notification'] );?>><?php _e( 'New Tag', 'bnfw' ); ?></option>
                     </optgroup>
 					<optgroup label="Page">
 					<option value="new-page" <?php selected( 'new-page', $setting['notification'] );?>><?php _e( 'New Page Published', 'bnfw' );?></option>
@@ -238,6 +241,23 @@ class BNFW_Notification {
 			</td>
         </tr>
 
+        <tr valign="top" id="email-formatting">
+			<th>
+				<?php esc_attr_e( 'Email formatting', 'bnfw' ); ?>
+			</th>
+			<td>
+				<label style="margin-right: 20px;">
+					<input type="radio" name="email-formatting" value="html" <?php checked( 'html', $setting['email-formatting'] ); ?>>
+					<?php esc_html_e( 'HTML Formatting', 'bnfw' ); ?>
+				</label>
+
+				<label>
+					<input type="radio" name="email-formatting" value="text" <?php checked( 'text', $setting['email-formatting'] ); ?>>
+					<?php esc_html_e( 'Plain text', 'bnfw' ); ?>
+				</label>
+			</td>
+        </tr>
+
         <tr valign="top" id="toggle-fields">
 			<th>
 				<?php esc_attr_e( 'Additional Email Fields', 'bnfw' ); ?>
@@ -293,6 +313,16 @@ class BNFW_Notification {
             </td>
         </tr>
 
+        <tr valign="top" id="current-user">
+			<th> </th>
+			<td>
+				<label>
+					<input type="checkbox" name="disable-current-user" value="true" <?php checked( 'true', $setting['disable-current-user'] ); ?>>
+					<?php _e( 'Disable Notification for the User that triggered it', 'bnfw' ); ?>
+				</label>
+			</td>
+        </tr>
+
         <tr valign="top">
             <th scope="row">
                 <?php _e( 'Subject', 'bnfw' ); ?>
@@ -308,6 +338,7 @@ class BNFW_Notification {
             </th>
             <td>
 				<?php wp_editor( $setting['message'], 'notification_message', array( 'media_buttons' => false ) ); ?>
+				<p><a id="shortcode-help" href="" target="_blank"><?php _e( 'Looking for help with shortcodes? Click here to see which ones you can use with the selected notification.', 'bnfw' ); ?></a></p>
             </td>
         </tr>
     </tbody>
@@ -367,7 +398,6 @@ class BNFW_Notification {
 	 * @param int     $post_id The ID of the post being saved.
 	 */
 	public function save_meta_data( $post_id ) {
-
 		if ( self::POST_TYPE !== get_post_type( $post_id ) ) {
 			return;
 		}
@@ -391,12 +421,18 @@ class BNFW_Notification {
 		}
 
 		$setting = array(
-			'notification' => $_POST['notification'],
-			'subject'      => sanitize_text_field( $_POST['subject'] ),
-			'message'      => $_POST['notification_message'],
-			'disabled'     => isset( $_POST['disabled'] ) ? sanitize_text_field( $_POST['disabled'] ) : 'false',
-			'users'        => $_POST['users'],
+			'notification'         => $_POST['notification'],
+			'subject'              => sanitize_text_field( $_POST['subject'] ),
+			'message'              => $_POST['notification_message'],
+			'disabled'             => isset( $_POST['disabled'] ) ? sanitize_text_field( $_POST['disabled'] ) : 'false',
+			'email-formatting'     => isset( $_POST['email-formatting'] ) ? sanitize_text_field( $_POST['email-formatting'] ) : 'html',
+			'disable-current-user' => isset( $_POST['disable-current-user'] ) ? sanitize_text_field( $_POST['disable-current-user'] ) : 'false',
+			'users'                => array(),
 		);
+
+		if ( isset( $_POST['users'] ) ) {
+			$setting['users'] = $_POST['users'];
+		}
 
 		if ( isset( $_POST['show-fields'] ) && 'true' == $_POST['show-fields'] ) {
 			$setting['show-fields'] = 'true';
@@ -413,8 +449,36 @@ class BNFW_Notification {
 		if ( isset( $_POST['send-test-email'] ) ) {
 			if ( 'true' == $_POST['send-test-email'] ) {
 				BNFW::factory()->engine->send_test_email( $setting );
+				add_filter( 'redirect_post_location', array( $this, 'test_mail_sent' ) );
 			}
 		}
+	}
+
+	/**
+	 * Add a query parameter to url if test email was sent.
+	 *
+	 * @since 1.3
+	 */
+	public function test_mail_sent( $loc ) {
+		return add_query_arg( self::TEST_MAIL_ARG, 1, $loc );
+	}
+
+	/**
+	 * Add a notification if a test email was sent.
+	 *
+	 * @since 1.3
+	 */
+	public function admin_notices() {
+		if ( isset( $_GET[self::TEST_MAIL_ARG ] ) ) {
+            $screen = get_current_screen();
+            if ( in_array( $screen->post_type, array( self::POST_TYPE ) ) ) {
+?>
+				<div class="updated below-h2">
+					<p><?php echo __( 'Test Notification Sent.', 'bnfw' ); ?></p>
+				</div>
+<?php
+            }
+        }
 	}
 
 	/**
@@ -441,16 +505,18 @@ class BNFW_Notification {
 	public function read_settings( $post_id ) {
 		$setting = array();
 		$default = array(
-			'notification' => '',
-			'from-name'    => '',
-			'from-email'   => '',
-			'cc'           => array(),
-			'bcc'          => array(),
-			'users'        => array(),
-			'subject'      => '',
-			'message'      => '',
-			'show-fields'  => 'false',
-			'disabled'     => 'false',
+			'notification'         => '',
+			'from-name'            => '',
+			'from-email'           => '',
+			'cc'                   => array(),
+			'bcc'                  => array(),
+			'users'                => array(),
+			'subject'              => '',
+			'email-formatting'     => 'html',
+			'message'              => '',
+			'show-fields'          => 'false',
+			'disable-current-user' => 'false',
+			'disabled'             => 'false',
 		);
 
 		foreach ( $default as $key => $default_value ) {
@@ -691,6 +757,9 @@ class BNFW_Notification {
 			case 'new-pingback':
 				return __( 'New Pingback', 'bnfw' );
 				break;
+			case 'reply-comment':
+				return __( 'Comment Reply', 'bnfw' );
+				break;
 			case 'user-password':
 				return __( 'Lost Password - For User', 'bnfw' );
 				break;
@@ -718,10 +787,10 @@ class BNFW_Notification {
 			case 'future-post':
 				return __( 'Post Scheduled', 'bnfw' );
 				break;
-			case 'new-category':
+			case 'newterm-category':
 				return __( 'New Category', 'bnfw' );
 				break;
-			case 'new-post_tag':
+			case 'newterm-post_tag':
 				return __( 'New Tag', 'bnfw' );
 				break;
 			default:

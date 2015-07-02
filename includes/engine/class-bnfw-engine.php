@@ -20,7 +20,9 @@ class BNFW_Engine {
 		$email = $current_user->user_email;
 
 		$headers = array();
-		$headers[] = 'Content-type: text/html';
+		if ( 'html' == $setting['email-formatting'] ) {
+			$headers[] = 'Content-type: text/html';
+		}
 
 		wp_mail( $email, stripslashes( $subject ), wpautop( $message ), $headers );
 	}
@@ -37,7 +39,10 @@ class BNFW_Engine {
 		$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $id );
 		$emails  = $this->get_emails( $setting );
 		$headers = $this->get_headers( $emails );
-		$headers[] = 'Content-type: text/html';
+
+		if ( 'html' == $setting['email-formatting'] ) {
+			$headers[] = 'Content-type: text/html';
+		}
 
 		foreach ( $emails['to'] as $email ) {
 			wp_mail( $email, stripslashes( $subject ), wpautop( $message ), $headers );
@@ -64,9 +69,34 @@ class BNFW_Engine {
 		$subject = str_replace( '[login_url]', wp_login_url() , $subject );
 		$message = str_replace( '[login_url]', wp_login_url(), $message );
 
-		$headers = array( 'Content-type: text/html' );
+		$headers = array();
+		if ( 'html' == $setting['email-formatting'] ) {
+			$headers[] = 'Content-type: text/html';
+		}
 
 		wp_mail( $user->user_email, stripslashes( $subject ), wpautop( $message ), $headers );
+	}
+
+	/**
+	 * Send comment reply notification email.
+	 *
+	 * @since 1.3
+	 * @param array  $setting        Notification setting
+	 * @param object $comment        Comment object
+	 * @param object $parent_comment Parent comment object
+	 */
+	public function send_comment_reply_email( $setting, $comment, $parent_comment ) {
+		$comment_id = $comment->comment_ID;
+
+		$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $comment_id );
+		$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $comment_id );
+
+		$headers = array();
+		if ( 'html' == $setting['email-formatting'] ) {
+			$headers[] = 'Content-type: text/html';
+		}
+
+		wp_mail( $parent_comment->comment_author_email, stripslashes( $subject ), wpautop( $message ), $headers );
 	}
 
 	/**
@@ -97,6 +127,7 @@ class BNFW_Engine {
 			case 'new-comment':
 			case 'new-trackback':
 			case 'new-pingback':
+			case 'reply-comment':
 				// handle new comments, trackbacks and pingbacks
 				$message = $this->comment_shortcodes( $message, $id );
 				$comment = get_comment( $id );
@@ -107,6 +138,7 @@ class BNFW_Engine {
 			case 'user-password':
 			case 'admin-user':
 			case 'welcome-email':
+			case 'new-user':
 				// handle users (lost password and new user registration)
 				$message = $this->user_shortcodes( $message, $id );
 				break;
@@ -203,6 +235,16 @@ class BNFW_Engine {
 		$user_info = get_userdata( $post->post_author );
 		$message = str_replace( '[post_author]', $user_info->display_name, $message );
 
+		if ( $last_id = get_post_meta( $post->ID, '_edit_last', true ) ) {
+			if ( $post->post_author != $last_id ) {
+				$last_user_info = get_userdata($last_id);
+			} else {
+				$last_user_info = $user_info;
+			}
+
+			$message = str_replace( '[post_update_author]', $last_user_info->display_name, $message );
+		}
+
 		return $message;
 	}
 
@@ -249,7 +291,10 @@ class BNFW_Engine {
 	private function user_shortcodes( $message, $user_id ) {
 		$user_info = get_userdata( $user_id );
 
+		// deperecated
 		$message = str_replace( '[ID]', $user_info->ID, $message );
+
+		$message = str_replace( '[user_id]', $user_info->ID, $message );
 		$message = str_replace( '[user_login]', $user_info->user_login, $message );
 		$message = str_replace( '[user_nicename]', $user_info->user_nicename, $message );
 		$message = str_replace( '[user_email]', $user_info->user_email, $message );
@@ -291,14 +336,23 @@ class BNFW_Engine {
 	 * Get the list of emails from the notification settings.
 	 *
 	 * @since 1.0
-	 * @param unknown $setting
-	 * @return unknown
+	 * @param array $setting Notification settings
+	 * @return array Emails
 	 */
 	private function get_emails( $setting ) {
+		global $current_user;
+
 		$emails = array();
 
+		$exclude = null;
+		if ( 'true' == $setting['disable-current-user'] ) {
+			if ( isset( $current_user->ID ) ) {
+				$exclude = $current_user->ID;
+			}
+		}
+
 		if ( ! empty( $setting['users'] ) ) {
-			$emails['to'] = $this->get_emails_from_users( $setting['users'] );
+			$emails['to'] = $this->get_emails_from_users( $setting['users'], $exclude );
 		}
 
 		if ( 'true' == $setting['show-fields'] ) {
@@ -309,11 +363,11 @@ class BNFW_Engine {
 			}
 
 			if ( ! empty( $setting['cc'] ) ) {
-				$emails['cc'] = $this->get_emails_from_users( $setting['cc'] );
+				$emails['cc'] = $this->get_emails_from_users( $setting['cc'], $exclude );
 			}
 
 			if ( ! empty( $setting['bcc'] ) ) {
-				$emails['bcc'] = $this->get_emails_from_users( $setting['bcc'] );
+				$emails['bcc'] = $this->get_emails_from_users( $setting['bcc'], $exclude );
 			}
 		}
 
@@ -324,8 +378,10 @@ class BNFW_Engine {
 	 * Get emails from users.
 	 *
 	 * @since 1.2
+	 * @param array $users Users Array
+	 * @param int $exclude User id to exclude
 	 */
-	private function get_emails_from_users( $users ) {
+	private function get_emails_from_users( $users, $exclude = null ) {
 		$email_list = array();
 		$user_ids = array();
 		$user_roles = array();
@@ -338,8 +394,12 @@ class BNFW_Engine {
 			}
 		}
 
+		if ( null != $exclude ) {
+			$user_ids = array_diff( $user_ids, array( $exclude ) );
+		}
 		$emails_from_user_ids   = $this->get_emails_from_id( $user_ids );
-		$emails_from_user_roles = $this->get_emails_from_role( $user_roles );
+
+		$emails_from_user_roles = $this->get_emails_from_role( $user_roles, $exclude );
 
 		return array_merge( $emails_from_user_roles, $emails_from_user_ids );
 	}
@@ -366,10 +426,11 @@ class BNFW_Engine {
 	 * Get emails of users based on role.
 	 *
 	 * @since 1.0
-	 * @param unknown $roles
-	 * @return unknown
+	 * @param array $roles User Roles
+	 * @param int $exclude User id to exclude
+	 * @return array Email ids
 	 */
-	private function get_emails_from_role( $roles ) {
+	private function get_emails_from_role( $roles, $exclude = null ) {
 		if ( ! is_array( $roles ) ) {
 			$roles = array( $roles );
 		}
@@ -379,10 +440,15 @@ class BNFW_Engine {
 			$role_name = $this->get_role_name_by_label( $role );
 			$users = get_users( array(
 					'role' => $role_name,
-					'fields' => array( 'user_email' ),
+					'fields' => array( 'user_email', 'ID' ),
 				) );
 
 			foreach ( $users as $user ) {
+				if ( null != $exclude ) {
+					if ( $user->ID == $exclude ) {
+						continue;
+					}
+				}
 				$email_list[] = $user->user_email;
 			}
 		}
