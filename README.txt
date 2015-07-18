@@ -3,7 +3,7 @@ Contributors: voltronik
 Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from
 Requires at least: 3.5
 Tested up to: 4.2.2
-Stable tag: 1.3
+Stable tag: 1.3.1
 License: GPLv2 or later
 
 Send customisable HTML emails to your users for different WordPress notifications.
@@ -159,6 +159,10 @@ It might do but this is untested.
 
 
 == Changelog ==
+
+= 1.3.1 =
+* Fixed: The P2 theme wasn't triggering new post or comment notifications. 
+* Fixed: Sometimes the shortcode help link at the bottom of the notification editor wouldn't link to the help page properly. 
 
 = 1.3 =
 * New: Option to disable notifications going to the user that triggered them.

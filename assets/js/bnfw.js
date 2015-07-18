@@ -43,8 +43,47 @@ jQuery(document).ready(function($) {
 	});
 
 	$( '#shortcode-help' ).on( 'click', function() {
-		var notification = $( '#notification' ).val();
+		var notification = $( '#notification' ).val(),
+			notification_slug = '',
+			splited;
 
-		$(this).attr( 'href', 'http://www.voltronik.co.uk/wordpress-plugins/better-notifications-for-wordpress-shortcodes/?notification=' + notification );
+		switch( notification ) {
+			case 'new-comment':
+			case 'new-trackback':
+			case 'new-pingback':
+			case 'reply-comment':
+			case 'user-password':
+			case 'admin-password':
+			case 'new-user':
+			case 'welcome-email':
+			case 'admin-user':
+			case 'new-post':
+			case 'update-post':
+			case 'pending-post':
+			case 'future-post':
+			case 'newterm-category':
+			case 'newterm-post_tag':
+				notification_slug = notification;
+				break;
+
+			default:
+				splited = notification.split( '-' );
+				switch( splited[0] ) {
+					case 'new':
+					case 'update':
+					case 'pending':
+					case 'future':
+					case 'comment':
+						notification_slug = splited[0] + '-post';
+						break;
+					case 'newterm':
+						notification_slug = 'newterm-category';
+						break;
+				}
+
+				break;
+		}
+
+		$(this).attr( 'href', 'http://www.voltronik.co.uk/wordpress-plugins/better-notifications-for-wordpress-shortcodes/?notification=' + notification_slug );
 	});
 });

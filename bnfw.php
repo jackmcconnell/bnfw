@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: http://wordpress.org/plugins/bnfw/
  * Description: Send customisable HTML emails to your users for different WordPress notifications.
- * Version: 1.3
+ * Version: 1.3.1
  * Author: Voltronik
  * Author URI: http://www.voltronik.co.uk/
  * Author Email: plugins@voltronik.co.uk
@@ -94,8 +94,8 @@ class BNFW {
 		register_activation_hook( __FILE__      , array( $this, 'activate' ) );
 
 		// P2 theme directly inserts the post into db
-		if ( class_exists( 'P2' ) ) {
-			add_action( 'wp_insert_post'        , array( $this, 'publish_post' ) );
+		if ( 'P2' == get_current_theme() ) {
+			add_action( 'wp_insert_post'        , array( $this, 'insert_post' ), 10, 3 );
 		}
 
 		add_action( 'draft_to_publish'          , array( $this, 'publish_post' ) );
@@ -173,8 +173,20 @@ class BNFW {
 	/**
 	 * Fires when a post is created for the first time.
 	 *
+	 * @since 1.3.1
+	 * @param int $post_id Post ID
+	 * @param object $post Post object
+	 * @param bool $update Whether it was an update
+	 */
+	public function insert_post( $post_id, $post, $update ) {
+		$this->publish_post( $post );
+	}
+
+	/**
+	 * Fires when a post is created for the first time.
+	 *
 	 * @since 1.0
-	 * @param unknown $post
+	 * @param object $post Post Object
 	 */
 	function publish_post( $post ) {
 		$post_id   = $post->ID;
