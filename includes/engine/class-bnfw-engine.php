@@ -31,21 +31,25 @@ class BNFW_Engine {
 	 * Send the notification email.
 	 *
 	 * @since 1.0
-	 * @param unknown $setting
-	 * @param unknown $id
+	 * @param array $setting
+	 * @param int $id
 	 */
 	public function send_notification( $setting, $id ) {
 		$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $id );
 		$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $id );
-		$emails  = $this->get_emails( $setting );
+		$emails  = $this->get_emails( $setting, $id );
 		$headers = $this->get_headers( $emails );
 
 		if ( 'html' == $setting['email-formatting'] ) {
 			$headers[] = 'Content-type: text/html';
+		} else {
+			$headers[] = 'Content-type: text/plain';
 		}
 
-		foreach ( $emails['to'] as $email ) {
-			wp_mail( $email, stripslashes( $subject ), wpautop( $message ), $headers );
+		if ( is_array( $emails['to'] ) ) {
+			foreach ( $emails['to'] as $email ) {
+				wp_mail( $email, stripslashes( $subject ), wpautop( $message ), $headers );
+			}
 		}
 	}
 
@@ -55,16 +59,19 @@ class BNFW_Engine {
 	 * @since 1.1
 	 * @param array  $setting  Notification setting
 	 * @param object $user     User object
-	 * @param string $password Plain text password
+	 * @param string $password_url Plain text password in WP < 4.3 and password url in WP > 4.3
 	 */
-	public function send_registration_email( $setting, $user, $password = '' ) {
+	public function send_registration_email( $setting, $user, $password_url = '' ) {
 		$user_id = $user->ID;
 
 		$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $user_id );
 		$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $user_id );
 
-		$subject = str_replace( '[password]', $password, $subject );
-		$message = str_replace( '[password]', $password, $message );
+		$subject = str_replace( '[password]', $password_url, $subject );
+		$message = str_replace( '[password]', $password_url, $message );
+
+		$subject = str_replace( '[password_url]', $password_url, $subject );
+		$message = str_replace( '[password_url]', $password_url, $message );
 
 		$subject = str_replace( '[login_url]', wp_login_url() , $subject );
 		$message = str_replace( '[login_url]', wp_login_url(), $message );
@@ -337,9 +344,10 @@ class BNFW_Engine {
 	 *
 	 * @since 1.0
 	 * @param array $setting Notification settings
+	 * @param int $id
 	 * @return array Emails
 	 */
-	private function get_emails( $setting ) {
+	private function get_emails( $setting, $id ) {
 		global $current_user;
 
 		$emails = array();
@@ -351,8 +359,15 @@ class BNFW_Engine {
 			}
 		}
 
-		if ( ! empty( $setting['users'] ) ) {
-			$emails['to'] = $this->get_emails_from_users( $setting['users'], $exclude );
+		if ( 'true' === $setting['only-post-author'] ) {
+			$author = get_user_by( 'id', get_post_field( 'post_author', $id ) );
+			if ( false !== $author ) {
+				$emails['to'] = array( $author->user_email );
+			}
+		} else {
+			if ( ! empty( $setting['users'] ) ) {
+				$emails['to'] = $this->get_emails_from_users( $setting['users'], $exclude );
+			}
 		}
 
 		if ( 'true' == $setting['show-fields'] ) {

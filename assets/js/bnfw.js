@@ -9,25 +9,48 @@ jQuery(document).ready(function($) {
     	}
     }
 
-    $(".select2").select2();
-	toggle_fields();
-
-    if ( 'user-password' === $('#notification').val() || 'new-user' === $('#notification').val() || 'welcome-email' === $('#notification').val() || 'reply-comment' === $('#notification').val() ) {
-		$('#toggle-fields, #email, #cc, #bcc, #users, #email-formatting, #current-user').hide();
-		$('#user-password-msg').show();
-    } else {
-		$('#toggle-fields, #users, #email-formatting, #current-user').show();
-		toggle_fields();
-		$('#user-password-msg').hide();
+    function toggle_users() {
+    	if ( $( '#only-post-author' ).is( ':checked' ) ) {
+    		$( '#users, #current-user' ).hide();
+    	} else {
+    		$( '#users, #current-user' ).show();
+    	}
     }
 
+	function init() {
+		$(".select2").select2();
+		toggle_fields();
+
+		if ( 'user-password' === $('#notification').val() || 'new-user' === $('#notification').val() || 'welcome-email' === $('#notification').val() || 'reply-comment' === $('#notification').val() ) {
+			$('#toggle-fields, #email, #cc, #bcc, #users, #email-formatting, #current-user, #post-author').hide();
+			$('#user-password-msg').show();
+		} else if ( 'new-comment' === $('#notification').val() || 'new-trackback' === $('#notification').val() || 'new-pingback' === $('#notification').val() || 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() ) {
+			$('#toggle-fields, #users, #email-formatting, #current-user').show();
+			$('#only-post-author').prop( 'checked', false );
+			$('#post-author').hide();
+			toggle_fields();
+			$('#user-password-msg').hide();
+		} else {
+			$('#toggle-fields, #users, #email-formatting, #current-user, #post-author').show();
+			toggle_fields();
+			toggle_users();
+			$('#user-password-msg').hide();
+		}
+	}
+
+	init();
     $('#notification').on('change', function() {
 		var $this = $(this);
 		if ( 'user-password' === $this.val() || 'new-user' === $this.val() || 'welcome-email' === $this.val() || 'reply-comment' === $this.val() ) {
-			$('#toggle-fields, #email, #cc, #bcc, #users, #email-formatting, #current-user').hide();
+			$('#toggle-fields, #email, #cc, #bcc, #users, #email-formatting, #current-user, #post-author').hide();
 			$('#user-password-msg').show();
-		} else {
+		} else if ( 'new-comment' === $('#notification').val() || 'new-trackback' === $('#notification').val() || 'new-pingback' === $('#notification').val() || 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() ) {
+			$('#post-author').hide();
 			$('#toggle-fields, #users, #email-formatting, #current-user').show();
+			$('#user-password-msg').hide();
+			toggle_fields();
+		} else {
+			$('#toggle-fields, #users, #email-formatting, #current-user, #post-author').show();
 			$('#user-password-msg').hide();
 			toggle_fields();
 		}
@@ -36,6 +59,10 @@ jQuery(document).ready(function($) {
     $('#show-fields').change(function() {
     	toggle_fields();
     });
+
+    $( '#only-post-author' ).change(function() {
+		toggle_users();
+	} );
 
 	// send test email
 	$( '#test-email' ).click(function() {

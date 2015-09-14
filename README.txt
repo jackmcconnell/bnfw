@@ -1,18 +1,18 @@
 === Better Notifications for WordPress ===
 Contributors: voltronik
-Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from
+Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from, author
 Requires at least: 3.5
-Tested up to: 4.2.2
-Stable tag: 1.3.2
+Tested up to: 4.3
+Stable tag: 1.3.3
 License: GPLv2 or later
 
-Send customisable HTML emails to your users for different WordPress notifications.
+Send customisable emails to your users for different WordPress notifications.
 
 == Description ==
 
 > Recently updated to be even easier to use!
 
-Better Notifications for WordPress allows you to generate custom HTML email notifications and send them to user roles (including custom roles) or individual users for all kinds of things happening on your WordPress website. Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using an appropriate 3rd party plugin should you wish.
+Better Notifications for WordPress allows you to generate custom email notifications and send them to user roles (including custom roles) or individual users for all kinds of things happening on your WordPress website. Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using an appropriate 3rd party plugin should you wish.
 
 = For example: =
 You want a user with the editor role (or all users using the Editor role) to be alerted via email when a new post is published and you'd like to customise it to include your branding along with the author's display name and post time - with this plugin, that's easy. 
@@ -34,6 +34,7 @@ Notifications that are currently available to use are:
 * Lost Password (For User)
 * New User Registration (For User)
 * New User - Welcome Email
+* Comment Reply
 
 **Posts / Custom Post Types**
 
@@ -116,9 +117,9 @@ This will very much depend on what notifications you're using the plugin for. Ou
 
 * If you want to use the 'Comment Reply' transactional email, you need to ensure that comments are only set-up to be 2-levels deep. You can do this by going to Settings > Discussion and changing the option 'Enable threaded (nested) comments 'X' levels deep' to '2'. Please also ensure this option is ticked. 
 
-= Configured emails aren't coming through! =
+= Notifications aren't coming through! =
 
-Check your settings to make sure all is as it should be, then check your spam folder and/or filter at your host. Gmail and certain hosts can mark messages from new websites (or IP addresses) as spam so it's worth checking and possibly creating a filter to ensure this doesn't happen in the future.
+Check your settings to make sure all is as it should be, then check your SPAM folder and/or filter at your host. Gmail and certain hosts can mark messages from new websites (or IP addresses) as SPAM so it's worth checking and possibly creating a filter to ensure this doesn't happen in the future.
 
 Many hosts place a limit on the number of emails that can be sent out within an hour so this may also cause some delay in emails arriving. 
 
@@ -129,6 +130,10 @@ It's possible you're inserting a shortcode into a notification that cannot use i
 = I press the 'Send Me a Test Email' button but nothing happens! =
 
 Check that you've saved your notification first, then try again. It may take a second for the email to come through. Please also check your email SPAM filter.
+
+= Other emails from WordPress / other plugins are being messed up! =
+
+WordPress, by default, sends all emails in Plain Text. If you'd like to include code or use the WYSIWYG editor as part of Better Notifications for WordPress in your emails, you can change this to HTML using the global setting in Better Notification for WordPress. This can be found under the 'Notifications > Settings' screen. Changing this global email format setting will affect how all emails are sent out from WordPress however, so you may experience formatting issues with emails sent out from other plugins if you change the email format setting in this way. If you do, change this setting to Plain Text. You can also set the email format on a per-notification basis when setting-up a new Notification. The caveat is that WordPress will only either allow setting the email format globally (for all emails) or individually for anything that's non-transactional.
 
 = Custom Post Type 'X' isn't showing in the list of available custom post types =
 
@@ -142,7 +147,7 @@ In order to fix a problem with P2 not triggering notifications at all, if you po
 
 Yes, of course! The plugin is completely translation-friendly and if you send me your .po file, i'll make sure to include it in the plugin and credit you on this page.
 
-= Will this plugin work with versions WordPress less than 3.5? = 
+= Will this plugin work with versions of WordPress less than 3.5? = 
 
 It might do but this is untested. 
 
@@ -159,6 +164,18 @@ It might do but this is untested.
 
 
 == Changelog ==
+
+= 1.3.3 =
+* New: You can now send a notification to the Post Author only, where a notification supports it.
+* New: There is now an option in the Settings screen to globally set WordPress to send emails in either HTML or Plain Text. Please read the [FAQ](https://wordpress.org/plugins/bnfw/faq/) for more information about this as there is a small caveat.
+* New: Support for WordPress 4.3.
+* New: Pending posts that are changed to Published now trigger the 'New Post / Page Notification'.
+* Improved: Scheduled notifications now trigger two notifications, one for when they're saved as Scheduled ('Post Scheduled' / 'Page Scheduled') and one for when they're actually published ('New Post Published / New Page Published').
+* Improved: Swapped the green tick for a dashicons tick for a slightly more speedier, native-feeling plugin.
+* Improved: Reduced the flash of hidden elements when loading the New / Edit Notification screen.
+* Fixed: WordPress 4.3 doesn't allow passwords to be automatically created for new users and will instead, send them to a password generator page. The `[password]` shortcode has been replaced with `[password_url]`. `[password]` should still work though so it won't break your existing notifications.
+* Fixed: Some output was being showed when WP_DEBUG was enabled.
+* Fixed: Removed the 'slug' field when enabled from Screen Options.
 
 = 1.3.2 =
 * Fixed: Replaced a deprecated function which might cause a warning to show when `WP_DEBUG` was enabled.
@@ -253,7 +270,7 @@ It might do but this is untested.
 * Minor Bugfixes
 
 = 0.2 beta =
-* Added an option to suppress spam comment notifications.
+* Added an option to suppress SPAM comment notifications.
 
 = 0.1 beta =
 * Initial version of the plugin.

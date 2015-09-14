@@ -106,6 +106,7 @@ class BNFW_Notification {
 	 */
 	public function remove_meta_boxes() {
 		remove_meta_box( 'submitdiv', self::POST_TYPE, 'side' );
+		remove_meta_box( 'slugdiv', self::POST_TYPE, 'normal' );
 	}
 
 	/**
@@ -235,15 +236,15 @@ class BNFW_Notification {
         <tr valign="top" id="user-password-msg">
 			<td>&nbsp;</td>
 			<td>
-				<div style="background:#FFFFE1;padding:15px;">
-					<p style="margin-top: 0;"><?php esc_html_e( "This notification doesn't support additional email fields or shortcodes in the subject line", 'bnfw' ); ?></p>
+				<div>
+					<p style="margin-top: 0;"><?php esc_html_e( "This notification doesn't support additional email fields or shortcodes in the subject line.", 'bnfw' ); ?></p>
 				</div>
 			</td>
         </tr>
 
         <tr valign="top" id="email-formatting">
 			<th>
-				<?php esc_attr_e( 'Email formatting', 'bnfw' ); ?>
+				<?php esc_attr_e( 'Email Formatting', 'bnfw' ); ?>
 			</th>
 			<td>
 				<label style="margin-right: 20px;">
@@ -253,7 +254,7 @@ class BNFW_Notification {
 
 				<label>
 					<input type="radio" name="email-formatting" value="text" <?php checked( 'text', $setting['email-formatting'] ); ?>>
-					<?php esc_html_e( 'Plain text', 'bnfw' ); ?>
+					<?php esc_html_e( 'Plain Text', 'bnfw' ); ?>
 				</label>
 			</td>
         </tr>
@@ -284,7 +285,7 @@ class BNFW_Notification {
             </th>
 
             <td>
-                <select multiple name="cc[]" class="select2" data-placeholder="Select Users" style="width:75%">
+                <select multiple name="cc[]" class="select2" data-placeholder="Select User Roles / Users" style="width:75%">
 					<?php $this->render_users_dropdown( $setting['cc'] ); ?>
                 </select>
             </td>
@@ -296,18 +297,28 @@ class BNFW_Notification {
             </th>
 
             <td>
-                <select multiple name="bcc[]" class="select2" data-placeholder="Select Users" style="width:75%">
+                <select multiple name="bcc[]" class="select2" data-placeholder="Select User Roles / Users" style="width:75%">
 					<?php $this->render_users_dropdown( $setting['bcc'] ); ?>
                 </select>
             </td>
         </tr>
 
+        <tr valign="top" id="post-author">
+			<th> </th>
+			<td>
+				<label>
+					<input type="checkbox" id="only-post-author" name="only-post-author" value="true" <?php checked( 'true', $setting['only-post-author'] ); ?>>
+					<?php _e( 'Send this notification to the Author only', 'bnfw' ); ?>
+				</label>
+			</td>
+        </tr>
+
         <tr valign="top" id="users">
             <th scope="row">
-                <?php _e( 'Users', 'bnfw' ); ?>
+                <?php _e( 'Send To', 'bnfw' ); ?>
             </th>
             <td>
-                <select multiple name="users[]" class="select2" data-placeholder="Select Users" style="width:75%">
+                <select multiple name="users[]" class="select2" data-placeholder="Select User Roles / Users" style="width:75%">
 					<?php $this->render_users_dropdown( $setting['users'] ); ?>
                 </select>
             </td>
@@ -318,7 +329,7 @@ class BNFW_Notification {
 			<td>
 				<label>
 					<input type="checkbox" name="disable-current-user" value="true" <?php checked( 'true', $setting['disable-current-user'] ); ?>>
-					<?php _e( 'Disable Notification for the User that triggered it', 'bnfw' ); ?>
+					<?php _e( 'Disable this Notification for the User that triggered it', 'bnfw' ); ?>
 				</label>
 			</td>
         </tr>
@@ -388,6 +399,7 @@ class BNFW_Notification {
 			wp_enqueue_style( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.css', array(), '3.5.2' );
 			wp_enqueue_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js', array( 'jquery' ), '3.5.2', true );
 			wp_enqueue_script( 'bnfw', plugins_url( '../assets/js/bnfw.js', dirname( __FILE__ ) ), array( 'jquery' ), '0.1', true );
+			wp_enqueue_style( 'bnfw', plugins_url( '../assets/css/bnfw.css', dirname( __FILE__ ) ), array( 'dashicons' ), '0.1' );
 		}
 	}
 
@@ -427,6 +439,7 @@ class BNFW_Notification {
 			'disabled'             => isset( $_POST['disabled'] ) ? sanitize_text_field( $_POST['disabled'] ) : 'false',
 			'email-formatting'     => isset( $_POST['email-formatting'] ) ? sanitize_text_field( $_POST['email-formatting'] ) : 'html',
 			'disable-current-user' => isset( $_POST['disable-current-user'] ) ? sanitize_text_field( $_POST['disable-current-user'] ) : 'false',
+			'only-post-author'     => isset( $_POST['only-post-author'] ) ? sanitize_text_field( $_POST['only-post-author'] ) : 'false',
 			'users'                => array(),
 		);
 
@@ -512,10 +525,11 @@ class BNFW_Notification {
 			'bcc'                  => array(),
 			'users'                => array(),
 			'subject'              => '',
-			'email-formatting'     => 'html',
+			'email-formatting'     => get_option( 'bnfw_email_format', 'html' ),
 			'message'              => '',
 			'show-fields'          => 'false',
 			'disable-current-user' => 'false',
+			'only-post-author'     => 'false',
 			'disabled'             => 'false',
 		);
 
@@ -676,7 +690,7 @@ class BNFW_Notification {
 		$columns['type']     = __( 'Notification Type', 'bnfw' );
 		$columns['disabled'] = __( 'Enabled?', 'bnfw' );
 		$columns['subject']  = __( 'Subject', 'bnfw' );
-		$columns['users']    = __( 'User Roles/Users', 'bnfw' );
+		$columns['users']    = __( 'User Roles / Users', 'bnfw' );
 
 		return $columns;
 	}
@@ -695,7 +709,7 @@ class BNFW_Notification {
 		switch ( $column ) {
 			case 'disabled':
 				if ( 'true' != $setting['disabled'] ) {
-					printf( '<img src="%s" style="width:25px;">', plugins_url( '../assets/images/notification-enabled.png', dirname( __FILE__ ) ) );
+					printf('<span class="dashicons dashicons-yes"></span>');
 				}
 				break;
 			case 'type':
