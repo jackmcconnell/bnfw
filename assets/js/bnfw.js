@@ -111,6 +111,6 @@ jQuery(document).ready(function($) {
 				break;
 		}
 
-		$(this).attr( 'href', 'http://www.voltronik.co.uk/wordpress-plugins/better-notifications-for-wordpress-shortcodes/?notification=' + notification_slug );
+		$(this).attr( 'href', 'https://betternotificationsforwp.com/shortcodes/?notification=' + notification_slug );
 	});
 });

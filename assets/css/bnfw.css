@@ -6,3 +6,14 @@
 		background: #FFFFE1;
 		padding: 15px;
 	}
+
+
+/* Fix 'jump' when hovering over 'x' in select2 box */
+ul.select2-choices li.select2-search-choice a {
+	-webkit-transition-property: none;
+	transition-property: none;
+	-webkit-transition-duration: 0s;
+	transition-duration: 0s;
+	-webkit-transition-timing-function: initial;
+	transition-timing-function: initial;
+}

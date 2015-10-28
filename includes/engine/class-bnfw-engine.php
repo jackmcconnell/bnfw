@@ -14,7 +14,11 @@ class BNFW_Engine {
 	 */
 	public function send_test_email( $setting ) {
 		$subject = $setting['subject'];
-		$message = '<p><strong>This is a test email. All shortcodes below will show in place but not be replaced with content.</strong></p>' . $setting['message'];
+		$message = '<p><strong>This is a test email. All shortcodes below will show in place but not be replaced with content.</strong></p>' . stripslashes( $setting['message'] );
+
+		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
+			$message = wpautop( $message );
+		}
 
 		$current_user = wp_get_current_user();
 		$email = $current_user->user_email;
@@ -24,7 +28,7 @@ class BNFW_Engine {
 			$headers[] = 'Content-type: text/html';
 		}
 
-		wp_mail( $email, stripslashes( $subject ), wpautop( $message ), $headers );
+		wp_mail( $email, stripslashes( $subject ), $message, $headers );
 	}
 
 	/**
@@ -40,6 +44,10 @@ class BNFW_Engine {
 		$emails  = $this->get_emails( $setting, $id );
 		$headers = $this->get_headers( $emails );
 
+		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
+			$message = wpautop( $message );
+		}
+
 		if ( 'html' == $setting['email-formatting'] ) {
 			$headers[] = 'Content-type: text/html';
 		} else {
@@ -48,7 +56,7 @@ class BNFW_Engine {
 
 		if ( is_array( $emails['to'] ) ) {
 			foreach ( $emails['to'] as $email ) {
-				wp_mail( $email, stripslashes( $subject ), wpautop( $message ), $headers );
+				wp_mail( $email, stripslashes( $subject ), $message, $headers );
 			}
 		}
 	}
@@ -76,12 +84,16 @@ class BNFW_Engine {
 		$subject = str_replace( '[login_url]', wp_login_url() , $subject );
 		$message = str_replace( '[login_url]', wp_login_url(), $message );
 
+		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
+			$message = wpautop( $message );
+		}
+
 		$headers = array();
 		if ( 'html' == $setting['email-formatting'] ) {
 			$headers[] = 'Content-type: text/html';
 		}
 
-		wp_mail( $user->user_email, stripslashes( $subject ), wpautop( $message ), $headers );
+		wp_mail( $user->user_email, stripslashes( $subject ), $message, $headers );
 	}
 
 	/**
@@ -103,7 +115,11 @@ class BNFW_Engine {
 			$headers[] = 'Content-type: text/html';
 		}
 
-		wp_mail( $parent_comment->comment_author_email, stripslashes( $subject ), wpautop( $message ), $headers );
+		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
+			$message = wpautop( $message );
+		}
+
+		wp_mail( $parent_comment->comment_author_email, stripslashes( $subject ), $message, $headers );
 	}
 
 	/**
@@ -184,6 +200,7 @@ class BNFW_Engine {
 				break;
 		}
 
+		$message = apply_filters( 'bnfw_shortcodes', $message, $notification, $id, $this );
 		return $message;
 	}
 
@@ -191,11 +208,11 @@ class BNFW_Engine {
 	 * Handle post shortcodes.
 	 *
 	 * @since 1.0
-	 * @param unknown $message
-	 * @param unknown $post_id
-	 * @return unknown
+	 * @param string $message
+	 * @param int $post_id
+	 * @return string
 	 */
-	private function post_shortcodes(  $message, $post_id  ) {
+	public function post_shortcodes(  $message, $post_id  ) {
 		$post = get_post( $post_id );
 
 		$post_content = apply_filters( 'the_content', $post->post_content );
@@ -244,7 +261,7 @@ class BNFW_Engine {
 
 		if ( $last_id = get_post_meta( $post->ID, '_edit_last', true ) ) {
 			if ( $post->post_author != $last_id ) {
-				$last_user_info = get_userdata($last_id);
+				$last_user_info = get_userdata( $last_id );
 			} else {
 				$last_user_info = $user_info;
 			}
@@ -252,6 +269,7 @@ class BNFW_Engine {
 			$message = str_replace( '[post_update_author]', $last_user_info->display_name, $message );
 		}
 
+		$message = apply_filters( 'bnfw_shortcodes_post', $message, $post_id );
 		return $message;
 	}
 
@@ -365,9 +383,13 @@ class BNFW_Engine {
 				$emails['to'] = array( $author->user_email );
 			}
 		} else {
+			$to_emails = array();
+
 			if ( ! empty( $setting['users'] ) ) {
-				$emails['to'] = $this->get_emails_from_users( $setting['users'], $exclude );
+				$to_emails = $this->get_emails_from_users( $setting['users'], $exclude );
 			}
+
+			$emails['to'] = apply_filters( 'bnfw_to_emails', $to_emails, $setting, $id );
 		}
 
 		if ( 'true' == $setting['show-fields'] ) {
@@ -396,7 +418,7 @@ class BNFW_Engine {
 	 * @param array $users Users Array
 	 * @param int $exclude User id to exclude
 	 */
-	private function get_emails_from_users( $users, $exclude = null ) {
+	public function get_emails_from_users( $users, $exclude = null ) {
 		$email_list = array();
 		$user_ids = array();
 		$user_roles = array();

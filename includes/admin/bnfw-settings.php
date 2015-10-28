@@ -20,6 +20,8 @@ function bnfw_admin_menu() {
 }
 // Add the Admin pages to the WordPress menu
 add_action( 'admin_menu', 'bnfw_admin_menu' );
+add_action( 'admin_menu', 'bnfw_menu_item_links' );
+add_action( 'admin_head', 'bnfw_menu_item_link_targets' );
 
 /* ------------------------------------------------------------------------ *
  * Menu Pages
@@ -36,18 +38,62 @@ function bnfw_settings_page() {
         <h2><?php _e( 'BNFW Settings', 'bnfw' ); ?></h2>
 
         <form method="post" action="options.php" class="bnfw-form">
-<?php
-	settings_errors();
-	settings_fields( 'bnfw-settings' );
-	do_settings_sections( 'bnfw-settings' );
+			<?php
+				settings_errors();
+				settings_fields( 'bnfw-settings' );
+				do_settings_sections( 'bnfw-settings' );
 
-	submit_button( 'Save Settings' );
-?>
+				submit_button( 'Save Settings' );
+			?>
         </form>
     </div>
 
     <?php echo ob_get_clean();
 }
+
+/**
+ * External Menu Item Links
+ */
+
+function bnfw_menu_item_links() {
+	global $submenu;
+
+	// Documentation Link
+	$submenu['edit.php?post_type=bnfw_notification'][400] = array( 
+		'<div id="bnfw-menu-item-documentation">Documentation</div>',
+		'manage_options',
+		'https://betternotificationsforwp.com/documentation/?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Documentation"&utm_medium=referral&utm_campaign=' . home_url()
+	);
+
+	// Add-ons Link
+	$submenu['edit.php?post_type=bnfw_notification'][500] = array( 
+		'<div id="bnfw-menu-item-addons" style="color: #ff6f59;">Add-ons</div>',
+		'manage_options',
+		'https://betternotificationsforwp.com/store/?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Add-on"&utm_medium=referral&utm_campaign=' . home_url()
+	);
+}
+
+function bnfw_menu_item_link_targets() { ?>
+
+	<!-- Documentation Link -->
+	<script type="text/javascript">
+    	jQuery(document).ready(function($) {
+			$('#bnfw-menu-item-documentation').parent().attr('target', '_blank');
+		});
+	</script>
+
+	<!-- Add-ons Link -->
+	<script type="text/javascript">
+    	jQuery(document).ready(function($) {
+			$('#bnfw-menu-item-addons').parent().attr('target', '_blank');
+			$('#bnfw-menu-item-addons').hover(function() {
+				$(this).css('color', '#ffaa9d');
+			}, function() {
+				$(this).css('color', '#ff6f59');
+			});
+		});
+	</script>
+<?php }
 
 /* ------------------------------------------------------------------------ *
  * Settings Page - Setting Registration

@@ -31,7 +31,7 @@ class BNFW_Notification {
 		add_action( sprintf( 'manage_%s_posts_custom_column', self::POST_TYPE ), array( $this, 'custom_column_row' ), 10, 2 );
 
 		// Enqueue scripts/styles and disables autosave for this post type.
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'is_assets_needed' ) );
 	}
 
 	/**
@@ -177,6 +177,7 @@ class BNFW_Notification {
 					<option value="future-post" <?php selected( 'future-post', $setting['notification'] );?>><?php _e( 'Post Scheduled', 'bnfw' );?></option>
 					<option value="newterm-category" <?php selected( 'newterm-category', $setting['notification'] );?>><?php _e( 'New Category', 'bnfw' ); ?></option>
 					<option value="newterm-post_tag" <?php selected( 'newterm-post_tag', $setting['notification'] );?>><?php _e( 'New Tag', 'bnfw' ); ?></option>
+					<?php do_action( 'bnfw_after_notification_options', 'post', 'Post', $setting ); ?>
                     </optgroup>
 					<optgroup label="Page">
 					<option value="new-page" <?php selected( 'new-page', $setting['notification'] );?>><?php _e( 'New Page Published', 'bnfw' );?></option>
@@ -184,6 +185,7 @@ class BNFW_Notification {
 					<option value="pending-page" <?php selected( 'pending-page', $setting['notification'] );?>><?php _e( 'Page Pending Review', 'bnfw' );?></option>
 					<option value="future-page" <?php selected( 'future-page', $setting['notification'] );?>><?php _e( 'Page Scheduled', 'bnfw' );?></option>
 					<option value="comment-page" <?php selected( 'comment-page', $setting['notification'] );?>><?php _e( 'Page - New Comment', 'bnfw' );?></option>
+					<?php do_action( 'bnfw_after_notification_options', 'page', 'Page', $setting ); ?>
 					</optgroup>
 <?php
 		$types = get_post_types( array(
@@ -203,15 +205,16 @@ class BNFW_Notification {
                         <option value="pending-<?php echo $type; ?>" <?php selected( 'pending-' . $type, $setting['notification'] );?>><?php echo "'$label' ", __( 'Pending Review', 'bnfw' ); ?></option>
                         <option value="future-<?php echo $type; ?>" <?php selected( 'future-' . $type, $setting['notification'] );?>><?php echo "'$label' ", __( 'Scheduled', 'bnfw' ); ?></option>
                         <option value="comment-<?php echo $type; ?>" <?php selected( 'comment-' . $type, $setting['notification'] );?>><?php echo "'$label' ", __( 'New Comment', 'bnfw' ); ?></option>
+						<?php do_action( 'bnfw_after_notification_options', $type, $label, $setting ); ?>
                     </optgroup>
 <?php
 			}
 		}
 
 		$taxs = get_taxonomies( array(
-			'public'   => true,
-			'_builtin' => false,
-		), 'objects'
+				'public'   => true,
+				'_builtin' => false,
+			), 'objects'
 		);
 
 		if ( count( $taxs > 0 ) ) {
@@ -232,6 +235,8 @@ class BNFW_Notification {
                 </select>
             </td>
         </tr>
+
+		<?php do_action( 'bnfw_after_notification_dropdown', $setting ); ?>
 
         <tr valign="top" id="user-password-msg">
 			<td>&nbsp;</td>
@@ -265,7 +270,7 @@ class BNFW_Notification {
 			</th>
 			<td>
 				<input type="checkbox" id="show-fields" name="show-fields" value="true" <?php checked( $setting['show-fields'], 'true', true ); ?>>
-				<label for="show-fields"><?php esc_html_e( 'Show additional email fields', 'bnfw' ); ?></label>
+				<label for="show-fields"><?php esc_html_e( 'Set "From" Name & Email, CC, BCC', 'bnfw' ); ?></label>
 			</td>
         </tr>
 
@@ -346,12 +351,29 @@ class BNFW_Notification {
         <tr valign="top">
             <th scope="row">
                 <?php _e( 'Message Body', 'bnfw' ); ?>
+                <div class="wp-ui-text-highlight">
+                	<p>
+                		<br />
+                		<span class="dashicons dashicons-editor-help"></span> <?php _e( 'Need some help?', 'bnfw' ); ?>
+                	</p>
+                	<p>
+						<a href="https://betternotificationsforwp.com/documentation/" target="_blank" class="button-secondary"><?php _e( 'Documentation', 'bnfw' ); ?></a>
+					</p>
+					<p>
+                		<a href="" target="_blank" id="shortcode-help" class="button-secondary"><?php _e( 'Shortcode Help', 'bnfw' ); ?></a>
+                	</p>
+                </div>
             </th>
             <td>
-				<?php wp_editor( $setting['message'], 'notification_message', array( 'media_buttons' => false ) ); ?>
-				<p><a id="shortcode-help" href="" target="_blank"><?php _e( 'Looking for help with shortcodes? Click here to see which ones you can use with the selected notification.', 'bnfw' ); ?></a></p>
+				<?php wp_editor( $setting['message'], 'notification_message', array( 'media_buttons' => true ) ); ?>
+				<p> &nbsp; </p>
+				<label>
+					<input type="checkbox" name="disable-autop" value="true" <?php checked( 'true', $setting['disable-autop'] ); ?>>
+					<?php _e( 'Stop additional paragraph and line break HTML from being inserted into my notifications', 'bnfw' ); ?>
+				</label>
             </td>
         </tr>
+
     </tbody>
     </table>
 <?php
@@ -362,7 +384,7 @@ class BNFW_Notification {
 	 *
 	 * @since 1.2
 	 */
-	private function render_users_dropdown( $selected_users ) {
+	public function render_users_dropdown( $selected_users ) {
 		global $wp_roles;
 ?>
 		<optgroup label="User Roles">
@@ -388,19 +410,30 @@ class BNFW_Notification {
 	}
 
 	/**
-	 * Enqueue scripts.
+	 * Should we enqueue assets?
 	 *
 	 * @since 1.0
 	 */
-	public function enqueue_scripts() {
+	public function is_assets_needed() {
 		if ( self::POST_TYPE === get_post_type() ) {
-			wp_dequeue_script( 'autosave' );
-
-			wp_enqueue_style( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.css', array(), '3.5.2' );
-			wp_enqueue_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js', array( 'jquery' ), '3.5.2', true );
-			wp_enqueue_script( 'bnfw', plugins_url( '../assets/js/bnfw.js', dirname( __FILE__ ) ), array( 'jquery' ), '0.1', true );
-			wp_enqueue_style( 'bnfw', plugins_url( '../assets/css/bnfw.css', dirname( __FILE__ ) ), array( 'dashicons' ), '0.1' );
+			$this->enqueue_assets();
+			do_action( 'bnfw_after_enqueue_scripts' );
 		}
+	}
+
+	/**
+	 * Enqueue assets.
+	 *
+	 * @since 1.4
+	 */
+	public function enqueue_assets() {
+		wp_dequeue_script( 'autosave' );
+
+		wp_enqueue_style( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.css', array(), '3.5.2' );
+		wp_enqueue_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js', array( 'jquery' ), '3.5.2', true );
+
+		wp_enqueue_script( 'bnfw', plugins_url( '../assets/js/bnfw.js', dirname( __FILE__ ) ), array( 'jquery' ), '0.1', true );
+		wp_enqueue_style( 'bnfw', plugins_url( '../assets/css/bnfw.css', dirname( __FILE__ ) ), array( 'dashicons' ), '0.1' );
 	}
 
 	/**
@@ -439,6 +472,7 @@ class BNFW_Notification {
 			'disabled'             => isset( $_POST['disabled'] ) ? sanitize_text_field( $_POST['disabled'] ) : 'false',
 			'email-formatting'     => isset( $_POST['email-formatting'] ) ? sanitize_text_field( $_POST['email-formatting'] ) : 'html',
 			'disable-current-user' => isset( $_POST['disable-current-user'] ) ? sanitize_text_field( $_POST['disable-current-user'] ) : 'false',
+			'disable-autop'        => isset( $_POST['disable-autop'] ) ? sanitize_text_field( $_POST['disable-autop'] ) : 'false',
 			'only-post-author'     => isset( $_POST['only-post-author'] ) ? sanitize_text_field( $_POST['only-post-author'] ) : 'false',
 			'users'                => array(),
 		);
@@ -456,6 +490,8 @@ class BNFW_Notification {
 		} else {
 			$setting['show-fields'] = 'false';
 		}
+
+		$setting = apply_filters( 'bnfw_notification_setting', $setting );
 
 		$this->save_settings( $post_id, $setting );
 
@@ -529,9 +565,12 @@ class BNFW_Notification {
 			'message'              => '',
 			'show-fields'          => 'false',
 			'disable-current-user' => 'false',
+			'disable-autop'        => 'false',
 			'only-post-author'     => 'false',
 			'disabled'             => 'false',
 		);
+
+		$default = apply_filters( 'bnfw_notification_setting_fields', $default );
 
 		foreach ( $default as $key => $default_value ) {
 			$value = get_post_meta( $post_id, self::META_KEY_PREFIX . $key, true );
@@ -592,7 +631,10 @@ class BNFW_Notification {
 <?php
 		$setting = $this->read_settings( $post->ID );
 ?>
-		<input type="checkbox" name="disabled" value="true" <?php checked( $setting['disabled'], 'true', true ); ?>><?php _e( 'Disable Notification', 'bnfw' ); ?>
+		<label>
+			<input type="checkbox" name="disabled" value="true" <?php checked( $setting['disabled'], 'true', true ); ?>><?php _e( 'Disable Notification', 'bnfw' ); ?>
+		</label>
+		
 		<br>
 		<br>
 
@@ -761,51 +803,52 @@ class BNFW_Notification {
 	 * @return unknown
 	 */
 	private function get_notifications_name( $slug ) {
+		$name = '';
 		switch ( $slug ) {
 			case 'new-comment':
-				return __( 'New Comment', 'bnfw' );
+				$name = __( 'New Comment', 'bnfw' );
 				break;
 			case 'new-trackback':
-				return __( 'New Trackback', 'bnfw' );
+				$name = __( 'New Trackback', 'bnfw' );
 				break;
 			case 'new-pingback':
-				return __( 'New Pingback', 'bnfw' );
+				$name = __( 'New Pingback', 'bnfw' );
 				break;
 			case 'reply-comment':
-				return __( 'Comment Reply', 'bnfw' );
+				$name = __( 'Comment Reply', 'bnfw' );
 				break;
 			case 'user-password':
-				return __( 'Lost Password - For User', 'bnfw' );
+				$name = __( 'Lost Password - For User', 'bnfw' );
 				break;
 			case 'admin-password':
-				return __( 'Lost Password - For Admin', 'bnfw' );
+				$name = __( 'Lost Password - For Admin', 'bnfw' );
 				break;
 			case 'new-user':
-				return __( 'User Registration - For User', 'bnfw' );
+				$name = __( 'User Registration - For User', 'bnfw' );
 				break;
 			case 'welcome-email':
-				return __( 'New User - Welcome email', 'bnfw' );
+				$name = __( 'New User - Welcome email', 'bnfw' );
 				break;
 			case 'admin-user':
-				return __( 'User Registration - For Admin', 'bnfw' );
+				$name = __( 'User Registration - For Admin', 'bnfw' );
 				break;
 			case 'new-post':
-				return __( 'New Post Published', 'bnfw' );
+				$name = __( 'New Post Published', 'bnfw' );
 				break;
 			case 'update-post':
-				return __( 'Post Updated', 'bnfw' );
+				$name = __( 'Post Updated', 'bnfw' );
 				break;
 			case 'pending-post':
-				return __( 'Post Pending Review', 'bnfw' );
+				$name = __( 'Post Pending Review', 'bnfw' );
 				break;
 			case 'future-post':
-				return __( 'Post Scheduled', 'bnfw' );
+				$name = __( 'Post Scheduled', 'bnfw' );
 				break;
 			case 'newterm-category':
-				return __( 'New Category', 'bnfw' );
+				$name = __( 'New Category', 'bnfw' );
 				break;
 			case 'newterm-post_tag':
-				return __( 'New Tag', 'bnfw' );
+				$name = __( 'New Tag', 'bnfw' );
 				break;
 			default:
 				$splited = explode( '-', $slug );
@@ -818,26 +861,30 @@ class BNFW_Notification {
 
 				switch ( $splited[0] ) {
 					case 'new':
-						return __( 'New ', 'bnfw' ) . $label;
+						$name = __( 'New ', 'bnfw' ) . $label;
 						break;
 					case 'update':
-						return __( 'Updated ', 'bnfw' ) . $label;
+						$name = __( 'Updated ', 'bnfw' ) . $label;
 						break;
 					case 'pending':
-						return $label . __( ' Pending Review', 'bnfw' );
+						$name = $label . __( ' Pending Review', 'bnfw' );
 						break;
 					case 'future':
-						return $label . __( ' Scheduled', 'bnfw' );
+						$name = $label . __( ' Scheduled', 'bnfw' );
 						break;
 					case 'comment':
-						return $label . __( ' Comment', 'bnfw' );
+						$name = $label . __( ' Comment', 'bnfw' );
 						break;
 					case 'newterm':
-						return __( 'New term in ', 'bnfw' ) . $splited[1];
+						$name = __( 'New term in ', 'bnfw' ) . $splited[1];
 						break;
 				}
 				break;
 		}
+
+		$name = apply_filters( 'bnfw_notification_name', $name, $slug );
+
+		return $name;
 	}
 
 	/**
@@ -864,8 +911,8 @@ class BNFW_Notification {
 	 *
 	 * @since 1.2
 	 */
-	private function starts_with( $haystack, $needle ) {
+	public function starts_with( $haystack, $needle ) {
 		// search backwards starting from haystack length characters from the end
-		return $needle === '' || strrpos( $haystack, $needle, -strlen( $haystack ) ) !== false;
+		return '' === $needle || strrpos( $haystack, $needle, -strlen( $haystack ) ) !== false;
 	}
 }
