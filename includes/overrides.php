@@ -9,13 +9,15 @@
  *
  * A new user registration notification is also sent to admin email.
  *
- * @param int    $user_id        User ID.
- * @param string $notify (optional) Optional. Whether admin and user should be notified ('both') or
- *                        only the admin ('admin' or empty).
+ * @param int    $user_id    User ID.
+ * @param null   $deprecated Not used (argument deprecated).
+ * @param string $notify     Optional. Type of notification that should happen. Accepts 'admin' or an empty
+ *                           string (admin only), or 'both' (admin and user). The empty string value was kept
+ *                           for backward-compatibility purposes with the renamed parameter. Default empty.
  */
 if ( ! function_exists( 'wp_new_user_notification' ) ) {
-	function wp_new_user_notification( $user_id, $notify = '' ) {
-		global $wp_version;
+	function wp_new_user_notification( $user_id, $deprecated = null, $notify = '' ) {
+		global $wp_version, $wp_hasher;;
 
 		$bnfw = BNFW::factory();
 		$user = get_userdata( $user_id );
@@ -23,6 +25,14 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 		if ( version_compare( $wp_version, '4.3', '>=' ) ) {
 			// for WordPress 4.3 and above
 			global $wpdb;
+
+			if ( version_compare( $wp_version, '4.3', '=' ) ) {
+				$notify = $deprecated;
+			} else {
+				if ( $deprecated !== null ) {
+					_deprecated_argument( __FUNCTION__, '4.3.1' );
+				}
+			}
 
 			// The blogname option is escaped with esc_html on the way into the database in sanitize_option
 			// we want to reverse this for the plain text arena of emails.
@@ -36,20 +46,12 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 				@wp_mail(get_option('admin_email'), sprintf(__('[%s] New User Registration'), $blogname), $message);
 			}
 
-			// Generate something random for a password reset key.
-			$key = wp_generate_password( 20, false );
-
-			if ( $bnfw->notifier->notification_exists( 'new-user' ) ) {
-				$notifications = $bnfw->notifier->get_notifications( 'new-user' );
-				$password_url = network_site_url( "wp-login.php?action=rp&key=" . $key . "&login=" . rawurlencode( $user->user_login ), 'login' );
-				foreach ( $notifications as $notification ) {
-					$bnfw->engine->send_registration_email( $bnfw->notifier->read_settings( $notification->ID ), $user, $password_url );
-				}
-			}
-
 			if ( 'admin' === $notify || empty( $notify ) ) {
 				return;
 			}
+
+			// Generate something random for a password reset key.
+			$key = wp_generate_password( 20, false );
 
 			/** This action is documented in wp-login.php */
 			do_action( 'retrieve_password_key', $user->user_login, $key );
@@ -62,17 +64,25 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 			$hashed = time() . ':' . $wp_hasher->HashPassword( $key );
 			$wpdb->update( $wpdb->users, array( 'user_activation_key' => $hashed ), array( 'user_login' => $user->user_login ) );
 
-			$message = sprintf(__('Username: %s'), $user->user_login) . "\r\n\r\n";
-			$message .= __('To set your password, visit the following address:') . "\r\n\r\n";
-			$message .= '<' . network_site_url("wp-login.php?action=rp&key=$key&login=" . rawurlencode($user->user_login), 'login') . ">\r\n\r\n";
+			if ( $bnfw->notifier->notification_exists( 'new-user' ) ) {
+				$notifications = $bnfw->notifier->get_notifications( 'new-user' );
+				$password_url = network_site_url( "wp-login.php?action=rp&key=" . $key . "&login=" . rawurlencode( $user->user_login ), 'login' );
+				foreach ( $notifications as $notification ) {
+					$bnfw->engine->send_registration_email( $bnfw->notifier->read_settings( $notification->ID ), $user, $password_url );
+				}
+			} else {
+				$message = sprintf(__('Username: %s'), $user->user_login) . "\r\n\r\n";
+				$message .= __('To set your password, visit the following address:') . "\r\n\r\n";
+				$message .= '<' . network_site_url("wp-login.php?action=rp&key=$key&login=" . rawurlencode($user->user_login), 'login') . ">\r\n\r\n";
 
-			$message .= wp_login_url() . "\r\n";
+				$message .= wp_login_url() . "\r\n";
 
-			wp_mail($user->user_email, sprintf(__('[%s] Your username and password info'), $blogname), $message);
+				wp_mail($user->user_email, sprintf(__('[%s] Your username and password info'), $blogname), $message);
+			}
 		} else {
 
 			// for WordPress below 4.3
-			$plaintext_pass = $notify;
+			$plaintext_pass = $deprecated;
 
 			// The blogname option is escaped with esc_html on the way into the database in sanitize_option
 			// we want to reverse this for the plain text arena of emails.

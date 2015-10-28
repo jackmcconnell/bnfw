@@ -367,10 +367,12 @@ class BNFW_Notification {
             <td>
 				<?php wp_editor( $setting['message'], 'notification_message', array( 'media_buttons' => true ) ); ?>
 				<p> &nbsp; </p>
-				<label>
-					<input type="checkbox" name="disable-autop" value="true" <?php checked( 'true', $setting['disable-autop'] ); ?>>
-					<?php _e( 'Stop additional paragraph and line break HTML from being inserted into my notifications', 'bnfw' ); ?>
-				</label>
+				<div id="disable-autop">
+					<label>
+						<input type="checkbox" name="disable-autop" value="true" <?php checked( 'true', $setting['disable-autop'] ); ?>>
+						<?php _e( 'Stop additional paragraph and line break HTML from being inserted into my notifications', 'bnfw' ); ?>
+					</label>
+				</div>
             </td>
         </tr>
 
@@ -827,7 +829,7 @@ class BNFW_Notification {
 				$name = __( 'User Registration - For User', 'bnfw' );
 				break;
 			case 'welcome-email':
-				$name = __( 'New User - Welcome email', 'bnfw' );
+				$name = __( 'New User - Welcome Email', 'bnfw' );
 				break;
 			case 'admin-user':
 				$name = __( 'User Registration - For Admin', 'bnfw' );
@@ -876,7 +878,8 @@ class BNFW_Notification {
 						$name = $label . __( ' Comment', 'bnfw' );
 						break;
 					case 'newterm':
-						$name = __( 'New term in ', 'bnfw' ) . $splited[1];
+						$tax = get_taxonomy( $splited[1] );
+						$name = __( 'New Term in ', 'bnfw' ) . $tax->labels->name;
 						break;
 				}
 				break;

@@ -3,7 +3,7 @@ Contributors: voltronik
 Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from, author
 Requires at least: 3.5
 Tested up to: 4.3.1
-Stable tag: 1.3.4
+Stable tag: 1.3.5
 License: GPLv2 or later
 
 Send customisable emails to your users for different WordPress notifications.
@@ -168,6 +168,12 @@ It might do but this is untested.
 
 
 == Changelog ==
+
+= 1.3.5 - 9th October 2015 =
+* Fixed: A large bug that was causing issues with Password URL shortcodes in the 'New User Registration - For User' and 'Password Reset - For User' notifications.
+* Fixed: An issue where the 'disabled wpautop' checkbox was appearing on transactional emails. 
+* Fixed: Some labels in the 'All Notifications' screen weren't formatted correctly.
+* Fixed: Translations weren't referenced correctly. Auto-translation will be [done by WordPress.org automatically](https://make.wordpress.org/plugins/2015/09/01/plugin-translations-on-wordpress-org/) at some point in the future.
 
 = 1.3.4 - 2nd October 2015 =
 * New: Choose automatic or manual paragraph / line breaks in the WYSIWYG editor. This fixes an issue where they were inserted automatically when they weren't desired. The checkbox for this is below the WYSIWYG editor. 

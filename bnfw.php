@@ -3,18 +3,18 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: http://wordpress.org/plugins/bnfw/
  * Description: Send customisable emails to your users for different WordPress notifications.
- * Version: 1.3.4
+ * Version: 1.3.5
  * Author: Voltronik
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: plugins@voltronik.co.uk
  * License: GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: bnfw
- * Domain Path: languages/
+ * Domain Path: /languages
  */
 
 /**
- * Copyright © 2014 Voltronik (plugins@voltronik.co.uk)
+ * Copyright © 2015 Voltronik (plugins@voltronik.co.uk)
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
  * published by the Free Software Foundation.
