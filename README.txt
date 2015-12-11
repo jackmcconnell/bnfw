@@ -68,8 +68,8 @@ If you'd like to see a notification in the list above, please drop me a line in 
 
 Having problems? Please let me know via this plugin's forum so I can address them and let it act as a source of information for future reference and other users.
 
-Like this plugin? Please leave it a great review! 
-Don't think the plugin is worthy of 5 stars? Let me know on the forum and I'll do my best to help. 
+Like this plugin? Please leave it [a great review](https://wordpress.org/support/view/plugin-reviews/bnfw?rate=5#postform)! 
+Don't think the plugin is worthy of 5 stars? Let me know on the forum and I'll do my best to help.
 
 > DISCLAIMER
 > This is an incredibly useful and highly rated plugin however, it's possible that overuse or abuse of this plugin could upset your users by sending them too many notifications. By downloading / installing / using this plugin, you take full responsibility of the management / quantity / types of notifications that are sent out from it including abiding by any SPAM laws in your country / operating areas, dealing with / responding to subscription / unsubscription requests, complaints, and so on. I accept no liability or responsibility for spam or abuse of this plugin from the user(s) of or anyone that may receive notifications as a result of the use of this plugin. I'm trusting you, please don't abuse your users.

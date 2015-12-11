@@ -347,7 +347,7 @@ class BNFW {
 	 *
 	 * @since 1.1
 	 */
-	public function change_password_email_message( $message, $key, $user_login, $user_data ) {
+	public function change_password_email_message( $message, $key, $user_login = '', $user_data = '' ) {
 		$notifications = $this->notifier->get_notifications( 'user-password' );
 		if ( count( $notifications ) > 0 ) {
 			// Ideally there should be only one notification for this type.
