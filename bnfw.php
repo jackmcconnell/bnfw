@@ -75,7 +75,9 @@ class BNFW {
 	 */
 	public function includes() {
 		// Load license related classes
-		require_once 'includes/libraries/EDD_SL_Plugin_Updater.php';
+		if ( ! class_exists( 'EDD_SL_Plugin_Updater' ) ) {
+			require_once 'includes/libraries/EDD_SL_Plugin_Updater.php';
+		}
 		require_once 'includes/license/class-bnfw-license.php';
 		require_once 'includes/license/class-bnfw-license-setting.php';
 
