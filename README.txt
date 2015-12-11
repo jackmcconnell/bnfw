@@ -4,7 +4,7 @@ Donate link: https://betternotificationsforwp.com/donate/
 Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from, author
 Requires at least: 3.5
 Tested up to: 4.4
-Stable tag: 1.3.6
+Stable tag: 1.3.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -174,6 +174,9 @@ It might do but this is untested.
 
 
 == Changelog ==
+
+= 1.3.7 - 11th December 2015 =
+* Fixed: An issue where EDD_SL_Plugin_Updater class was already declared by another plugin.
 
 = 1.3.6 - 11th December 2015 =
 * Merry Christmas to you all!
