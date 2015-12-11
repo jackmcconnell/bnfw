@@ -19,11 +19,34 @@ jQuery(document).ready(function($) {
 
 	function init() {
 		$(".select2").select2();
+		$(".user-select2").select2( {
+			ajax: {
+				url: ajaxurl,
+				dataType: 'json',
+				data: function( params ) {
+					return {
+						action: 'bnfw_search_users',
+						query: params.term,
+						page: params.page
+					};
+				},
+				processResults: function( data, page ) {
+					return {
+						results: data
+					};
+				}
+			},
+			minimumInputLength: 3
+		} );
+
 		toggle_fields();
 
-		if ( 'user-password' === $('#notification').val() || 'new-user' === $('#notification').val() || 'welcome-email' === $('#notification').val() || 'reply-comment' === $('#notification').val() ) {
+		if ( 'new-user' === $('#notification').val() || 'welcome-email' === $('#notification').val() || 'reply-comment' === $('#notification').val() ) {
 			$('#toggle-fields, #email, #cc, #bcc, #users, #email-formatting, #disable-autop, #current-user, #post-author').hide();
 			$('#user-password-msg').show();
+		} else if ( 'user-password' === $('#notification').val() ) {
+			$('#toggle-fields, #email, #cc, #bcc, #users, #disable-autop, #current-user, #post-author').hide();
+			$('#user-password-msg, #email-formatting').show();
 		} else if ( 'new-comment' === $('#notification').val() || 'new-trackback' === $('#notification').val() || 'new-pingback' === $('#notification').val() || 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() ) {
 			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user').show();
 			$('#only-post-author').prop( 'checked', false );
@@ -41,9 +64,12 @@ jQuery(document).ready(function($) {
 	init();
     $('#notification').on('change', function() {
 		var $this = $(this);
-		if ( 'user-password' === $this.val() || 'new-user' === $this.val() || 'welcome-email' === $this.val() || 'reply-comment' === $this.val() ) {
+		if ( 'new-user' === $this.val() || 'welcome-email' === $this.val() || 'reply-comment' === $this.val() ) {
 			$('#toggle-fields, #email, #cc, #bcc, #users, #email-formatting, #disable-autop, #current-user, #post-author').hide();
 			$('#user-password-msg').show();
+		} else if ( 'user-password' === $this.val() ) {
+			$('#toggle-fields, #email, #cc, #bcc, #users, #disable-autop, #current-user, #post-author').hide();
+			$('#user-password-msg, #email-formatting').show();
 		} else if ( 'new-comment' === $('#notification').val() || 'new-trackback' === $('#notification').val() || 'new-pingback' === $('#notification').val() || 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() ) {
 			$('#post-author').hide();
 			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user').show();
@@ -111,6 +137,6 @@ jQuery(document).ready(function($) {
 				break;
 		}
 
-		$(this).attr( 'href', 'https://betternotificationsforwp.com/shortcodes/?notification=' + notification_slug );
+		$(this).attr( 'href', 'https://betternotificationsforwp.com/shortcodes/?notification=' + notification_slug + '&utm_source=WP%20Admin%20Notification%20Editor%20-%20"Shortcode%20Help"&utm_medium=referral' );
 	});
 });

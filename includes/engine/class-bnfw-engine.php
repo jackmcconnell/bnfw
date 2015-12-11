@@ -39,24 +39,33 @@ class BNFW_Engine {
 	 * @param int $id
 	 */
 	public function send_notification( $setting, $id ) {
-		$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $id );
-		$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $id );
-		$emails  = $this->get_emails( $setting, $id );
-		$headers = $this->get_headers( $emails );
+		/**
+		 * BNFW - Whether notification is enabled?
+		 *
+		 * @since 1.3.6
+		 */
+		$notification_enabled = apply_filters( 'bnfw_notification_enabled', true, $id, $notification_details );
 
-		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
-			$message = wpautop( $message );
-		}
+		if ( 'false' != $notification_enabled ) {
+			$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $id );
+			$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $id );
+			$emails  = $this->get_emails( $setting, $id );
+			$headers = $this->get_headers( $emails );
 
-		if ( 'html' == $setting['email-formatting'] ) {
-			$headers[] = 'Content-type: text/html';
-		} else {
-			$headers[] = 'Content-type: text/plain';
-		}
+			if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
+				$message = wpautop( $message );
+			}
 
-		if ( is_array( $emails['to'] ) ) {
-			foreach ( $emails['to'] as $email ) {
-				wp_mail( $email, stripslashes( $subject ), $message, $headers );
+			if ( 'html' == $setting['email-formatting'] ) {
+				$headers[] = 'Content-type: text/html';
+			} else {
+				$headers[] = 'Content-type: text/plain';
+			}
+
+			if ( is_array( $emails['to'] ) ) {
+				foreach ( $emails['to'] as $email ) {
+					wp_mail( $email, stripslashes( $subject ), $message, $headers );
+				}
 			}
 		}
 	}
@@ -128,11 +137,13 @@ class BNFW_Engine {
 	 * @since 1.1
 	 */
 	public function handle_password_reset_shortcodes( $setting, $key, $user_login, $user_data ) {
-		$message = $this->user_shortcodes( $setting['message'], $user_data->ID );
+		if ( '' != $user_login ) {
+			// For WordPress version 4.1.0 or less, we could have empty user_login
+			$message = $this->user_shortcodes( $setting['message'], $user_data->ID );
 
-		$reset_link = wp_login_url() . "?action=rp&key=$key&login=$user_login";
-		$message = str_replace( '[password_reset_link]', $reset_link, $message );
-
+			$reset_link = wp_login_url() . "?action=rp&key=$key&login=$user_login";
+			$message = str_replace( '[password_reset_link]', $reset_link, $message );
+		}
 		return $message;
 	}
 
@@ -389,6 +400,9 @@ class BNFW_Engine {
 				$to_emails = $this->get_emails_from_users( $setting['users'], $exclude );
 			}
 
+			/**
+			 * BNFW get to emails.
+			 */
 			$emails['to'] = apply_filters( 'bnfw_to_emails', $to_emails, $setting, $id );
 		}
 

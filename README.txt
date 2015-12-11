@@ -1,10 +1,12 @@
 === Better Notifications for WordPress ===
 Contributors: voltronik
+Donate link: https://betternotificationsforwp.com/donate/
 Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from, author
 Requires at least: 3.5
-Tested up to: 4.3.1
-Stable tag: 1.3.5
+Tested up to: 4.4
+Stable tag: 1.3.6
 License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Send customisable emails to your users for different WordPress notifications.
 
@@ -69,8 +71,8 @@ Having problems? Please let me know via this plugin's forum so I can address the
 Like this plugin? Please leave it a great review! 
 Don't think the plugin is worthy of 5 stars? Let me know on the forum and I'll do my best to help. 
 
-> Want to add categories and sub-categories via the WordPress front-end? 
-> Try my [Front-end Categories](https://wordpress.org/plugins/front-end-categories/ "Front-end Categories WordPress Plugin") plugin.
+> DISCLAIMER
+> This is an incredibly useful and highly rated plugin however, it's possible that overuse or abuse of this plugin could upset your users by sending them too many notifications. By downloading / installing / using this plugin, you take full responsibility of the management / quantity / types of notifications that are sent out from it including abiding by any SPAM laws in your country / operating areas, dealing with / responding to subscription / unsubscription requests, complaints, and so on. I accept no liability or responsibility for spam or abuse of this plugin from the user(s) of or anyone that may receive notifications as a result of the use of this plugin. I'm trusting you, please don't abuse your users.
 
 
 
@@ -79,7 +81,7 @@ Don't think the plugin is worthy of 5 stars? Let me know on the forum and I'll d
 1. Upload the 'bnfw' plugin folder to the '/wp-content/plugins/' directory or install it via your WordPress Admin.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Use the settings in the new 'Notifications' Menu item in the sidebar to configure the plugin.
-4. (Optional) Install a plugin to use SMTP instead of `wp_mail()`.
+4. (Optional) Install a plugin to use SMTP instead of `wp_mail()`. I recommend [Postman SMTP Mailer/Email Log](https://wordpress.org/plugins/postman-smtp/).
 5. Test by creating a notification with some [shortcodes](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WordPress").
 
 
@@ -107,9 +109,13 @@ The possibilities are endless!
 
 Yes! There is an option for suppressing comments marked as SPAM by Akismet in the plugin settings.
 
+= Does this plugin work with Multisite? =
+
+Yes and no - some notifications work, others don't, and some are missing entirely. I do plan on adding full Multisite support at a later date however, this will most likely be in the form of an add-on. 
+
 = What isn't this plugin? =
 
-It's not designed to send out newsletters. There is no send-this-out-on-this-date style functionality included. There are many other great plugins available that you could use for that instead. 
+It's not designed to send out newsletters. There is no send-this-out-on-this-date style functionality included. There are many other great plugins available that you could use for that instead. Additionally, users cannot currently unsubscribe automatically from notifications so you'll have to work out how you manage unsubscribers manually.
 
 = How do I set-up WordPress to work with this plugin correctly? =
 
@@ -161,13 +167,22 @@ It might do but this is untested.
 
 1. All Notifications
 
-2. Add New Notification
+2. Add New / Edit Notification
 
 3. Plugin Settings
 
 
 
 == Changelog ==
+
+= 1.3.6 - 11th December 2015 =
+* Merry Christmas to you all!
+* New: Password Reset notifications can now be in HTML or Plain Text.
+* Improved: The Users / User Role select box now utilises live search instead of showing all users in a long list if you have more than 100 users. This should be a huge performance improvement if your site has a lot of users.
+* Updated: select2.js library updated to v4.
+* Fixed: Compatibility with password reset notifications in WordPress 4.1.0 and below.
+* Fixed: An issue where the 'Tag' label was showing incorrectly in the 'All Notifications' screen.
+* I've added a short disclaimer to the [Description Tab](https://wordpress.org/plugins/bnfw/) regarding spam and overuse/abuse of this plugin which I recommend a quick read through.
 
 = 1.3.5 - 9th October 2015 =
 * Fixed: A large bug that was causing issues with Password URL shortcodes in the 'New User Registration - For User' and 'Password Reset - For User' notifications.

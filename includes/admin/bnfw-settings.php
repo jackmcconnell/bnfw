@@ -54,26 +54,26 @@ function bnfw_settings_page() {
 /**
  * External Menu Item Links
  */
-
 function bnfw_menu_item_links() {
 	global $submenu;
 
 	// Documentation Link
-	$submenu['edit.php?post_type=bnfw_notification'][400] = array( 
+	$submenu['edit.php?post_type=bnfw_notification'][400] = array(
 		'<div id="bnfw-menu-item-documentation">Documentation</div>',
 		'manage_options',
-		'https://betternotificationsforwp.com/documentation/?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Documentation"&utm_medium=referral&utm_campaign=' . home_url()
+		'https://betternotificationsforwp.com/documentation/?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Documentation"&amp;utm_medium=referral',
 	);
 
 	// Add-ons Link
-	$submenu['edit.php?post_type=bnfw_notification'][500] = array( 
+	$submenu['edit.php?post_type=bnfw_notification'][500] = array(
 		'<div id="bnfw-menu-item-addons" style="color: #ff6f59;">Add-ons</div>',
 		'manage_options',
-		'https://betternotificationsforwp.com/store/?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Add-on"&utm_medium=referral&utm_campaign=' . home_url()
+		'https://betternotificationsforwp.com/store/?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Add-on"&amp;utm_medium=referral',
 	);
 }
 
-function bnfw_menu_item_link_targets() { ?>
+function bnfw_menu_item_link_targets() {
+?>
 
 	<!-- Documentation Link -->
 	<script type="text/javascript">
@@ -148,7 +148,7 @@ function bnfw_general_options() {
 	);
 
 }
-add_action( 'admin_init', 'bnfw_general_options' );
+add_action( 'admin_init', 'bnfw_general_options', 10 );
 
 /* ------------------------------------------------------------------------ *
  * Settings Page - Settings Section Callbacks
@@ -191,7 +191,7 @@ function bnfw_email_format_radio( $args ) {
 	<br />
 	<label>
 		<input type="radio" value="text" name="bnfw_email_format" <?php checked( $email_format, 'text', true ); ?>><?php _e( 'Plain Text', 'bnfw' ); ?>
-	</label>	
+	</label>
 	<p><i><?php echo $args[0]; ?></i></p>
 <?php
 }

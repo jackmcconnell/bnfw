@@ -242,7 +242,7 @@ class BNFW_Notification {
 			<td>&nbsp;</td>
 			<td>
 				<div>
-					<p style="margin-top: 0;"><?php esc_html_e( "This notification doesn't support additional email fields or shortcodes in the subject line.", 'bnfw' ); ?></p>
+					<p style="margin-top: 0;"><?php esc_html_e( "This notification doesn't support additional email fields.", 'bnfw' ); ?></p>
 				</div>
 			</td>
         </tr>
@@ -290,8 +290,8 @@ class BNFW_Notification {
             </th>
 
             <td>
-                <select multiple name="cc[]" class="select2" data-placeholder="Select User Roles / Users" style="width:75%">
-					<?php $this->render_users_dropdown( $setting['cc'] ); ?>
+				<select multiple name="cc[]" class="<?php echo bnfw_get_user_select_class(); ?>" data-placeholder="Select User Roles / Users" style="width:75%">
+					<?php bnfw_render_users_dropdown( $setting['cc'] ); ?>
                 </select>
             </td>
         </tr>
@@ -302,8 +302,8 @@ class BNFW_Notification {
             </th>
 
             <td>
-                <select multiple name="bcc[]" class="select2" data-placeholder="Select User Roles / Users" style="width:75%">
-					<?php $this->render_users_dropdown( $setting['bcc'] ); ?>
+                <select multiple name="bcc[]" class="<?php echo bnfw_get_user_select_class(); ?>" data-placeholder="Select User Roles / Users" style="width:75%">
+					<?php bnfw_render_users_dropdown( $setting['bcc'] ); ?>
                 </select>
             </td>
         </tr>
@@ -323,8 +323,8 @@ class BNFW_Notification {
                 <?php _e( 'Send To', 'bnfw' ); ?>
             </th>
             <td>
-                <select multiple name="users[]" class="select2" data-placeholder="Select User Roles / Users" style="width:75%">
-					<?php $this->render_users_dropdown( $setting['users'] ); ?>
+                <select multiple name="users[]" class="<?php echo bnfw_get_user_select_class(); ?>" data-placeholder="Select User Roles / Users" style="width:75%">
+					<?php bnfw_render_users_dropdown( $setting['users'] ); ?>
                 </select>
             </td>
         </tr>
@@ -357,7 +357,7 @@ class BNFW_Notification {
                 		<span class="dashicons dashicons-editor-help"></span> <?php _e( 'Need some help?', 'bnfw' ); ?>
                 	</p>
                 	<p>
-						<a href="https://betternotificationsforwp.com/documentation/" target="_blank" class="button-secondary"><?php _e( 'Documentation', 'bnfw' ); ?></a>
+						<a href="https://betternotificationsforwp.com/documentation/?utm_source=WP%20Admin%20Notification%20Editor%20-%20'Documentation'&amp;utm_medium=referral" target="_blank" class="button-secondary"><?php _e( 'Documentation', 'bnfw' ); ?></a>
 					</p>
 					<p>
                 		<a href="" target="_blank" id="shortcode-help" class="button-secondary"><?php _e( 'Shortcode Help', 'bnfw' ); ?></a>
@@ -382,36 +382,6 @@ class BNFW_Notification {
 	}
 
 	/**
-	 * Render users dropdown.
-	 *
-	 * @since 1.2
-	 */
-	public function render_users_dropdown( $selected_users ) {
-		global $wp_roles;
-?>
-		<optgroup label="User Roles">
-<?php
-		$roles = $wp_roles->get_names();
-
-		foreach ( $roles as $role ) {
-			$selected = selected( true, in_array( 'role-' . $role, $selected_users ), false );
-			echo '<option value="role-', $role, '" ', $selected, '>', $role, '</option>';
-		}
-?>
-		</optgroup>
-		<optgroup label="Users">
-<?php
-		$users = get_users( array(
-				'order_by' => 'email',
-			) );
-
-		foreach ( $users as $user ) {
-			$selected = selected( true, in_array( $user->ID, $selected_users ), false );
-			echo '<option value="', $user->ID, '" ', $selected, '>', $user->user_login, '</option>';
-		}
-	}
-
-	/**
 	 * Should we enqueue assets?
 	 *
 	 * @since 1.0
@@ -431,11 +401,16 @@ class BNFW_Notification {
 	public function enqueue_assets() {
 		wp_dequeue_script( 'autosave' );
 
-		wp_enqueue_style( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.css', array(), '3.5.2' );
-		wp_enqueue_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js', array( 'jquery' ), '3.5.2', true );
+		wp_deregister_script( 'select2' );
+		wp_dequeue_script( 'select2' );
+		wp_deregister_style( 'select2' );
+		wp_dequeue_style( 'select2' );
 
-		wp_enqueue_script( 'bnfw', plugins_url( '../assets/js/bnfw.js', dirname( __FILE__ ) ), array( 'jquery' ), '0.1', true );
-		wp_enqueue_style( 'bnfw', plugins_url( '../assets/css/bnfw.css', dirname( __FILE__ ) ), array( 'dashicons' ), '0.1' );
+		wp_enqueue_style( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1-rc.1/css/select2.min.css', array(), '4.0.1' );
+		wp_enqueue_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1-rc.1/js/select2.min.js', array( 'jquery' ), '4.0.1', true );
+
+		wp_enqueue_script( 'bnfw', plugins_url( '../assets/js/bnfw.js', dirname( __FILE__ ) ), array( 'select2' ), '0.1', true );
+		wp_enqueue_style( 'bnfw', plugins_url( '../assets/css/bnfw.css', dirname( __FILE__ ) ), array( 'dashicons', 'select2' ), '0.1' );
 	}
 
 	/**

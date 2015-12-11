@@ -9,11 +9,20 @@
 
 
 /* Fix 'jump' when hovering over 'x' in select2 box */
-ul.select2-choices li.select2-search-choice a {
+/*ul.select2-choices li.select2-search-choice a {
 	-webkit-transition-property: none;
 	transition-property: none;
 	-webkit-transition-duration: 0s;
 	transition-duration: 0s;
 	-webkit-transition-timing-function: initial;
 	transition-timing-function: initial;
+}*/
+
+/* Select2 4.0 */
+.select2-container--default .select2-selection--multiple {
+	line-height: 0;
 }
+
+	ul.select2-selection__rendered {
+		line-height: 1.3;
+	}
