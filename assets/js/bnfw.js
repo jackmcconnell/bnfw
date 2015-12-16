@@ -36,7 +36,7 @@ jQuery(document).ready(function($) {
 					};
 				}
 			},
-			minimumInputLength: 3
+			minimumInputLength: 1
 		} );
 
 		toggle_fields();

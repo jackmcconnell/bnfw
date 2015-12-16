@@ -4,7 +4,7 @@ Donate link: https://betternotificationsforwp.com/donate/
 Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from, author
 Requires at least: 3.5
 Tested up to: 4.4
-Stable tag: 1.3.7
+Stable tag: 1.3.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -174,6 +174,11 @@ It might do but this is untested.
 
 
 == Changelog ==
+
+= 1.3.8 - 16th December 2015 =
+* Fixed: Notifications weren't being sent out at all. After lots of testing, I think this should now be resolved.
+* Fixed: An issue where quotes in the Subject field were causing part of/all the field content to be removed.
+* Improved: If you have more than 100 users on your site, the User Roles / Users select box will show the first 100 users only. You can search through the rest by typing the first character of a username in the select box and it will show you any matching users.
 
 = 1.3.7 - 11th December 2015 =
 * Fixed: An issue where EDD_SL_Plugin_Updater class was already declared by another plugin.

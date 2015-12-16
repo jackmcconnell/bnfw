@@ -44,9 +44,9 @@ class BNFW_Engine {
 		 *
 		 * @since 1.3.6
 		 */
-		$notification_enabled = apply_filters( 'bnfw_notification_enabled', true, $id, $notification_details );
+		$notification_enabled = apply_filters( 'bnfw_notification_enabled', true, $id, $setting );
 
-		if ( 'false' != $notification_enabled ) {
+		if ( $notification_enabled ) {
 			$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $id );
 			$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $id );
 			$emails  = $this->get_emails( $setting, $id );

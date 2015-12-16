@@ -344,7 +344,7 @@ class BNFW_Notification {
                 <?php _e( 'Subject', 'bnfw' ); ?>
             </th>
             <td>
-                <input type="text" name="subject" value="<?php echo $setting['subject']; ?>" style="width:75%;">
+                <input type="text" name="subject" value="<?php echo esc_attr( $setting['subject'] ); ?>" style="width:75%;">
             </td>
         </tr>
 
@@ -444,7 +444,7 @@ class BNFW_Notification {
 
 		$setting = array(
 			'notification'         => $_POST['notification'],
-			'subject'              => sanitize_text_field( $_POST['subject'] ),
+			'subject'              => $_POST['subject'],
 			'message'              => $_POST['notification_message'],
 			'disabled'             => isset( $_POST['disabled'] ) ? sanitize_text_field( $_POST['disabled'] ) : 'false',
 			'email-formatting'     => isset( $_POST['email-formatting'] ) ? sanitize_text_field( $_POST['email-formatting'] ) : 'html',

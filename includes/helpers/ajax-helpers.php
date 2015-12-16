@@ -13,6 +13,23 @@
 function bnfw_search_users() {
 	global $wp_roles;
 
+	$roles_data = array();
+	$roles = $wp_roles->get_names();
+	foreach ( $roles as $role ) {
+		$roles_data[] = array(
+			'id'   => 'role-' . $role,
+			'text' => $role,
+		);
+	}
+
+	$data = array(
+		array(
+			'id'       => 1,
+			'text'     => __( 'User Roles', 'bnfw' ),
+			'children' => $roles_data,
+		),
+	);
+
 	$query = sanitize_text_field( $_GET['query'] );
 	$users = get_users( array(
 		'order_by' => 'email',
@@ -29,27 +46,10 @@ function bnfw_search_users() {
 		);
 	}
 
-	$data = array(
-		array(
-			'id'       => 1,
-			'text'     => __( 'Users', 'bnfw' ),
-			'children' => $user_data,
-		),
-	);
-
-	$roles_data = array();
-	$roles = $wp_roles->get_names();
-	foreach ( $roles as $role ) {
-		$roles_data[] = array(
-			'id'   => 'role-' . $role,
-			'text' => $role,
-		);
-	}
-
 	$data[] = array(
 		'id'       => 2,
-		'text'     => __( 'User Roles', 'bnfw' ),
-		'children' => $roles_data,
+		'text'     => __( 'Users', 'bnfw' ),
+		'children' => $user_data,
 	);
 
 	echo json_encode( $data );
