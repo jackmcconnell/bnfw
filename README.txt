@@ -3,8 +3,8 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from, author
 Requires at least: 3.5
-Tested up to: 4.4
-Stable tag: 1.3.8
+Tested up to: 4.4.1
+Stable tag: 1.3.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,6 +38,7 @@ Notifications that are currently available to use are:
 * Lost Password (For User)
 * New User Registration (For User)
 * New User - Welcome Email
+* User Role Changed
 * Comment Reply
 
 **Posts / Custom Post Types**
@@ -174,6 +175,12 @@ It might do but this is untested.
 
 
 == Changelog ==
+
+= 1.3.9 - 9th January 2016 =
+* Happy New Year!
+* New: Transactional notification for when a User Role Changed. This is sent to the user when their User Role is changed.
+* Fixed: Ensure that at least one User or User Role is selected before saving a notification.
+* Fixed: select2 v4 update and compatibility with Ultimate Member and ACF Pro.
 
 = 1.3.8 - 16th December 2015 =
 * Fixed: Notifications weren't being sent out at all. After lots of testing, I think this should now be resolved.

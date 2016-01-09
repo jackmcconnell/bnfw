@@ -168,7 +168,11 @@ class BNFW_Notification {
                     <option value="user-password" <?php selected( 'user-password', $setting['notification'] );?>><?php _e( 'Lost Password - For User', 'bnfw' );?></option>
                     <option value="new-user" <?php selected( 'new-user', $setting['notification'] );?>><?php _e( 'New User Registration - For User', 'bnfw' );?></option>
                     <option value="welcome-email" <?php selected( 'welcome-email', $setting['notification'] );?>><?php _e( 'New User - Welcome Email', 'bnfw' );?></option>
+                    <option value="user-role" <?php selected( 'user-role', $setting['notification'] );?>><?php _e( 'User Role Changed', 'bnfw' );?></option>
                     <option value="reply-comment" <?php selected( 'reply-comment', $setting['notification'] );?>><?php _e( 'Comment Reply', 'bnfw' );?></option>
+                    </optgroup>
+                    <optgroup label="Others">
+						<option value="user-role" <?php selected( 'user-role', $setting['notification'] );?>><?php _e( 'User Role Changed', 'bnfw' );?></option>
                     </optgroup>
                     <optgroup label="Posts">
                     <option value="new-post" <?php selected( 'new-post', $setting['notification'] );?>><?php _e( 'New Post Published', 'bnfw' );?></option>
@@ -323,7 +327,7 @@ class BNFW_Notification {
                 <?php _e( 'Send To', 'bnfw' ); ?>
             </th>
             <td>
-                <select multiple name="users[]" class="<?php echo bnfw_get_user_select_class(); ?>" data-placeholder="Select User Roles / Users" style="width:75%">
+                <select multiple id="users-select" name="users[]" class="<?php echo bnfw_get_user_select_class(); ?>" data-placeholder="Select User Roles / Users" style="width:75%">
 					<?php bnfw_render_users_dropdown( $setting['users'] ); ?>
                 </select>
             </td>
@@ -406,8 +410,14 @@ class BNFW_Notification {
 		wp_deregister_style( 'select2' );
 		wp_dequeue_style( 'select2' );
 
-		wp_enqueue_style( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1-rc.1/css/select2.min.css', array(), '4.0.1' );
-		wp_enqueue_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1-rc.1/js/select2.min.js', array( 'jquery' ), '4.0.1', true );
+		// Ultimate Member plugin is giving us problems. They should upgrade
+		wp_deregister_script( 'um_minified' );
+		wp_dequeue_script( 'um_minified' );
+		wp_deregister_script( 'um_admin_scripts' );
+		wp_dequeue_script( 'um_admin_scripts' );
+
+		wp_enqueue_style( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css', array(), '4.0.1' );
+		wp_enqueue_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js', array( 'jquery' ), '4.0.1', true );
 
 		wp_enqueue_script( 'bnfw', plugins_url( '../assets/js/bnfw.js', dirname( __FILE__ ) ), array( 'select2' ), '0.1', true );
 		wp_enqueue_style( 'bnfw', plugins_url( '../assets/css/bnfw.css', dirname( __FILE__ ) ), array( 'dashicons', 'select2' ), '0.1' );
@@ -525,8 +535,8 @@ class BNFW_Notification {
 	 * Read settings from post meta.
 	 *
 	 * @since 1.0
-	 * @param unknown $post_id
-	 * @return unknown
+	 * @param int $post_id
+	 * @return array
 	 */
 	public function read_settings( $post_id ) {
 		$setting = array();
@@ -569,6 +579,7 @@ class BNFW_Notification {
 			delete_post_meta( $post_id, self::META_KEY_PREFIX . 'user-roles' );
 		}
 
+		$setting['id'] = $post_id;
 		return $setting;
 	}
 
@@ -655,16 +666,21 @@ class BNFW_Notification {
 	 * Get notifications based on type.
 	 *
 	 * @since 1.0
-	 * @param unknown $type
-	 * @return unknown
+	 * @param array|string $types
+	 * @return array WP_Post objects
 	 */
-	public function get_notifications( $type ) {
+	public function get_notifications( $types ) {
+		if ( ! is_array( $types ) ) {
+			$types = array( $types );
+		}
+
 		$args = array(
 			'post_type' => self::POST_TYPE,
 			'meta_query' => array(
 				array(
 					'key'     => self::META_KEY_PREFIX . 'notification',
-					'value'   => $type,
+					'value'   => $types,
+					'compare' => 'IN',
 				),
 				array(
 					'key'     => self::META_KEY_PREFIX . 'disabled',
@@ -742,6 +758,16 @@ class BNFW_Notification {
 				echo implode( ', ', $users );
 				break;
 		}
+
+		/**
+		 * Invoked while displaying a custom column in notification table.
+		 *
+		 * @since 1.3.9
+		 *
+		 * @param string  $column  Column name
+		 * @param int     $post_id Post ID
+		 */
+		do_action( 'bnfw_notification_table_column', $column, $post_id );
 	}
 
 	/**
@@ -808,6 +834,9 @@ class BNFW_Notification {
 				break;
 			case 'admin-user':
 				$name = __( 'User Registration - For Admin', 'bnfw' );
+				break;
+			case 'user-role':
+				$name = __( 'User Role Changed', 'bnfw' );
 				break;
 			case 'new-post':
 				$name = __( 'New Post Published', 'bnfw' );

@@ -18,6 +18,8 @@ jQuery(document).ready(function($) {
     }
 
 	function init() {
+		var notification = $('#notification').val();
+
 		$(".select2").select2();
 		$(".user-select2").select2( {
 			ajax: {
@@ -44,7 +46,7 @@ jQuery(document).ready(function($) {
 		if ( 'new-user' === $('#notification').val() || 'welcome-email' === $('#notification').val() || 'reply-comment' === $('#notification').val() ) {
 			$('#toggle-fields, #email, #cc, #bcc, #users, #email-formatting, #disable-autop, #current-user, #post-author').hide();
 			$('#user-password-msg').show();
-		} else if ( 'user-password' === $('#notification').val() ) {
+		} else if ( 'user-password' === $('#notification').val() || 'user-role' === notification ) {
 			$('#toggle-fields, #email, #cc, #bcc, #users, #disable-autop, #current-user, #post-author').hide();
 			$('#user-password-msg, #email-formatting').show();
 		} else if ( 'new-comment' === $('#notification').val() || 'new-trackback' === $('#notification').val() || 'new-pingback' === $('#notification').val() || 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() ) {
@@ -63,11 +65,13 @@ jQuery(document).ready(function($) {
 
 	init();
     $('#notification').on('change', function() {
-		var $this = $(this);
+		var $this = $(this),
+			notification = $this.val();
+
 		if ( 'new-user' === $this.val() || 'welcome-email' === $this.val() || 'reply-comment' === $this.val() ) {
 			$('#toggle-fields, #email, #cc, #bcc, #users, #email-formatting, #disable-autop, #current-user, #post-author').hide();
 			$('#user-password-msg').show();
-		} else if ( 'user-password' === $this.val() ) {
+		} else if ( 'user-password' === $this.val() || 'user-role' === notification ) {
 			$('#toggle-fields, #email, #cc, #bcc, #users, #disable-autop, #current-user, #post-author').hide();
 			$('#user-password-msg, #email-formatting').show();
 		} else if ( 'new-comment' === $('#notification').val() || 'new-trackback' === $('#notification').val() || 'new-pingback' === $('#notification').val() || 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() ) {
@@ -93,6 +97,19 @@ jQuery(document).ready(function($) {
 	// send test email
 	$( '#test-email' ).click(function() {
 		$( '#send-test-email' ).val( 'true' );
+	});
+
+	// Validate before saving notification
+	$( '#publish' ).click(function() {
+		if ( $('#users').is(':visible') ) {
+			if ( null === $('#users-select').val() ) {
+				$('#bnfw_error').remove();
+				$('.wrap h1').after('<div class="error" id="bnfw_error"><p>You must choose at least one User or User Role to send the notification to before you can save</p></div>');
+				return false;
+			}
+		}
+
+		return true;
 	});
 
 	$( '#shortcode-help' ).on( 'click', function() {

@@ -132,6 +132,30 @@ class BNFW_Engine {
 	}
 
 	/**
+	 * Send user role changed email.
+	 *
+	 * @since 1.3.9
+	 * @param array  $setting Notification setting
+	 * @param object $user_id User ID
+	 */
+	public function send_user_role_chnaged_email( $setting, $user_id ) {
+		$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $user_id );
+		$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $user_id );
+
+		$headers = array();
+		if ( 'html' == $setting['email-formatting'] ) {
+			$headers[] = 'Content-type: text/html';
+		}
+
+		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
+			$message = wpautop( $message );
+		}
+
+		$user = get_user_by( 'id', $user_id );
+		wp_mail( $user->user_email, stripslashes( $subject ), $message, $headers );
+	}
+
+	/**
 	 * Handle shortcode for password reset email message.
 	 *
 	 * @since 1.1
@@ -151,10 +175,10 @@ class BNFW_Engine {
 	 * Generate message for notification.
 	 *
 	 * @since 1.0
-	 * @param unknown $message
-	 * @param unknown $notification
-	 * @param unknown $id
-	 * @return unknown
+	 * @param string $message
+	 * @param string $notification
+	 * @param int $id
+	 * @return string
 	 */
 	private function handle_shortcodes( $message, $notification, $id ) {
 		switch ( $notification ) {
@@ -173,6 +197,7 @@ class BNFW_Engine {
 			case 'admin-user':
 			case 'welcome-email':
 			case 'new-user':
+			case 'user-role':
 				// handle users (lost password and new user registration)
 				$message = $this->user_shortcodes( $message, $id );
 				break;
@@ -436,6 +461,10 @@ class BNFW_Engine {
 		$email_list = array();
 		$user_ids = array();
 		$user_roles = array();
+
+		if ( empty( $users ) ) {
+			return array();
+		}
 
 		foreach ( $users as $user ) {
 			if ( $this->starts_with( $user, 'role-' ) ) {

@@ -15,33 +15,11 @@
  * @return array                 Filtered list of post notifications
  */
 function bnfw_post_notifications( $notifications, $post_type ) {
-	$post_obj = get_post_type_object( $post_type );
-	$label = $post_obj->labels->singular_name;
-
-	$notifications[] = array(
-		'type'  => 'new-' . $post_type,
-		'label' => 'New ' . $label . ' Published',
-	);
-
-	$notifications[] = array(
-		'type'  => 'update-' . $post_type,
-		'label' => $label . ' Update',
-	);
-
-	$notifications[] = array(
-		'type'  => 'pending-' . $post_type,
-		'label' => $label . ' Pending',
-	);
-
-	$notifications[] = array(
-		'type'  => 'future-' . $post_type,
-		'label' => $label . ' Scheduled',
-	);
-
-	$notifications[] = array(
-		'type'  => 'comment-' . $post_type,
-		'label' => $label . ' New Comment',
-	);
+	$notifications[] = 'new-' . $post_type;
+	$notifications[] = 'update-' . $post_type;
+	$notifications[] = 'pending-' . $post_type;
+	$notifications[] = 'future-' . $post_type;
+	$notifications[] = 'comment-' . $post_type;
 
 	return $notifications;
 }

@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: http://wordpress.org/plugins/bnfw/
  * Description: Send customisable emails to your users for different WordPress notifications.
- * Version: 1.3.8
+ * Version: 1.3.9
  * Author: Voltronik
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: plugins@voltronik.co.uk
@@ -125,6 +125,7 @@ class BNFW {
 
 		add_action( 'user_register'             , array( $this, 'user_register' ) );
 		add_action( 'user_register'             , array( $this, 'welcome_email' ) );
+		add_action( 'set_user_role'             , array( $this, 'user_role_changed' ), 10, 2 );
 
 		add_action( 'lostpassword_post'         , array( $this, 'on_lost_password' ) );
 		add_filter( 'retrieve_password_title'   , array( $this, 'change_password_email_title' ) );
@@ -390,7 +391,7 @@ class BNFW {
 	 * Send notification for new uses.
 	 *
 	 * @since 1.0
-	 * @param unknown $user_id
+	 * @param int $user_id
 	 */
 	function user_register( $user_id ) {
 		$this->send_notification( 'admin-user', $user_id );
@@ -406,6 +407,20 @@ class BNFW {
 		$notifications = $this->notifier->get_notifications( 'welcome-email' );
 		foreach ( $notifications as $notification ) {
 			$this->engine->send_registration_email( $this->notifier->read_settings( $notification->ID ), get_userdata( $user_id ) );
+		}
+	}
+
+	/**
+	 * Send notification when a user role changes.
+	 *
+	 * @since 1.3.9
+	 * @param int $user_id User ID
+	 * @param string $new_role New User role
+	 */
+	public function user_role_changed( $user_id, $new_role ) {
+		$notifications = $this->notifier->get_notifications( 'user-role' );
+		foreach ( $notifications as $notification ) {
+			$this->engine->send_user_role_chnaged_email( $this->notifier->read_settings( $notification->ID ), $user_id );
 		}
 	}
 
