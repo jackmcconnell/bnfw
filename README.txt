@@ -4,7 +4,7 @@ Donate link: https://betternotificationsforwp.com/donate/
 Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from, author
 Requires at least: 3.5
 Tested up to: 4.4.1
-Stable tag: 1.3.9
+Stable tag: 1.3.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -175,6 +175,10 @@ It might do but this is untested.
 
 
 == Changelog ==
+
+= 1.3.9.1 - 9th January 2016 =
+* Fixed: Missing shortcode link for new 'User Role Changed' notification.
+* Fixed: Duplicate 'User Role Changed' listing in the Notification select box.
 
 = 1.3.9 - 9th January 2016 =
 * Happy New Year!
