@@ -171,9 +171,6 @@ class BNFW_Notification {
                     <option value="user-role" <?php selected( 'user-role', $setting['notification'] );?>><?php _e( 'User Role Changed', 'bnfw' );?></option>
                     <option value="reply-comment" <?php selected( 'reply-comment', $setting['notification'] );?>><?php _e( 'Comment Reply', 'bnfw' );?></option>
                     </optgroup>
-                    <optgroup label="Others">
-						<option value="user-role" <?php selected( 'user-role', $setting['notification'] );?>><?php _e( 'User Role Changed', 'bnfw' );?></option>
-                    </optgroup>
                     <optgroup label="Posts">
                     <option value="new-post" <?php selected( 'new-post', $setting['notification'] );?>><?php _e( 'New Post Published', 'bnfw' );?></option>
                     <option value="update-post" <?php selected( 'update-post', $setting['notification'] );?>><?php _e( 'Post Updated', 'bnfw' );?></option>

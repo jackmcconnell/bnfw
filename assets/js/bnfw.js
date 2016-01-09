@@ -126,6 +126,7 @@ jQuery(document).ready(function($) {
 			case 'admin-password':
 			case 'new-user':
 			case 'welcome-email':
+			case 'user-role':
 			case 'admin-user':
 			case 'new-post':
 			case 'update-post':
