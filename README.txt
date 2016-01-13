@@ -12,7 +12,7 @@ Send customisable emails to your users for different WordPress notifications.
 
 == Description ==
 
-> Recently updated to be even easier to use!
+> New add-ons are now available! [Buy Add-ons](https://betternotificationsforwp.com/store/)
 
 Better Notifications for WordPress allows you to generate custom email notifications and send them to user roles (including custom roles) or individual users for all kinds of things happening on your WordPress website. Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using an appropriate 3rd party plugin should you wish.
 
@@ -21,7 +21,7 @@ https://www.youtube.com/watch?v=MxPUyRZPJ1Q
 = For example: =
 You want a user with the editor role (or all users using the Editor role) to be alerted via email when a new post is published and you'd like to customise it to include your branding along with the author's display name and post time - with this plugin, that's easy. 
 
-> A long and handy list of shortcodes you can use is available [here](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WordPress").
+> A handy list of shortcodes you can use is available [here](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WordPress").
 
 Notifications that are currently available to use are: 
 
@@ -47,6 +47,7 @@ Notifications that are currently available to use are:
 * Post Updated
 * Post Pending Review
 * Post Scheduled
+* Post - Custom Field Updated ([Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
 
 **Pages**
 
@@ -55,6 +56,7 @@ Notifications that are currently available to use are:
 * Page Pending Review
 * Page Scheduled
 * Page - New Comment
+* Page - Custom Field Updated ([Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
 
 **Posts**
 
@@ -65,15 +67,13 @@ Notifications that are currently available to use are:
 
 * New Term
 
-If you'd like to see a notification in the list above, please drop me a line in the forums and I'll see what I can do to add it.
-
-Having problems? Please let me know via this plugin's forum so I can address them and let it act as a source of information for future reference and other users.
+If you'd like to see a notification in the list above, please drop me a line in the forum and I'll see what I can do to add it.
 
 Like this plugin? Please leave it [a great review](https://wordpress.org/support/view/plugin-reviews/bnfw?rate=5#postform)! 
-Don't think the plugin is worthy of 5 stars? Let me know on the forum and I'll do my best to help.
+Don't think the plugin is worthy of 5 stars? Having problems? Let me know in the [forum](https://wordpress.org/support/plugin/bnfw) and I'll do my best to help.
 
 > DISCLAIMER
-> This is an incredibly useful and highly rated plugin however, it's possible that overuse or abuse of this plugin could upset your users by sending them too many notifications. By downloading / installing / using this plugin, you take full responsibility of the management / quantity / types of notifications that are sent out from it including abiding by any SPAM laws in your country / operating areas, dealing with / responding to subscription / unsubscription requests, complaints, and so on. I accept no liability or responsibility for spam or abuse of this plugin from the user(s) of or anyone that may receive notifications as a result of the use of this plugin. I'm trusting you, please don't abuse your users.
+> This is an incredibly useful and highly rated plugin however, it's possible that overuse or abuse of this plugin could upset your users by sending them too many notifications. By downloading / installing / using this plugin, you take full responsibility of the management / quantity / types of notifications that are sent out from it including abiding by any SPAM laws in your country / operating areas, dealing with / responding to subscription / unsubscription requests, complaints, and so on. I accept no liability or responsibility for SPAM or abuse of this plugin from the user(s) of or anyone that may receive notifications as a result of the use of this plugin. I'm trusting you, please don't abuse your users.
 
 
 
@@ -95,7 +95,7 @@ Shortcodes are little blocks of content inserted by WordPress, contained in squa
 
 Shortcodes can be used in the 'Subject' and 'Message Body' of your notifications, except for a select few (due to a restriction in WordPress).
 
-> A long and handy list of shortcodes you can use is available [here](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WordPress").
+> A handy list of shortcodes you can use is available [here](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WordPress").
 
 = What are some scenarios this plugin could be used for? =
 
@@ -201,7 +201,7 @@ It might do but this is untested.
 * Updated: select2.js library updated to v4.
 * Fixed: Compatibility with password reset notifications in WordPress 4.1.0 and below.
 * Fixed: An issue where the 'Tag' label was showing incorrectly in the 'All Notifications' screen.
-* I've added a short disclaimer to the [Description Tab](https://wordpress.org/plugins/bnfw/) regarding spam and overuse/abuse of this plugin which I recommend a quick read through.
+* I've added a short disclaimer to the [Description Tab](https://wordpress.org/plugins/bnfw/) regarding SPAM and overuse/abuse of this plugin which I recommend a quick read through.
 
 = 1.3.5 - 9th October 2015 =
 * Fixed: A large bug that was causing issues with Password URL shortcodes in the 'New User Registration - For User' and 'Password Reset - For User' notifications.
