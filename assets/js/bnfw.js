@@ -104,7 +104,7 @@ jQuery(document).ready(function($) {
 		if ( $('#users').is(':visible') ) {
 			if ( null === $('#users-select').val() ) {
 				$('#bnfw_error').remove();
-				$('.wrap h1').after('<div class="error" id="bnfw_error"><p>You must choose at least one User or User Role to send the notification to before you can save</p></div>');
+				$('.wrap h1').after('<div class="error" id="bnfw_error"><p>' + BNFW.empty_user + '</p></div>');
 				return false;
 			}
 		}

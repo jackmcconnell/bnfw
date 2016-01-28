@@ -218,7 +218,7 @@ class BNFW_Notification {
 			), 'objects'
 		);
 
-		if ( count( $taxs > 0 ) ) {
+		if ( count( $taxs ) > 0 ) {
 ?>
                     <optgroup label="<?php _e( 'Custom Taxonomy', 'bnfw' );?>">
 <?php
@@ -414,10 +414,16 @@ class BNFW_Notification {
 		wp_dequeue_script( 'um_admin_scripts' );
 
 		wp_enqueue_style( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css', array(), '4.0.1' );
-		wp_enqueue_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js', array( 'jquery' ), '4.0.1', true );
+		wp_enqueue_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.full.min.js', array( 'jquery' ), '4.0.1', true );
 
 		wp_enqueue_script( 'bnfw', plugins_url( '../assets/js/bnfw.js', dirname( __FILE__ ) ), array( 'select2' ), '0.1', true );
 		wp_enqueue_style( 'bnfw', plugins_url( '../assets/css/bnfw.css', dirname( __FILE__ ) ), array( 'dashicons', 'select2' ), '0.1' );
+
+		$strings = array(
+			'empty_user' => __( 'You must choose at least one User or User Role to send the notification to before you can save', 'bnfw' ),
+		);
+
+		wp_localize_script( 'bnfw', 'BNFW', $strings );
 	}
 
 	/**
@@ -469,8 +475,8 @@ class BNFW_Notification {
 			$setting['show-fields'] = 'true';
 			$setting['from-name']   = sanitize_text_field( $_POST['from-name'] );
 			$setting['from-email']  = sanitize_email( $_POST['from-email'] );
-			$setting['cc']          = $_POST['cc'];
-			$setting['bcc']         = $_POST['bcc'];
+			$setting['cc']          = isset( $_POST['cc'] ) ? $_POST['cc'] : '';
+			$setting['bcc']         = isset( $_POST['bcc'] ) ? $_POST['bcc'] : '';
 		} else {
 			$setting['show-fields'] = 'false';
 		}
@@ -880,7 +886,11 @@ class BNFW_Notification {
 						break;
 					case 'newterm':
 						$tax = get_taxonomy( $splited[1] );
-						$name = __( 'New Term in ', 'bnfw' ) . $tax->labels->name;
+						if ( ! $tax ) {
+							$name = __( 'New Term', 'bnfw' );
+						} else {
+							$name = __( 'New Term in ', 'bnfw' ) . $tax->labels->name;
+						}
 						break;
 				}
 				break;

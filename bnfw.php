@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: http://wordpress.org/plugins/bnfw/
  * Description: Send customisable emails to your users for different WordPress notifications.
- * Version: 1.3.9.1
+ * Version: 1.3.9.2
  * Author: Voltronik
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: plugins@voltronik.co.uk
@@ -107,14 +107,18 @@ class BNFW {
 	public function hooks() {
 		register_activation_hook( __FILE__      , array( $this, 'activate' ) );
 
-		// P2 theme directly inserts the post into db
-		if ( 'P2' == wp_get_theme() ) {
+		// some themes like P2, directly insert posts into DB.
+		$insert_post_themes = apply_filters( 'bnfw_insert_post_themes', array( 'P2', 'Syncope' ) );
+		$current_theme = wp_get_theme();
+
+		if ( in_array( $current_theme, $insert_post_themes ) ) {
 			add_action( 'wp_insert_post'        , array( $this, 'insert_post' ), 10, 3 );
 		}
 
 		add_action( 'draft_to_publish'          , array( $this, 'publish_post' ) );
 		add_action( 'future_to_publish'         , array( $this, 'publish_post' ) );
 		add_action( 'pending_to_publish'        , array( $this, 'publish_post' ) );
+		add_action( 'private_to_publish'        , array( $this, 'publish_post' ) );
 		add_action( 'publish_to_publish'        , array( $this, 'update_post' ) );
 		add_action( 'init'                      , array( $this, 'custom_post_type_hooks' ), 100 );
 		add_action( 'create_term'               , array( $this, 'create_term' ), 10, 3 );
@@ -125,7 +129,7 @@ class BNFW {
 
 		add_action( 'user_register'             , array( $this, 'user_register' ) );
 		add_action( 'user_register'             , array( $this, 'welcome_email' ) );
-		add_action( 'set_user_role'             , array( $this, 'user_role_changed' ), 10, 2 );
+		add_action( 'set_user_role'             , array( $this, 'user_role_changed' ), 10, 3 );
 
 		add_action( 'lostpassword_post'         , array( $this, 'on_lost_password' ) );
 		add_filter( 'retrieve_password_title'   , array( $this, 'change_password_email_title' ) );
@@ -416,11 +420,14 @@ class BNFW {
 	 * @since 1.3.9
 	 * @param int $user_id User ID
 	 * @param string $new_role New User role
+	 * @param string $old_role Old User role
 	 */
-	public function user_role_changed( $user_id, $new_role ) {
-		$notifications = $this->notifier->get_notifications( 'user-role' );
-		foreach ( $notifications as $notification ) {
-			$this->engine->send_user_role_chnaged_email( $this->notifier->read_settings( $notification->ID ), $user_id );
+	public function user_role_changed( $user_id, $new_role, $old_role ) {
+		if ( ! empty( $old_role ) ) {
+			$notifications = $this->notifier->get_notifications( 'user-role' );
+			foreach ( $notifications as $notification ) {
+				$this->engine->send_user_role_changed_email( $this->notifier->read_settings( $notification->ID ), $user_id );
+			}
 		}
 	}
 

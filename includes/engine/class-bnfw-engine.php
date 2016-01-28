@@ -138,7 +138,7 @@ class BNFW_Engine {
 	 * @param array  $setting Notification setting
 	 * @param object $user_id User ID
 	 */
-	public function send_user_role_chnaged_email( $setting, $user_id ) {
+	public function send_user_role_changed_email( $setting, $user_id ) {
 		$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $user_id );
 		$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $user_id );
 
@@ -152,7 +152,9 @@ class BNFW_Engine {
 		}
 
 		$user = get_user_by( 'id', $user_id );
-		wp_mail( $user->user_email, stripslashes( $subject ), $message, $headers );
+		if ( $user->user_activation_key == '' ) {
+			wp_mail( $user->user_email, stripslashes( $subject ), $message, $headers );
+		}
 	}
 
 	/**
