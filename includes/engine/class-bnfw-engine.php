@@ -40,13 +40,13 @@ class BNFW_Engine {
 	 */
 	public function send_notification( $setting, $id ) {
 		/**
-		 * BNFW - Whether notification is enabled?
+		 * BNFW - Whether notification is disabled?
 		 *
 		 * @since 1.3.6
 		 */
-		$notification_enabled = apply_filters( 'bnfw_notification_enabled', true, $id, $setting );
+		$notification_disabled = apply_filters( 'bnfw_notification_disabled', false, $id, $setting );
 
-		if ( $notification_enabled ) {
+		if ( ! $notification_disabled ) {
 			$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $id );
 			$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $id );
 			$emails  = $this->get_emails( $setting, $id );

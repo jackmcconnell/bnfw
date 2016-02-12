@@ -3,8 +3,8 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from, author
 Requires at least: 3.5
-Tested up to: 4.4.1
-Stable tag: 1.3.9.2
+Tested up to: 4.4.2
+Stable tag: 1.3.9.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,12 +14,14 @@ Send customisable emails to your users for different WordPress notifications.
 
 > New add-ons are now available! [Buy Add-ons](https://betternotificationsforwp.com/store/)
 
-Better Notifications for WordPress allows you to generate custom email notifications and send them to user roles (including custom roles) or individual users for all kinds of things happening on your WordPress website. Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using an appropriate 3rd party plugin should you wish.
+Better Notifications for WordPress allows you to create custom email notifications and send them to user roles (including custom roles) or individual users for all kinds of things happening on your WordPress website. Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using an appropriate 3rd party plugin should you wish.
 
 https://www.youtube.com/watch?v=MxPUyRZPJ1Q
 
 = For example: =
 You want a user with the editor role (or all users using the Editor role) to be alerted via email when a new post is published and you'd like to customise it to include your branding along with the author's display name and post time - with this plugin, that's easy. 
+
+If you want to override the notifications that you've set-up on an individual post / page / custom post basis, you may be interested in the [Per-post Override add-on](https://betternotificationsforwp.com/downloads/per-post-override/).
 
 > A handy list of shortcodes you can use is available [here](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WordPress").
 
@@ -158,13 +160,13 @@ In order to fix a problem with P2 not triggering notifications at all, if you po
 
 Try adding this code to your functions.php in your theme / child theme directory and replace `theme_name` with the name of your theme and re-test. 
 
-```
+`
 function bnfw_insert_post_hook_for_theme( $themes ) {
 	$themes[] = 'theme_name';
 	return $themes;
 }
 add_filter( 'bnfw_insert_post_themes', 'bnfw_insert_post_hook_for_theme' );
-```
+`
 
 = Can I translate this plugin? =
 
@@ -187,6 +189,10 @@ An older version might work but this is untested. A lot of the newer features re
 
 
 == Changelog ==
+
+= 1.3.9.3 - 12th February 2016 =
+* General bug fixes and updates relating to future add-ons and the new [Per-post Override add-on](https://betternotificationsforwp.com/downloads/per-post-override/) which allows you to override your notifications for each post / page / custom post.
+* Added: New Post Published notifications now trigger on `auto_draft_to_publish`. This may or may not effect you if you use a publish through a front-end form or from an app.
 
 = 1.3.9.2 - 29th January 2016 =
 * The [Add-on Store](https://betternotificationsforwp.com/store/) is now live! Looking for some extra, premium functionality in your notifications? You might find an add-on for it!

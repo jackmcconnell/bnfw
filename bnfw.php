@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: http://wordpress.org/plugins/bnfw/
  * Description: Send customisable emails to your users for different WordPress notifications.
- * Version: 1.3.9.2
+ * Version: 1.3.9.3
  * Author: Voltronik
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: plugins@voltronik.co.uk
@@ -115,6 +115,7 @@ class BNFW {
 			add_action( 'wp_insert_post'        , array( $this, 'insert_post' ), 10, 3 );
 		}
 
+		add_action( 'auto-draft_to_publish'     , array( $this, 'publish_post' ) );
 		add_action( 'draft_to_publish'          , array( $this, 'publish_post' ) );
 		add_action( 'future_to_publish'         , array( $this, 'publish_post' ) );
 		add_action( 'pending_to_publish'        , array( $this, 'publish_post' ) );
@@ -136,6 +137,7 @@ class BNFW {
 		add_filter( 'retrieve_password_message' , array( $this, 'change_password_email_message' ), 10, 4 );
 
 		add_filter( 'plugin_action_links'       , array( $this, 'plugin_action_links' ), 10, 4 );
+		add_action( 'shutdown'                  , array( $this, 'on_shutdown' ) );
 	}
 
 	/**
@@ -214,7 +216,7 @@ class BNFW {
 		$post_type = $post->post_type;
 
 		if ( BNFW_Notification::POST_TYPE != $post_type ) {
-			$this->send_notification( 'new-' . $post_type, $post_id );
+			$this->send_notification_async( 'new-' . $post_type, $post_id );
 		}
 	}
 
@@ -229,7 +231,7 @@ class BNFW {
 		$post_type = $post->post_type;
 
 		if ( BNFW_Notification::POST_TYPE != $post_type ) {
-			$this->send_notification( 'update-' . $post_type, $post_id );
+			$this->send_notification_async( 'update-' . $post_type, $post_id );
 		}
 	}
 
@@ -244,7 +246,7 @@ class BNFW {
 		$post_type = $post->post_type;
 
 		if ( BNFW_Notification::POST_TYPE != $post_type ) {
-			$this->send_notification( 'pending-' . $post_type, $post_id );
+			$this->send_notification_async( 'pending-' . $post_type, $post_id );
 		}
 	}
 
@@ -259,7 +261,7 @@ class BNFW {
 		$post_type = $post->post_type;
 
 		if ( BNFW_Notification::POST_TYPE != $post_type ) {
-			$this->send_notification( 'future-' . $post_type, $post_id );
+			$this->send_notification_async( 'future-' . $post_type, $post_id );
 		}
 	}
 
@@ -436,13 +438,33 @@ class BNFW {
 	 *
 	 * @access private
 	 * @since 1.0
-	 * @param unknown $type
-	 * @param unknown $ref_id
+	 * @param string $type Notification type.
+	 * @param int $ref_id Reference id.
 	 */
 	private function send_notification( $type, $ref_id ) {
 		$notifications = $this->notifier->get_notifications( $type );
 		foreach ( $notifications as $notification ) {
 			$this->engine->send_notification( $this->notifier->read_settings( $notification->ID ), $ref_id );
+		}
+	}
+
+	/**
+	 * Send notification async based on type and ref id.
+	 *
+	 * @access private
+	 * @param  string  $type   Notification type.
+	 * @param  int     $ref_id Reference id.
+	 */
+	private function send_notification_async( $type, $ref_id ) {
+		$notifications = $this->notifier->get_notifications( $type );
+		foreach ( $notifications as $notification ) {
+			$transient = get_transient( 'bnfw-async-notifications' );
+			if ( ! is_array( $transient ) ) {
+				$transient = array();
+			}
+
+			$transient[] = array( 'ref_id' => $ref_id, 'notification_id' => $notification->ID, 'notification_type' => $type );
+			set_transient( 'bnfw-async-notifications', $transient, 600 );
 		}
 	}
 
@@ -460,6 +482,23 @@ class BNFW {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Send notification emails on shutdown.
+	 */
+	public function on_shutdown() {
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			return;
+		}
+
+		$transient = get_transient( 'bnfw-async-notifications' );
+		if ( is_array( $transient ) ) {
+			foreach ( $transient as $id_pairs ) {
+				$this->engine->send_notification( $this->notifier->read_settings( $id_pairs['notification_id'] ), $id_pairs['ref_id'] );
+			}
+			delete_transient( 'bnfw-async-notifications' );
+		}
 	}
 }
 
