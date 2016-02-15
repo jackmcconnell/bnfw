@@ -20,6 +20,9 @@ function bnfw_post_notifications( $notifications, $post_type ) {
 	$notifications[] = 'pending-' . $post_type;
 	$notifications[] = 'future-' . $post_type;
 	$notifications[] = 'comment-' . $post_type;
+	$notifications[] = 'new-comment';
+	$notifications[] = 'new-trackback';
+	$notifications[] = 'new-pingback';
 
 	return $notifications;
 }

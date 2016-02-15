@@ -4,7 +4,7 @@ Donate link: https://betternotificationsforwp.com/donate/
 Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from, author
 Requires at least: 3.5
 Tested up to: 4.4.2
-Stable tag: 1.3.9.3
+Stable tag: 1.3.9.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -189,6 +189,9 @@ An older version might work but this is untested. A lot of the newer features re
 
 
 == Changelog ==
+
+= 1.3.9.4 - 15th February 2016 =
+* Filter improvements for the new [Per-post Override add-on](https://betternotificationsforwp.com/downloads/per-post-override/).
 
 = 1.3.9.3 - 12th February 2016 =
 * General bug fixes and updates relating to future add-ons and the new [Per-post Override add-on](https://betternotificationsforwp.com/downloads/per-post-override/) which allows you to override your notifications for each post / page / custom post.
