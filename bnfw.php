@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: http://wordpress.org/plugins/bnfw/
  * Description: Send customisable emails to your users for different WordPress notifications.
- * Version: 1.3.9.4
+ * Version: 1.3.9.5
  * Author: Voltronik
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: plugins@voltronik.co.uk
@@ -115,7 +115,6 @@ class BNFW {
 			add_action( 'wp_insert_post'        , array( $this, 'insert_post' ), 10, 3 );
 		}
 
-		add_action( 'auto-draft_to_publish'     , array( $this, 'publish_post' ) );
 		add_action( 'draft_to_publish'          , array( $this, 'publish_post' ) );
 		add_action( 'future_to_publish'         , array( $this, 'publish_post' ) );
 		add_action( 'pending_to_publish'        , array( $this, 'publish_post' ) );
