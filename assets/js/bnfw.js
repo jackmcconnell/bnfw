@@ -50,10 +50,9 @@ jQuery(document).ready(function($) {
 			$('#toggle-fields, #email, #cc, #bcc, #users, #disable-autop, #current-user, #post-author').hide();
 			$('#user-password-msg, #email-formatting').show();
 		} else if ( 'new-comment' === $('#notification').val() || 'new-trackback' === $('#notification').val() || 'new-pingback' === $('#notification').val() || 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() ) {
-			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user').show();
-			$('#only-post-author').prop( 'checked', false );
-			$('#post-author').hide();
+			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user, #post-author').show();
 			toggle_fields();
+			toggle_users();
 			$('#user-password-msg').hide();
 		} else {
 			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user, #post-author').show();
@@ -74,15 +73,17 @@ jQuery(document).ready(function($) {
 		} else if ( 'user-password' === $this.val() || 'user-role' === notification ) {
 			$('#toggle-fields, #email, #cc, #bcc, #users, #disable-autop, #current-user, #post-author').hide();
 			$('#user-password-msg, #email-formatting').show();
-		} else if ( 'new-comment' === $('#notification').val() || 'new-trackback' === $('#notification').val() || 'new-pingback' === $('#notification').val() || 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() ) {
+		} else if ( 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() ) {
 			$('#post-author').hide();
 			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user').show();
 			$('#user-password-msg').hide();
 			toggle_fields();
+			toggle_users();
 		} else {
 			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user, #post-author').show();
 			$('#user-password-msg').hide();
 			toggle_fields();
+			toggle_users();
 		}
     });
 

@@ -62,7 +62,7 @@ class BNFW_Engine {
 				$headers[] = 'Content-type: text/plain';
 			}
 
-			if ( is_array( $emails['to'] ) ) {
+			if ( isset( $emails['to'] ) && is_array( $emails['to'] ) ) {
 				foreach ( $emails['to'] as $email ) {
 					wp_mail( $email, stripslashes( $subject ), $message, $headers );
 				}
@@ -192,6 +192,9 @@ class BNFW_Engine {
 				$message = $this->comment_shortcodes( $message, $id );
 				$comment = get_comment( $id );
 				$message = $this->post_shortcodes( $message, $comment->comment_post_ID );
+				if ( 0 != $comment->user_id ) {
+					$message = $this->user_shortcodes( $message, $comment->user_id );
+				}
 				break;
 
 			case 'admin-password':
@@ -267,18 +270,21 @@ class BNFW_Engine {
 		$message = str_replace( '[ping_status]', $post->ping_status, $message );
 		$message = str_replace( '[post_password]', $post->post_password, $message );
 		$message = str_replace( '[post_name]', $post->post_name, $message );
+		$message = str_replace( '[post_slug]', $post->post_name, $message );
 		$message = str_replace( '[to_ping]', $post->to_ping, $message );
 		$message = str_replace( '[pinged]', $post->pinged, $message );
 		$message = str_replace( '[post_modified]', $post->post_modified, $message );
 		$message = str_replace( '[post_modified_gmt]', $post->post_modified_gmt, $message );
 		$message = str_replace( '[post_content_filtered]', $post->post_content_filtered, $message );
 		$message = str_replace( '[post_parent]', $post->post_parent, $message );
+		$message = str_replace( '[post_parent_permalink]', get_permalink( $post->post_parent ), $message );
 		$message = str_replace( '[guid]', $post->guid, $message );
 		$message = str_replace( '[menu_order]', $post->menu_order, $message );
 		$message = str_replace( '[post_type]', $post->post_type, $message );
 		$message = str_replace( '[post_mime_type]', $post->post_mime_type, $message );
 		$message = str_replace( '[comment_count]', $post->comment_count, $message );
 		$message = str_replace( '[permalink]', get_permalink( $post->ID ), $message );
+		$message = str_replace( '[edit_post]', get_edit_post_link( $post->ID ), $message );
 
 		if ( 'future' == $post->post_status ) {
 			$message = str_replace( '[post_scheduled_date]', $post->post_date, $message );
@@ -296,6 +302,8 @@ class BNFW_Engine {
 
 		$user_info = get_userdata( $post->post_author );
 		$message = str_replace( '[post_author]', $user_info->display_name, $message );
+
+		$message = str_replace( '[author_link]', get_author_posts_url( $post->post_author ), $message );
 
 		if ( $last_id = get_post_meta( $post->ID, '_edit_last', true ) ) {
 			if ( $post->post_author != $last_id ) {
@@ -416,7 +424,14 @@ class BNFW_Engine {
 		}
 
 		if ( 'true' === $setting['only-post-author'] ) {
-			$author = get_user_by( 'id', get_post_field( 'post_author', $id ) );
+
+			$post_id = $id;
+			if ( bnfw_is_comment_notification( $setting['notification'] ) ) {
+				$comment = get_comment( $id );
+				$post_id = $comment->comment_post_ID;
+			}
+
+			$author = get_user_by( 'id', get_post_field( 'post_author', $post_id ) );
 			if ( false !== $author ) {
 				$emails['to'] = array( $author->user_email );
 			}

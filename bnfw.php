@@ -3,10 +3,10 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: http://wordpress.org/plugins/bnfw/
  * Description: Send customisable emails to your users for different WordPress notifications.
- * Version: 1.3.9.5
+ * Version: 1.4
  * Author: Voltronik
  * Author URI: https://betternotificationsforwp.com/
- * Author Email: plugins@voltronik.co.uk
+ * Author Email: hello@betternotificationsforwp.com
  * License: GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: bnfw
@@ -74,13 +74,14 @@ class BNFW {
 	 * @since 1.0
 	 */
 	public function includes() {
+
 		// Load license related classes
 		if ( ! class_exists( 'EDD_SL_Plugin_Updater' ) ) {
 			require_once 'includes/libraries/EDD_SL_Plugin_Updater.php';
 		}
 		require_once 'includes/license/class-bnfw-license.php';
 		require_once 'includes/license/class-bnfw-license-setting.php';
-
+		
 		// Load Engine
 		require_once 'includes/engine/class-bnfw-engine.php';
 		require_once 'includes/overrides.php';
@@ -89,7 +90,7 @@ class BNFW {
 		require_once 'includes/admin/class-bnfw-notification.php';
 		require_once 'includes/notification/post-notification.php';
 
-		// helpers
+		// Helpers
 		require_once 'includes/helpers/helpers.php';
 		require_once 'includes/helpers/ajax-helpers.php';
 
@@ -105,13 +106,22 @@ class BNFW {
 	 * @since 1.0
 	 */
 	public function hooks() {
+		global $wp_version;
+
 		register_activation_hook( __FILE__      , array( $this, 'activate' ) );
 
-		// some themes like P2, directly insert posts into DB.
+		// Some themes like P2, directly insert posts into DB.
 		$insert_post_themes = apply_filters( 'bnfw_insert_post_themes', array( 'P2', 'Syncope' ) );
 		$current_theme = wp_get_theme();
 
-		if ( in_array( $current_theme, $insert_post_themes ) ) {
+		/**
+		 * Whether to trigger insert post hook.
+		 *
+		 * @since 1.4
+		 */
+		$trigger_insert_post = apply_filters( 'bnfw_trigger_insert_post', false );
+
+		if ( in_array( $current_theme, $insert_post_themes ) || $trigger_insert_post ) {
 			add_action( 'wp_insert_post'        , array( $this, 'insert_post' ), 10, 3 );
 		}
 
@@ -131,8 +141,12 @@ class BNFW {
 		add_action( 'user_register'             , array( $this, 'welcome_email' ) );
 		add_action( 'set_user_role'             , array( $this, 'user_role_changed' ), 10, 3 );
 
+		if ( version_compare( $wp_version, '4.4', '>=' ) ) {
+			add_filter( 'retrieve_password_title', array( $this, 'change_password_email_title' ), 10, 3 );
+		} else {
+			add_filter( 'retrieve_password_title', array( $this, 'change_password_email_title' ) );
+		}
 		add_action( 'lostpassword_post'         , array( $this, 'on_lost_password' ) );
-		add_filter( 'retrieve_password_title'   , array( $this, 'change_password_email_title' ) );
 		add_filter( 'retrieve_password_message' , array( $this, 'change_password_email_message' ), 10, 4 );
 
 		add_filter( 'plugin_action_links'       , array( $this, 'plugin_action_links' ), 10, 4 );
@@ -338,13 +352,19 @@ class BNFW {
 	 *
 	 * @since 1.1
 	 */
-	public function change_password_email_title( $title ) {
+	public function change_password_email_title( $title, $user_login = '', $user_data = '' ) {
 		$notifications = $this->notifier->get_notifications( 'user-password' );
 		if ( count( $notifications ) > 0 ) {
 			// Ideally there should be only one notification for this type.
 			// If there are multiple notification then we will read data about only the last one
 			$setting = $this->notifier->read_settings( end( $notifications )->ID );
-			return $setting['subject'];
+
+			if ( '' === $user_data ) {
+				return $this->engine->user_shortcodes( $setting['subject'], $user_data->ID );
+
+			} else {
+				return $setting['subject'];
+			}
 		}
 
 		return $title;
@@ -393,7 +413,7 @@ class BNFW {
 	}
 
 	/**
-	 * Send notification for new uses.
+	 * Send notification for new users.
 	 *
 	 * @since 1.0
 	 * @param int $user_id
@@ -403,7 +423,7 @@ class BNFW {
 	}
 
 	/**
-	 * New User - Welcome email
+	 * New User - Post-registration Email
 	 *
 	 * @since 1.1
 	 * @param int $user_id New user id

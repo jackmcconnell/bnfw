@@ -3,8 +3,8 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from, author
 Requires at least: 3.5
-Tested up to: 4.4.2
-Stable tag: 1.3.9.5
+Tested up to: 4.5
+Stable tag: 1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,9 +37,9 @@ Notifications that are currently available to use are:
 
 **Transactional**
 
-* Lost Password (For User)
-* New User Registration (For User)
-* New User - Welcome Email
+* Lost Password - For User
+* New User Registration - For User
+* New User - Post-registration Email
 * User Role Changed
 * Comment Reply
 
@@ -189,6 +189,20 @@ An older version might work but this is untested. A lot of the newer features re
 
 
 == Changelog ==
+
+= 1.4 - 8th April 2016 =
+* New: Shortcode `[post_slug]`. Output the post slug.
+* New: Shortcode `[edit_post]`. Outputs the link to edit the post / page / custom post.
+* New: Shortcode `[post_parent_permalink]`. Outputs a permalink to the post / page / custom post's parent item.
+* New: Shortcode `[author_link]`. Outputs a link to the post / page / custom post's author archive.
+* New: You can now add the collection of User Shortcodes to the 'Lost Password - For User' email. 
+* New: Support for the 'O2' plugin, when used in conjunction with the 'P2' Theme via a filter. Please see the [documentation](https://betternotificationsforwp.com/documentation/) for details.
+* Improved: Users were getting confused with the 'Welcome Email', thinking it operated like that in the 'SB Welcome Email Editor' plugin. The name of this notification has been changed from 'New User - Welcome Email' to 'New User - Post-registration Email' to help differentiate its functionality in BNFW.
+* Improved: The screen where you add your license(s) after purchasing any BNFW add-on(s) is now called 'Add-on Licenses', instead of going to 'Settings' and adding them there. 
+* Improved: Setting a notification to send to 'the author only' now shows a label in the 'User Roles / Users' column in the 'All Notifications' screen.
+* Improved: 'New Comment / Awaiting Moderation', 'New Trackback', and 'New Pingback' notifications now show the 'Send this notification to the Author only' checkbox.
+* Improved: If a notification is present but disabled, the default WordPress notification (if there is one), will not be sent. 
+* Fixed: New Post Published notifications weren't being sent if you had the Per-post Override add-on installed. 
 
 = 1.3.9.5 - 26th February 2016 =
 * Fixed: New Post Published notifications were triggering multiple times due to `auto_draft_to_publish`.

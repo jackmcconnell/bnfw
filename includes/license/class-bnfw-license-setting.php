@@ -7,17 +7,64 @@
 
 defined( 'ABSPATH' ) || exit; // Exit if accessed directly
 
+/**
+ * Add License page.
+ *
+ * @since 1.4
+ */
+function bnfw_add_license_page() {
+	add_submenu_page(
+		'edit.php?post_type=bnfw_notification',
+		__( 'Add-on Licenses', 'bnfw' ),
+		__( 'Add-on Licenses', 'bnfw' ),
+		'manage_options',
+		'bnfw-license',
+		'bnfw_render_license_page'
+	);
+}
+add_action( 'admin_menu', 'bnfw_add_license_page', 11 );
+
+/**
+ * Render license page.
+ *
+ * @since 1.4
+ */
+function bnfw_render_license_page() {
+	$settings = apply_filters( 'bnfw_settings_licenses', array() );
+	ob_start(); ?>
+
+    <div class="wrap">
+        <?php screen_icon(); ?>
+        <h2><?php _e( 'BNFW Add-on Licenses', 'bnfw' ); ?></h2>
+
+        <form method="post" action="options.php" class="bnfw-form">
+			<?php
+				settings_errors();
+				settings_fields( 'bnfw-license-settings' );
+				do_settings_sections( 'bnfw-license' );
+
+				if ( ! empty( $settings ) ) {
+					submit_button( __( 'Save License', 'bnfw' ) );
+				} else {
+					_e( '<br>You have no BNFW Add-ons installed yet. You can buy add-ons from the <a href="https://betternotificationsforwp.com/store/?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Add-on%20Licenses"&amp;utm_medium=referral" target="_blank">Store</a>.', 'bnfw' );
+				}
+			?>
+        </form>
+    </div>
+
+    <?php echo ob_get_clean();
+}
+
 function bnfw_license_settings() {
 	$settings = apply_filters( 'bnfw_settings_licenses', array() );
 
 	if ( ! empty( $settings ) ) {
 
-		// Set-up - General Options Section
 		add_settings_section(
-			'bnfw_license_section',     // Section ID
-			__( 'Addon Licenses', 'bnfw' ),                                 // Title above settings section
-			'__return_false',    // Name of function that renders a description of the settings section
-			'bnfw-settings'                     // Page to show on
+			'bnfw_license_section',           // Section ID
+			__( '', 'bnfw' ),  				  // Title above settings section
+			'__return_false',                 // Name of function that renders a description of the settings section
+			'bnfw-license'                    // Page to show on
 		);
 
 		foreach ( $settings as $option ) {
@@ -26,7 +73,7 @@ function bnfw_license_settings() {
 				'bnfw_licenses[' . $option['id'] . ']',
 				$name,
 				'bnfw_license_key_callback',
-				'bnfw-settings',
+				'bnfw-license',
 				'bnfw_license_section',
 				array(
 					'id'          => isset( $option['id'] )          ? $option['id']          : null,
@@ -48,7 +95,7 @@ function bnfw_license_settings() {
 		}
 
 		register_setting(
-			'bnfw-settings',
+			'bnfw-license-settings',
 			'bnfw_licenses'
 		);
 	}

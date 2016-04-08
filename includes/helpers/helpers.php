@@ -65,3 +65,31 @@ function bnfw_render_users_dropdown( $selected_users ) {
 		echo '<option value="', $user->ID, '" ', $selected, '>', $user->user_login, '</option>';
 	}
 }
+
+/**
+ * Find whether the notification name is a comment notification.
+ *
+ * @param  string $notification_name Notification Name.
+ * @return bool                      True if it is a comment notification, False otherwise.
+ */
+function bnfw_is_comment_notification( $notification_name ) {
+	$is_comment_notification = false;
+
+	switch ( $notification_name ) {
+		case 'new-comment':
+		case 'new-trackback':
+		case 'new-pingback':
+		case 'reply-comment':
+			$is_comment_notification = true;
+			break;
+
+		default:
+			$type = explode( '-', $notification_name, 2 );
+			if ( 'comment' == $type[0] ) {
+				$is_comment_notification = true;
+			}
+			break;
+	}
+
+	return $is_comment_notification;
+}

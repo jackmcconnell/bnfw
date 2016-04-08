@@ -167,7 +167,7 @@ class BNFW_Notification {
                     <optgroup label="Transactional">
                     <option value="user-password" <?php selected( 'user-password', $setting['notification'] );?>><?php _e( 'Lost Password - For User', 'bnfw' );?></option>
                     <option value="new-user" <?php selected( 'new-user', $setting['notification'] );?>><?php _e( 'New User Registration - For User', 'bnfw' );?></option>
-                    <option value="welcome-email" <?php selected( 'welcome-email', $setting['notification'] );?>><?php _e( 'New User - Welcome Email', 'bnfw' );?></option>
+                    <option value="welcome-email" <?php selected( 'welcome-email', $setting['notification'] );?>><?php _e( 'New User - Post-registration Email', 'bnfw' );?></option>
                     <option value="user-role" <?php selected( 'user-role', $setting['notification'] );?>><?php _e( 'User Role Changed', 'bnfw' );?></option>
                     <option value="reply-comment" <?php selected( 'reply-comment', $setting['notification'] );?>><?php _e( 'Comment Reply', 'bnfw' );?></option>
                     </optgroup>
@@ -389,6 +389,9 @@ class BNFW_Notification {
 	 */
 	public function is_assets_needed() {
 		if ( self::POST_TYPE === get_post_type() ) {
+			// The enqueue assets function may be included from addons.
+			// We want to disable autosave only for notifications
+			wp_dequeue_script( 'autosave' );
 			$this->enqueue_assets();
 			do_action( 'bnfw_after_enqueue_scripts' );
 		}
@@ -400,8 +403,6 @@ class BNFW_Notification {
 	 * @since 1.4
 	 */
 	public function enqueue_assets() {
-		wp_dequeue_script( 'autosave' );
-
 		wp_deregister_script( 'select2' );
 		wp_dequeue_script( 'select2' );
 		wp_deregister_style( 'select2' );
@@ -670,9 +671,10 @@ class BNFW_Notification {
 	 *
 	 * @since 1.0
 	 * @param array|string $types
+	 * @param bool $exclude_disabled (optional) Whether to exclude disabled notifications or not. True by default.
 	 * @return array WP_Post objects
 	 */
-	public function get_notifications( $types ) {
+	public function get_notifications( $types, $exclude_disabled = true ) {
 		if ( ! is_array( $types ) ) {
 			$types = array( $types );
 		}
@@ -685,13 +687,16 @@ class BNFW_Notification {
 					'value'   => $types,
 					'compare' => 'IN',
 				),
-				array(
-					'key'     => self::META_KEY_PREFIX . 'disabled',
-					'value'   => 'true',
-					'compare' => '!=',
-				),
 			),
 		);
+
+		if ( $exclude_disabled ) {
+			$args['meta_query'][] = array(
+				'key'     => self::META_KEY_PREFIX . 'disabled',
+				'value'   => 'true',
+				'compare' => '!=',
+			);
+		}
 
 		$wp_query = new WP_Query();
 		$posts = $wp_query->query( $args );
@@ -704,10 +709,11 @@ class BNFW_Notification {
 	 * @since 1.1
 	 *
 	 * @param string $type Notification Type.
+	 * @param bool $exclude_disabled (optional) Whether to exclude disabled notifications or not. True by default.
 	 * @return bool True if present, False otherwise
 	 */
-	public function notification_exists( $type ) {
-		$notifications = $this->get_notifications( $type );
+	public function notification_exists( $type, $exclude_disabled = true ) {
+		$notifications = $this->get_notifications( $type, $exclude_disabled );
 
 		if ( count( $notifications ) > 0 ) {
 			return true;
@@ -736,7 +742,6 @@ class BNFW_Notification {
 	/**
 	 * Custom column appears in each row.
 	 *
-	 *
 	 * @since 1.0
 	 * @action manage_{post_type}_posts_custom_column
 	 * @param string  $column  Column name
@@ -757,8 +762,12 @@ class BNFW_Notification {
 				echo ! empty( $setting['subject'] ) ? $setting['subject'] : '';
 				break;
 			case 'users':
-				$users = $this->get_names_from_users( $setting['users'] );
-				echo implode( ', ', $users );
+				if ( 'true' === $setting['only-post-author'] ) {
+					echo __( 'Author only', 'bnfw' );
+				} else {
+					$users = $this->get_names_from_users( $setting['users'] );
+					echo implode( ', ', $users );
+				}
 				break;
 		}
 
@@ -830,13 +839,13 @@ class BNFW_Notification {
 				$name = __( 'Lost Password - For Admin', 'bnfw' );
 				break;
 			case 'new-user':
-				$name = __( 'User Registration - For User', 'bnfw' );
+				$name = __( 'New User Registration - For User', 'bnfw' );
 				break;
 			case 'welcome-email':
-				$name = __( 'New User - Welcome Email', 'bnfw' );
+				$name = __( 'New User - Post-registration Email', 'bnfw' );
 				break;
 			case 'admin-user':
-				$name = __( 'User Registration - For Admin', 'bnfw' );
+				$name = __( 'New User Registration - For Admin', 'bnfw' );
 				break;
 			case 'user-role':
 				$name = __( 'User Role Changed', 'bnfw' );

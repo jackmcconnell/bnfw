@@ -20,7 +20,7 @@ function bnfw_admin_menu() {
 }
 // Add the Admin pages to the WordPress menu
 add_action( 'admin_menu', 'bnfw_admin_menu' );
-add_action( 'admin_menu', 'bnfw_menu_item_links' );
+add_action( 'admin_menu', 'bnfw_menu_item_links', 12 );
 add_action( 'admin_head', 'bnfw_menu_item_link_targets' );
 
 /* ------------------------------------------------------------------------ *
@@ -58,14 +58,14 @@ function bnfw_menu_item_links() {
 	global $submenu;
 
 	// Documentation Link
-	$submenu['edit.php?post_type=bnfw_notification'][400] = array(
-		'<div id="bnfw-menu-item-documentation">Documentation</div>',
+	$submenu['edit.php?post_type=bnfw_notification'][500] = array(
+		'<div id="bnfw-menu-item-documentation" style="color: #73daeb;">Documentation</div>',
 		'manage_options',
 		'https://betternotificationsforwp.com/documentation/?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Documentation"&amp;utm_medium=referral',
 	);
 
 	// Add-ons Link
-	$submenu['edit.php?post_type=bnfw_notification'][500] = array(
+	$submenu['edit.php?post_type=bnfw_notification'][600] = array(
 		'<div id="bnfw-menu-item-addons" style="color: #ff6f59;">Add-ons</div>',
 		'manage_options',
 		'https://betternotificationsforwp.com/store/?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Add-on"&amp;utm_medium=referral',
@@ -74,20 +74,21 @@ function bnfw_menu_item_links() {
 
 function bnfw_menu_item_link_targets() {
 ?>
-
-	<!-- Documentation Link -->
+	
 	<script type="text/javascript">
     	jQuery(document).ready(function($) {
+    		// Documentation Link
 			$('#bnfw-menu-item-documentation').parent().attr('target', '_blank');
-		});
-	</script>
+			$('#bnfw-menu-item-documentation').hover(function() {
+				$(this).css('color', '#a0e6f1');
+			}, function() {
+				$(this).css('color', '#73daeb');
+			});
 
-	<!-- Add-ons Link -->
-	<script type="text/javascript">
-    	jQuery(document).ready(function($) {
+			// Add-ons Link
 			$('#bnfw-menu-item-addons').parent().attr('target', '_blank');
 			$('#bnfw-menu-item-addons').hover(function() {
-				$(this).css('color', '#ffaa9d');
+				$(this).css('color', '#ff9b8c');
 			}, function() {
 				$(this).css('color', '#ff6f59');
 			});

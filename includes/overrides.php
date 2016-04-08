@@ -38,7 +38,7 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 			// we want to reverse this for the plain text arena of emails.
 			$blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
 
-			if ( ! $bnfw->notifier->notification_exists( 'admin-user' ) ) {
+			if ( ! $bnfw->notifier->notification_exists( 'admin-user', false ) ) {
 				$message  = sprintf(__('New user registration on your site %s:'), $blogname) . "\r\n\r\n";
 				$message .= sprintf(__('Username: %s'), $user->user_login) . "\r\n\r\n";
 				$message .= sprintf(__('E-mail: %s'), $user->user_email) . "\r\n";
@@ -64,7 +64,7 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 			$hashed = time() . ':' . $wp_hasher->HashPassword( $key );
 			$wpdb->update( $wpdb->users, array( 'user_activation_key' => $hashed ), array( 'user_login' => $user->user_login ) );
 
-			if ( $bnfw->notifier->notification_exists( 'new-user' ) ) {
+			if ( $bnfw->notifier->notification_exists( 'new-user', false ) ) {
 				$notifications = $bnfw->notifier->get_notifications( 'new-user' );
 				$password_url = network_site_url( "wp-login.php?action=rp&key=" . $key . "&login=" . rawurlencode( $user->user_login ), 'login' );
 				foreach ( $notifications as $notification ) {
@@ -88,7 +88,7 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 			// we want to reverse this for the plain text arena of emails.
 			$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
 
-			if ( ! $bnfw->notifier->notification_exists( 'admin-user' ) ) {
+			if ( ! $bnfw->notifier->notification_exists( 'admin-user', false ) ) {
 				$message  = sprintf( __( 'New user registration on your site %s:' ), $blogname ) . "\r\n\r\n";
 				$message .= sprintf( __( 'Username: %s' ), $user->user_login ) . "\r\n\r\n";
 				$message .= sprintf( __( 'E-mail: %s' ), $user->user_email ) . "\r\n";
@@ -100,7 +100,7 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 				return;
 			}
 
-			if ( $bnfw->notifier->notification_exists( 'new-user' ) ) {
+			if ( $bnfw->notifier->notification_exists( 'new-user', false ) ) {
 				$notifications = $bnfw->notifier->get_notifications( 'new-user' );
 				foreach ( $notifications as $notification ) {
 					$bnfw->engine->send_registration_email( $bnfw->notifier->read_settings( $notification->ID ), $user, $plaintext_pass );
