@@ -57,24 +57,25 @@ function bnfw_settings_page() {
 function bnfw_menu_item_links() {
 	global $submenu;
 
-	// Documentation Link
-	$submenu['edit.php?post_type=bnfw_notification'][500] = array(
-		'<div id="bnfw-menu-item-documentation" style="color: #73daeb;">Documentation</div>',
-		'manage_options',
-		'https://betternotificationsforwp.com/documentation/?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Documentation"&amp;utm_medium=referral',
-	);
+	if ( current_user_can( 'manage_options' ) ) {
+		// Documentation Link
+		$submenu['edit.php?post_type=bnfw_notification'][500] = array(
+			'<div id="bnfw-menu-item-documentation" style="color: #73daeb;">Documentation</div>',
+			'manage_options',
+			'https://betternotificationsforwp.com/documentation/?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Documentation"&amp;utm_medium=referral',
+		);
 
-	// Add-ons Link
-	$submenu['edit.php?post_type=bnfw_notification'][600] = array(
-		'<div id="bnfw-menu-item-addons" style="color: #ff6f59;">Add-ons</div>',
-		'manage_options',
-		'https://betternotificationsforwp.com/store/?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Add-on"&amp;utm_medium=referral',
-	);
+		// Add-ons Link
+		$submenu['edit.php?post_type=bnfw_notification'][600] = array(
+			'<div id="bnfw-menu-item-addons" style="color: #ff6f59;">Add-ons</div>',
+			'manage_options',
+			'https://betternotificationsforwp.com/store/?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Add-on"&amp;utm_medium=referral',
+		);
+	}
 }
 
 function bnfw_menu_item_link_targets() {
 ?>
-	
 	<script type="text/javascript">
     	jQuery(document).ready(function($) {
     		// Documentation Link

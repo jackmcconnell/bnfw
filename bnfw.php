@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: Better Notifications for WordPress
- * Plugin URI: http://wordpress.org/plugins/bnfw/
+ * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Send customisable emails to your users for different WordPress notifications.
- * Version: 1.4
+ * Version: 1.4.1
  * Author: Voltronik
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -14,7 +14,7 @@
  */
 
 /**
- * Copyright © 2015 Voltronik (plugins@voltronik.co.uk)
+ * Copyright © 2015 Voltronik (hello@betternotificationsforwp.com)
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
  * published by the Free Software Foundation.
@@ -81,7 +81,7 @@ class BNFW {
 		}
 		require_once 'includes/license/class-bnfw-license.php';
 		require_once 'includes/license/class-bnfw-license-setting.php';
-		
+
 		// Load Engine
 		require_once 'includes/engine/class-bnfw-engine.php';
 		require_once 'includes/overrides.php';
@@ -382,13 +382,14 @@ class BNFW {
 			// If there are multiple notification then we will read data about only the last one
 			$setting = $this->notifier->read_settings( end( $notifications )->ID );
 
+			$message = $this->engine->handle_password_reset_shortcodes( $setting, $key, $user_login, $user_data );
+
 			if ( 'html' == $setting['email-formatting'] ) {
 				add_filter( 'wp_mail_content_type', array( $this, 'set_html_content_type' ) );
+				$message = wpautop( $message );
 			} else {
 				add_filter( 'wp_mail_content_type', array( $this, 'set_text_content_type' ) );
 			}
-
-			return $this->engine->handle_password_reset_shortcodes( $setting, $key, $user_login, $user_data );
 		}
 
 		return $message;
@@ -439,9 +440,10 @@ class BNFW {
 	 * Send notification when a user role changes.
 	 *
 	 * @since 1.3.9
-	 * @param int $user_id User ID
+	 *
+	 * @param int    $user_id  User ID
 	 * @param string $new_role New User role
-	 * @param string $old_role Old User role
+	 * @param array  $old_role Old User role
 	 */
 	public function user_role_changed( $user_id, $new_role, $old_role ) {
 		if ( ! empty( $old_role ) ) {
@@ -513,10 +515,10 @@ class BNFW {
 
 		$transient = get_transient( 'bnfw-async-notifications' );
 		if ( is_array( $transient ) ) {
+			delete_transient( 'bnfw-async-notifications' );
 			foreach ( $transient as $id_pairs ) {
 				$this->engine->send_notification( $this->notifier->read_settings( $id_pairs['notification_id'] ), $id_pairs['ref_id'] );
 			}
-			delete_transient( 'bnfw-async-notifications' );
 		}
 	}
 }

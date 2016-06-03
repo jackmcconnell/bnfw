@@ -135,8 +135,9 @@ class BNFW_Engine {
 	 * Send user role changed email.
 	 *
 	 * @since 1.3.9
-	 * @param array  $setting Notification setting
-	 * @param object $user_id User ID
+	 *
+	 * @param array $setting Notification setting
+	 * @param int   $user_id User ID
 	 */
 	public function send_user_role_changed_email( $setting, $user_id ) {
 		$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $user_id );
@@ -152,9 +153,7 @@ class BNFW_Engine {
 		}
 
 		$user = get_user_by( 'id', $user_id );
-		if ( $user->user_activation_key == '' ) {
-			wp_mail( $user->user_email, stripslashes( $subject ), $message, $headers );
-		}
+		wp_mail( $user->user_email, stripslashes( $subject ), $message, $headers );
 	}
 
 	/**
@@ -237,6 +236,9 @@ class BNFW_Engine {
 					$message = $this->comment_shortcodes( $message, $id );
 					$comment = get_comment( $id );
 					$message = $this->post_shortcodes( $message, $comment->comment_post_ID );
+					if ( 0 != $comment->user_id ) {
+						$message = $this->user_shortcodes( $message, $comment->user_id );
+					}
 				}
 				break;
 		}
@@ -380,6 +382,7 @@ class BNFW_Engine {
 			$message = str_replace( '[wp_capabilities]', implode( ',', $user_info->wp_capabilities ), $message );
 		}
 
+		$message = apply_filters( 'bnfw_shortcodes_user', $message, $user_id );
 		return $message;
 	}
 

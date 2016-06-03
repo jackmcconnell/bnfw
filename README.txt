@@ -3,8 +3,8 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from, author
 Requires at least: 3.5
-Tested up to: 4.5
-Stable tag: 1.4
+Tested up to: 4.5.2
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Send customisable emails to your users for different WordPress notifications.
 
 == Description ==
 
-> New add-ons are now available! [Buy Add-ons](https://betternotificationsforwp.com/store/)
+> New add-ons are now available! [View Add-ons](https://betternotificationsforwp.com/store/)
 
 Better Notifications for WordPress allows you to create custom email notifications and send them to user roles (including custom roles) or individual users for all kinds of things happening on your WordPress website. Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using an appropriate 3rd party plugin should you wish.
 
@@ -32,8 +32,8 @@ Notifications that are currently available to use are:
 * New Comment / Comment Awaiting Moderation
 * New Trackback
 * New Pingback
-* Lost Password (For Admin)
-* New User Registration (For Admin)
+* Lost Password - For Admin
+* New User Registration - For Admin
 
 **Transactional**
 
@@ -49,7 +49,7 @@ Notifications that are currently available to use are:
 * Post Updated
 * Post Pending Review
 * Post Scheduled
-* Post - Custom Field Updated ([Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
+* Post - Custom Field Updated ([Custom Fields Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
 
 **Pages**
 
@@ -58,7 +58,7 @@ Notifications that are currently available to use are:
 * Page Pending Review
 * Page Scheduled
 * Page - New Comment
-* Page - Custom Field Updated ([Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
+* Page - Custom Field Updated ([Custom Fields Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
 
 **Posts**
 
@@ -132,9 +132,9 @@ This will very much depend on what notifications you're using the plugin for. Ou
 
 First of all, follow [this article](https://betternotificationsforwp.com/how-can-i-receive-the-best-support/) about how to find out what might be causing the problem. Additionally, this [very handy answer](http://stackoverflow.com/questions/371/how-do-you-make-sure-email-you-send-programmatically-is-not-automatically-marked) on Stack Overflow explains what you might need to do to make sure that emails don't make it through to your users SPAM / Junk folders. It's worth going through this and completing as much as you can.
 
-Many hosts place a limit on the number of emails that can be sent out within an hour so this may also cause some delay in emails arriving. Please check with your host to find out what this limit is. 
+Many hosts place a limit on the number of emails that can be sent out within an hour so this may also cause some delay in emails arriving. MailPoet has a fairly extensive list of hosts and their corresponding email rate limits that's worth checkout [here](https://support.mailpoet.com/knowledgebase/lists-of-hosts-and-their-sending-limits/). Alternatively, please check with your host directly to find out what your limit is. 
 
-If you're still having problems, please drop me a line in the [Forum](https://wordpress.org/support/plugin/bnfw) and I'll do my best to help. 
+If you're still having problems, please drop me a line in the [Free Support Forums](https://wordpress.org/support/plugin/bnfw) and I'll do my best to help. 
 
 = Some of my shortcodes aren't working! =
 
@@ -151,22 +151,6 @@ WordPress, by default, sends all emails in Plain Text. If you'd like to include 
 = Custom Post Type 'X' isn't showing in the list of available custom post types =
 
 This is most likely because it's `public` setting is set to `false`. Try changing this and see if it shows up in the list. If the custom post type has been created by a plugin and is set to private (such as [TablePress](https://wordpress.org/plugins/tablepress/ "TablePress")), you'll need to get in touch with the plugin author to see if they'll consider changing it to public instead so that BNFW can send out notifications for it. 
-
-= I'm using the P2 theme and my notifications are coming through twice =
-
-In order to fix a problem with P2 not triggering notifications at all, if you post from the WordPress Admin, it will trigger two notifications: one for the standard settings and one for the additional P2 settings. I recommend posting from the front-end only if you're using P2 in order to trigger just a single notification. 
-
-= I'm using a theme and notifications aren't coming through =
-
-Try adding this code to your functions.php in your theme / child theme directory and replace `theme_name` with the name of your theme and re-test. 
-
-`
-function bnfw_insert_post_hook_for_theme( $themes ) {
-	$themes[] = 'theme_name';
-	return $themes;
-}
-add_filter( 'bnfw_insert_post_themes', 'bnfw_insert_post_hook_for_theme' );
-`
 
 = Can I translate this plugin? =
 
@@ -189,6 +173,13 @@ An older version might work but this is untested. A lot of the newer features re
 
 
 == Changelog ==
+
+= 1.4.1 - 3rd June 2016 =
+* Fixed: Multiple emails were being sent for a single notification for a small number of users. After lots of hunting and lots of testing, I'm hoping this should now be fixed.
+* Fixed: The 'User Role Changed' notification was broken after the update to WordPress 4.5.
+* Fixed: The 'Password Reset - For User' notification was being sent in HTML but with all carriage returns / line breaks stripped out.
+* Fixed: User shortcodes for new comments on custom post types weren't being outputted properly.
+* Added: German Translation (props Michael Schröttle).
 
 = 1.4 - 8th April 2016 =
 * New: Shortcode `[post_slug]`. Output the post slug.
