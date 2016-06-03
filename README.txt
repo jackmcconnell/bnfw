@@ -177,8 +177,9 @@ An older version might work but this is untested. A lot of the newer features re
 = 1.4.1 - 3rd June 2016 =
 * Fixed: Multiple emails were being sent for a single notification for a small number of users. After lots of hunting and lots of testing, I'm hoping this should now be fixed.
 * Fixed: The 'User Role Changed' notification was broken after the update to WordPress 4.5.
-* Fixed: The 'Password Reset - For User' notification was being sent in HTML but with all carriage returns / line breaks stripped out.
+* Fixed: The 'Password Reset - For User' and 'New User - Post-registration Email' notifications were being sent in HTML but with all carriage returns / line breaks stripped out.
 * Fixed: User shortcodes for new comments on custom post types weren't being outputted properly.
+* Fixed: The 'Notifications' BNFW menu item in the Sidebar in the WordPress Admin was showing for non-admins.
 * Added: German Translation (props Michael Schröttle).
 
 = 1.4 - 8th April 2016 =

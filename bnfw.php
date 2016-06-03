@@ -14,7 +14,7 @@
  */
 
 /**
- * Copyright © 2015 Voltronik (hello@betternotificationsforwp.com)
+ * Copyright © 2016 Voltronik (hello@betternotificationsforwp.com)
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
  * published by the Free Software Foundation.
