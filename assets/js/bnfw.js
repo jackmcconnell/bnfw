@@ -43,13 +43,13 @@ jQuery(document).ready(function($) {
 
 		toggle_fields();
 
-		if ( 'new-user' === $('#notification').val() || 'welcome-email' === $('#notification').val() || 'reply-comment' === $('#notification').val() ) {
+		if ( 'new-user' === $('#notification').val() || 'welcome-email' === $('#notification').val() || 'reply-comment' === $('#notification').val() || notification.startsWith( 'commentreply-' ) ) {
 			$('#toggle-fields, #email, #cc, #bcc, #users, #email-formatting, #disable-autop, #current-user, #post-author').hide();
 			$('#user-password-msg').show();
 		} else if ( 'user-password' === $('#notification').val() || 'user-role' === notification ) {
-			$('#toggle-fields, #email, #cc, #bcc, #users, #disable-autop, #current-user, #post-author').hide();
-			$('#user-password-msg, #email-formatting').show();
-		} else if ( 'new-comment' === $('#notification').val() || 'new-trackback' === $('#notification').val() || 'new-pingback' === $('#notification').val() || 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() ) {
+			$('#toggle-fields, #email, #cc, #bcc, #users, #current-user, #post-author').hide();
+			$('#user-password-msg, #disable-autop, #email-formatting').show();
+		} else if ( 'new-comment' === $('#notification').val() || 'new-trackback' === $('#notification').val() || 'new-pingback' === $('#notification').val() || 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() || 'admin-role' === notification ) {
 			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user, #post-author').show();
 			toggle_fields();
 			toggle_users();
@@ -67,13 +67,13 @@ jQuery(document).ready(function($) {
 		var $this = $(this),
 			notification = $this.val();
 
-		if ( 'new-user' === $this.val() || 'welcome-email' === $this.val() || 'reply-comment' === $this.val() ) {
+		if ( 'new-user' === $this.val() || 'welcome-email' === $this.val() || 'reply-comment' === $this.val() || notification.startsWith( 'commentreply-' ) ) {
 			$('#toggle-fields, #email, #cc, #bcc, #users, #email-formatting, #disable-autop, #current-user, #post-author').hide();
 			$('#user-password-msg').show();
 		} else if ( 'user-password' === $this.val() || 'user-role' === notification ) {
-			$('#toggle-fields, #email, #cc, #bcc, #users, #disable-autop, #current-user, #post-author').hide();
-			$('#user-password-msg, #email-formatting').show();
-		} else if ( 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() ) {
+			$('#toggle-fields, #email, #cc, #bcc, #users, #current-user, #post-author').hide();
+			$('#user-password-msg, #disable-autop, #email-formatting').show();
+		} else if ( 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() || 'admin-role' === notification ) {
 			$('#post-author').hide();
 			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user').show();
 			$('#user-password-msg').hide();
@@ -123,11 +123,13 @@ jQuery(document).ready(function($) {
 			case 'new-trackback':
 			case 'new-pingback':
 			case 'reply-comment':
+			case 'commentreply-page':
 			case 'user-password':
 			case 'admin-password':
 			case 'new-user':
 			case 'welcome-email':
 			case 'user-role':
+			case 'admin-role':
 			case 'admin-user':
 			case 'new-post':
 			case 'update-post':
@@ -146,6 +148,9 @@ jQuery(document).ready(function($) {
 					case 'pending':
 					case 'future':
 					case 'comment':
+						notification_slug = splited[0] + '-post';
+						break;
+					case 'commentreply':
 						notification_slug = splited[0] + '-post';
 						break;
 					case 'newterm':

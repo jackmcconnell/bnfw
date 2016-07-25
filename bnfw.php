@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Send customisable emails to your users for different WordPress notifications.
- * Version: 1.4.1
+ * Version: 1.5
  * Author: Voltronik
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -108,7 +108,7 @@ class BNFW {
 	public function hooks() {
 		global $wp_version;
 
-		register_activation_hook( __FILE__      , array( $this, 'activate' ) );
+		register_activation_hook( __FILE__, array( $this, 'activate' ) );
 
 		// Some themes like P2, directly insert posts into DB.
 		$insert_post_themes = apply_filters( 'bnfw_insert_post_themes', array( 'P2', 'Syncope' ) );
@@ -296,7 +296,11 @@ class BNFW {
 
 			// comment reply notification.
 			if ( $the_comment->comment_parent > 0 ) {
-				$notifications = $this->notifier->get_notifications( 'reply-comment' );
+				$notification_type = 'reply-comment'; // old notification name
+				if ( 'post' != $post->post_type ) {
+					$notification_type = 'commentreply-' . $post->post_type;
+				}
+				$notifications = $this->notifier->get_notifications( $notification_type );
 				if ( count( $notifications ) > 0 ) {
 					$parent = get_comment( $the_comment->comment_parent );
 					if ( $parent->comment_author_email != $the_comment->comment_author_email ) {
@@ -451,6 +455,8 @@ class BNFW {
 			foreach ( $notifications as $notification ) {
 				$this->engine->send_user_role_changed_email( $this->notifier->read_settings( $notification->ID ), $user_id );
 			}
+
+			$this->send_notification( 'admin-role', $user_id );
 		}
 	}
 

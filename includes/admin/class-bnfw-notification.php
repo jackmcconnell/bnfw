@@ -158,35 +158,37 @@ class BNFW_Notification {
             <td>
                 <select name="notification" id="notification" class="select2" data-placeholder="Select the notification type" style="width:75%">
                     <optgroup label="WordPress Defaults">
-                    <option value="new-comment" <?php selected( 'new-comment', $setting['notification'] );?>><?php _e( 'New Comment / Awaiting Moderation', 'bnfw' ); ?></option>
-                    <option value="new-trackback" <?php selected( 'new-trackback', $setting['notification'] );?>><?php _e( 'New Trackback', 'bnfw' );?></option>
-                    <option value="new-pingback" <?php selected( 'new-pingback', $setting['notification'] );?>><?php _e( 'New Pingback', 'bnfw' );?></option>
-                    <option value="admin-password" <?php selected( 'admin-password', $setting['notification'] );?>><?php _e( 'Lost Password - For Admin', 'bnfw' );?></option>
-                    <option value="admin-user" <?php selected( 'admin-user', $setting['notification'] );?>><?php _e( 'New User Registration - For Admin', 'bnfw' );?></option>
+	                    <option value="new-comment" <?php selected( 'new-comment', $setting['notification'] );?>><?php _e( 'New Comment / Awaiting Moderation', 'bnfw' ); ?></option>
+	                    <option value="new-trackback" <?php selected( 'new-trackback', $setting['notification'] );?>><?php _e( 'New Trackback', 'bnfw' );?></option>
+	                    <option value="new-pingback" <?php selected( 'new-pingback', $setting['notification'] );?>><?php _e( 'New Pingback', 'bnfw' );?></option>
+	                    <option value="admin-password" <?php selected( 'admin-password', $setting['notification'] );?>><?php _e( 'Lost Password - For Admin', 'bnfw' );?></option>
+	                    <option value="admin-user" <?php selected( 'admin-user', $setting['notification'] );?>><?php _e( 'New User Registration - For Admin', 'bnfw' );?></option>
                     </optgroup>
                     <optgroup label="Transactional">
-                    <option value="user-password" <?php selected( 'user-password', $setting['notification'] );?>><?php _e( 'Lost Password - For User', 'bnfw' );?></option>
-                    <option value="new-user" <?php selected( 'new-user', $setting['notification'] );?>><?php _e( 'New User Registration - For User', 'bnfw' );?></option>
-                    <option value="welcome-email" <?php selected( 'welcome-email', $setting['notification'] );?>><?php _e( 'New User - Post-registration Email', 'bnfw' );?></option>
-                    <option value="user-role" <?php selected( 'user-role', $setting['notification'] );?>><?php _e( 'User Role Changed', 'bnfw' );?></option>
-                    <option value="reply-comment" <?php selected( 'reply-comment', $setting['notification'] );?>><?php _e( 'Comment Reply', 'bnfw' );?></option>
+	                    <option value="user-password" <?php selected( 'user-password', $setting['notification'] );?>><?php _e( 'Lost Password - For User', 'bnfw' );?></option>
+	                    <option value="new-user" <?php selected( 'new-user', $setting['notification'] );?>><?php _e( 'New User Registration - For User', 'bnfw' );?></option>
+	                    <option value="welcome-email" <?php selected( 'welcome-email', $setting['notification'] );?>><?php _e( 'New User - Post-registration Email', 'bnfw' );?></option>
+	                    <option value="admin-role" <?php selected( 'admin-role', $setting['notification'] );?>><?php _e( 'User Role Changed - For Admin', 'bnfw' );?></option>
+	                    <option value="user-role" <?php selected( 'user-role', $setting['notification'] );?>><?php _e( 'User Role Changed - For User', 'bnfw' );?></option>
+	                    <option value="reply-comment" <?php selected( 'reply-comment', $setting['notification'] );?>><?php _e( 'Comment Reply', 'bnfw' );?></option>
                     </optgroup>
                     <optgroup label="Posts">
-                    <option value="new-post" <?php selected( 'new-post', $setting['notification'] );?>><?php _e( 'New Post Published', 'bnfw' );?></option>
-                    <option value="update-post" <?php selected( 'update-post', $setting['notification'] );?>><?php _e( 'Post Updated', 'bnfw' );?></option>
-					<option value="pending-post" <?php selected( 'pending-post', $setting['notification'] );?>><?php _e( 'Post Pending Review', 'bnfw' );?></option>
-					<option value="future-post" <?php selected( 'future-post', $setting['notification'] );?>><?php _e( 'Post Scheduled', 'bnfw' );?></option>
-					<option value="newterm-category" <?php selected( 'newterm-category', $setting['notification'] );?>><?php _e( 'New Category', 'bnfw' ); ?></option>
-					<option value="newterm-post_tag" <?php selected( 'newterm-post_tag', $setting['notification'] );?>><?php _e( 'New Tag', 'bnfw' ); ?></option>
-					<?php do_action( 'bnfw_after_notification_options', 'post', 'Post', $setting ); ?>
+	                    <option value="new-post" <?php selected( 'new-post', $setting['notification'] );?>><?php _e( 'New Post Published', 'bnfw' );?></option>
+	                    <option value="update-post" <?php selected( 'update-post', $setting['notification'] );?>><?php _e( 'Post Updated', 'bnfw' );?></option>
+						<option value="pending-post" <?php selected( 'pending-post', $setting['notification'] );?>><?php _e( 'Post Pending Review', 'bnfw' );?></option>
+						<option value="future-post" <?php selected( 'future-post', $setting['notification'] );?>><?php _e( 'Post Scheduled', 'bnfw' );?></option>
+						<option value="newterm-category" <?php selected( 'newterm-category', $setting['notification'] );?>><?php _e( 'New Category', 'bnfw' ); ?></option>
+						<option value="newterm-post_tag" <?php selected( 'newterm-post_tag', $setting['notification'] );?>><?php _e( 'New Tag', 'bnfw' ); ?></option>
+						<?php do_action( 'bnfw_after_notification_options', 'post', 'Post', $setting ); ?>
                     </optgroup>
 					<optgroup label="Page">
-					<option value="new-page" <?php selected( 'new-page', $setting['notification'] );?>><?php _e( 'New Page Published', 'bnfw' );?></option>
-					<option value="update-page" <?php selected( 'update-page', $setting['notification'] );?>><?php _e( 'Page Updated', 'bnfw' );?></option>
-					<option value="pending-page" <?php selected( 'pending-page', $setting['notification'] );?>><?php _e( 'Page Pending Review', 'bnfw' );?></option>
-					<option value="future-page" <?php selected( 'future-page', $setting['notification'] );?>><?php _e( 'Page Scheduled', 'bnfw' );?></option>
-					<option value="comment-page" <?php selected( 'comment-page', $setting['notification'] );?>><?php _e( 'Page - New Comment', 'bnfw' );?></option>
-					<?php do_action( 'bnfw_after_notification_options', 'page', 'Page', $setting ); ?>
+						<option value="new-page" <?php selected( 'new-page', $setting['notification'] );?>><?php _e( 'New Page Published', 'bnfw' );?></option>
+						<option value="update-page" <?php selected( 'update-page', $setting['notification'] );?>><?php _e( 'Page Updated', 'bnfw' );?></option>
+						<option value="pending-page" <?php selected( 'pending-page', $setting['notification'] );?>><?php _e( 'Page Pending Review', 'bnfw' );?></option>
+						<option value="future-page" <?php selected( 'future-page', $setting['notification'] );?>><?php _e( 'Page Scheduled', 'bnfw' );?></option>
+						<option value="comment-page" <?php selected( 'comment-page', $setting['notification'] );?>><?php _e( 'Page - New Comment', 'bnfw' );?></option>
+						<option value="commentreply-page" <?php selected( 'commentreply-page', $setting['notification'] );?>><?php _e( 'Page - Comment Reply', 'bnfw' );?></option>
+						<?php do_action( 'bnfw_after_notification_options', 'page', 'Page', $setting ); ?>
 					</optgroup>
 <?php
 		$types = get_post_types( array(
@@ -206,6 +208,7 @@ class BNFW_Notification {
                         <option value="pending-<?php echo $type; ?>" <?php selected( 'pending-' . $type, $setting['notification'] );?>><?php echo "'$label' ", __( 'Pending Review', 'bnfw' ); ?></option>
                         <option value="future-<?php echo $type; ?>" <?php selected( 'future-' . $type, $setting['notification'] );?>><?php echo "'$label' ", __( 'Scheduled', 'bnfw' ); ?></option>
                         <option value="comment-<?php echo $type; ?>" <?php selected( 'comment-' . $type, $setting['notification'] );?>><?php echo "'$label' ", __( 'New Comment', 'bnfw' ); ?></option>
+	                    <option value="commentreply-<?php echo $type; ?>" <?php selected( 'commentreply-' . $type, $setting['notification'] );?>><?php echo "'$label' ", __( 'Comment Reply', 'bnfw' ); ?></option>
 						<?php do_action( 'bnfw_after_notification_options', $type, $label, $setting ); ?>
                     </optgroup>
 <?php
@@ -848,7 +851,10 @@ class BNFW_Notification {
 				$name = __( 'New User Registration - For Admin', 'bnfw' );
 				break;
 			case 'user-role':
-				$name = __( 'User Role Changed', 'bnfw' );
+				$name = __( 'User Role Changed - For User', 'bnfw' );
+				break;
+			case 'admin-role':
+				$name = __( 'User Role Changed - For Admin', 'bnfw' );
 				break;
 			case 'new-post':
 				$name = __( 'New Post Published', 'bnfw' );
@@ -892,6 +898,9 @@ class BNFW_Notification {
 						break;
 					case 'comment':
 						$name = $label . __( ' Comment', 'bnfw' );
+						break;
+					case 'commentreply':
+						$name = $label . __( ' Comment Reply', 'bnfw' );
 						break;
 					case 'newterm':
 						$tax = get_taxonomy( $splited[1] );

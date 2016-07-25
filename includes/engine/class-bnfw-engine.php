@@ -28,6 +28,8 @@ class BNFW_Engine {
 			$headers[] = 'Content-type: text/html';
 		}
 
+		$subject = $this->handle_global_user_shortcodes( $subject, $email );
+		$message = $this->handle_global_user_shortcodes( $message, $email );
 		wp_mail( $email, stripslashes( $subject ), $message, $headers );
 	}
 
@@ -64,7 +66,7 @@ class BNFW_Engine {
 
 			if ( isset( $emails['to'] ) && is_array( $emails['to'] ) ) {
 				foreach ( $emails['to'] as $email ) {
-					wp_mail( $email, stripslashes( $subject ), $message, $headers );
+					wp_mail( $email, stripslashes( $this->handle_global_user_shortcodes( $subject, $email ) ), $this->handle_global_user_shortcodes( $message, $email ), $headers );
 				}
 			}
 		}
@@ -102,6 +104,8 @@ class BNFW_Engine {
 			$headers[] = 'Content-type: text/html';
 		}
 
+		$subject = $this->handle_global_user_shortcodes( $subject, $user->user_email );
+		$message = $this->handle_global_user_shortcodes( $message, $user->user_email );
 		wp_mail( $user->user_email, stripslashes( $subject ), $message, $headers );
 	}
 
@@ -128,6 +132,8 @@ class BNFW_Engine {
 			$message = wpautop( $message );
 		}
 
+		$subject = $this->handle_global_user_shortcodes( $subject, $parent_comment->comment_author_email );
+		$message = $this->handle_global_user_shortcodes( $message, $parent_comment->comment_author_email );
 		wp_mail( $parent_comment->comment_author_email, stripslashes( $subject ), $message, $headers );
 	}
 
@@ -153,6 +159,9 @@ class BNFW_Engine {
 		}
 
 		$user = get_user_by( 'id', $user_id );
+
+		$subject = $this->handle_global_user_shortcodes( $subject, $user->user_email );
+		$message = $this->handle_global_user_shortcodes( $message, $user->user_email );
 		wp_mail( $user->user_email, stripslashes( $subject ), $message, $headers );
 	}
 
@@ -202,6 +211,7 @@ class BNFW_Engine {
 			case 'welcome-email':
 			case 'new-user':
 			case 'user-role':
+			case 'admin-role':
 				// handle users (lost password and new user registration)
 				$message = $this->user_shortcodes( $message, $id );
 				break;
@@ -232,7 +242,7 @@ class BNFW_Engine {
 						$post = get_post( $id );
 						$message = $this->user_shortcodes( $message, $post->post_author );
 					}
-				} else if ( 'comment' == $type[0] ) {
+				} else if ( 'comment' == $type[0] || 'commentreply' == $type[0] ) {
 					$message = $this->comment_shortcodes( $message, $id );
 					$comment = get_comment( $id );
 					$message = $this->post_shortcodes( $message, $comment->comment_post_ID );
@@ -243,7 +253,26 @@ class BNFW_Engine {
 				break;
 		}
 
+		$message = $this->global_shortcodes( $message );
+
 		$message = apply_filters( 'bnfw_shortcodes', $message, $notification, $id, $this );
+		return $message;
+	}
+
+	/**
+	 * Handle Global shortcodes.
+	 *
+	 * @since 1.5
+	 *
+	 * @param string $message String with shortcodes.
+	 *
+	 * @return string String after processing global shortcodes.
+	 */
+	private function global_shortcodes( $message ) {
+		$message = str_replace( '[global_site_title]', get_bloginfo( 'name' ), $message );
+		$message = str_replace( '[global_site_tagline]', get_bloginfo( 'description' ), $message );
+		$message = str_replace( '[global_site_url]', get_bloginfo( 'url' ), $message );
+
 		return $message;
 	}
 
@@ -287,6 +316,13 @@ class BNFW_Engine {
 		$message = str_replace( '[comment_count]', $post->comment_count, $message );
 		$message = str_replace( '[permalink]', get_permalink( $post->ID ), $message );
 		$message = str_replace( '[edit_post]', get_edit_post_link( $post->ID ), $message );
+
+		if ( has_post_thumbnail( $post->ID ) ) {
+			$image_url = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'single-post-thumbnail' );
+			if ( is_array( $image_url ) ) {
+				$message = str_replace( '[featured_image]', $image_url[0], $message );
+			}
+		}
 
 		if ( 'future' == $post->post_status ) {
 			$message = str_replace( '[post_scheduled_date]', $post->post_date, $message );
@@ -355,13 +391,12 @@ class BNFW_Engine {
 	/**
 	 * Handle user shortcodes.
 	 *
-	 * @access private
 	 * @since 1.0
 	 * @param unknown $message
 	 * @param unknown $user_id
 	 * @return unknown
 	 */
-	private function user_shortcodes( $message, $user_id ) {
+	public function user_shortcodes( $message, $user_id ) {
 		$user_info = get_userdata( $user_id );
 
 		// deperecated
@@ -378,6 +413,10 @@ class BNFW_Engine {
 		$message = str_replace( '[user_lastname]', $user_info->user_lastname, $message );
 		$message = str_replace( '[nickname]', $user_info->nickname, $message );
 		$message = str_replace( '[user_description]', $user_info->user_description, $message );
+		$message = str_replace( '[user_avatar]', get_avatar_url( $user_id), $message );
+		$message = str_replace( '[user_avatar]', get_avatar_url( $user_id), $message );
+		$message = str_replace( '[commenter_avatar]', get_avatar_url( $user_id), $message );
+
 		if ( is_array( $user_info->wp_capabilities ) ) {
 			$message = str_replace( '[wp_capabilities]', implode( ',', $user_info->wp_capabilities ), $message );
 		}
@@ -607,5 +646,27 @@ class BNFW_Engine {
 
 		return $headers;
 	}
+
+	/**
+	 * Handle Global User Shortcodes.
+	 *
+	 * @param string $message String to be processed.
+	 * @param string $email   Email of the user.
+	 *
+	 * @return string Processed string.
+	 */
+	private function handle_global_user_shortcodes( $message, $email ) {
+		$user = get_user_by( 'email', $email );
+
+		if ( false === $user ) {
+			$message = str_replace( '[global_user_firstname]', $email, $message );
+			$message = str_replace( '[global_user_lastname]', $email, $message );
+		} else {
+			$message = str_replace( '[global_user_firstname]', $user->first_name, $message );
+			$message = str_replace( '[global_user_lastname]', $user->last_name, $message );
+		}
+		$message = str_replace( '[global_user_email]', $email, $message );
+
+		return $message;
+	}
 }
-?>

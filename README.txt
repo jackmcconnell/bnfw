@@ -3,8 +3,8 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from, author
 Requires at least: 3.5
-Tested up to: 4.5.2
-Stable tag: 1.4.1
+Tested up to: 4.5.3
+Stable tag: 1.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,7 +40,8 @@ Notifications that are currently available to use are:
 * Lost Password - For User
 * New User Registration - For User
 * New User - Post-registration Email
-* User Role Changed
+* User Role Changed - For Admin
+* User Role Changed - For User
 * Comment Reply
 
 **Posts / Custom Post Types**
@@ -50,6 +51,7 @@ Notifications that are currently available to use are:
 * Post Pending Review
 * Post Scheduled
 * Post - Custom Field Updated ([Custom Fields Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
+* Post - Update Reminder ([Update Reminder Add-on](https://betternotificationsforwp.com/downloads/update-reminder/))
 
 **Pages**
 
@@ -58,7 +60,9 @@ Notifications that are currently available to use are:
 * Page Pending Review
 * Page Scheduled
 * Page - New Comment
+* Page - Comment Reply
 * Page - Custom Field Updated ([Custom Fields Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
+* Page - Update Reminder ([Update Reminder Add-on](https://betternotificationsforwp.com/downloads/update-reminder/))
 
 **Posts**
 
@@ -154,7 +158,7 @@ This is most likely because it's `public` setting is set to `false`. Try changin
 
 = Can I translate this plugin? =
 
-Yes, of course! The plugin is completely translation-friendly and if you send me your .po file, I'll make sure to include it in the plugin and credit you on this page.
+Yes, of course! The plugin is completely translation-friendly and if you send me your .po file, I'll make sure to include it in the plugin and credit you in the changelog.
 
 = Will this plugin work with versions of WordPress less than 3.5? = 
 
@@ -173,6 +177,17 @@ An older version might work but this is untested. A lot of the newer features re
 
 
 == Changelog ==
+
+= 1.5 - 25th July 2016 =
+* New: Global Site Shortcodes! Include these in any notification to output the site title (`[global_site_title]`), site tagline (`[global_site_tagline]`), or site URL (`[global_site_URL]`).
+* New: Global User Shortcodes! Include these in any notification to output the user's first name (`[global_user_firstname]`), user's last name (`[global_user_lastname]`), or user's email address (`[global_user_email]`).
+* New: The 'User Role Changed' notification has been split into two transactional notifications - one that can be sent to users and one that can be sent to admins.
+* New: Shortcode `[featured_image]`. Outputs the URL for the featured image (if one is available). 
+* New: Shortcode `[user_avatar]`. Outputs the User's avatar when used in a capable notification.
+* New: Shortcode `[commenter_avatar]`. Outputs the comment author's avatar for comment-based notifications.
+* Improved: 'Comment Reply' notifications are now available to use for Pages and Custom Post Types.
+* Improved: When sending notifications to user roles in the 'To' field, it will now show how many users are in that role. 
+* Improved: The 'Lost Password - For User', 'User Role Changed - For Admin', and 'User Role Changed - For User' notifications now have the option to 'Stop additional paragraph and line break HTML from being inserted into my notifications' via the checkbox below the WYSIWYG editor on the Add New / Edit Notification screen.
 
 = 1.4.1 - 3rd June 2016 =
 * Fixed: Multiple emails were being sent for a single notification for a small number of users. After lots of hunting and lots of testing, I'm hoping this should now be fixed.

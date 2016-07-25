@@ -14,11 +14,17 @@ function bnfw_search_users() {
 	global $wp_roles;
 
 	$roles_data = array();
+	$user_count = count_users();
 	$roles = $wp_roles->get_names();
 	foreach ( $roles as $role ) {
+		$count = 0;
+		if ( isset( $user_count['avail_roles'][ strtolower( $role ) ] ) ) {
+			$count = $user_count['avail_roles'][ strtolower( $role ) ];
+		}
+
 		$roles_data[] = array(
 			'id'   => 'role-' . $role,
-			'text' => $role,
+			'text' => $role . ' (' . $count . ' Users)',
 		);
 	}
 

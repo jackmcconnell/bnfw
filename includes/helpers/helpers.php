@@ -29,6 +29,8 @@ function bnfw_get_user_select_class() {
  */
 function bnfw_render_users_dropdown( $selected_users ) {
 	global $wp_roles;
+
+	$user_count = count_users();
 ?>
 		<optgroup label="User Roles">
 	<?php
@@ -36,14 +38,16 @@ function bnfw_render_users_dropdown( $selected_users ) {
 
 	foreach ( $roles as $role ) {
 		$selected = selected( true, in_array( 'role-' . $role, $selected_users ), false );
-		echo '<option value="role-', $role, '" ', $selected, '>', $role, '</option>';
+		$count = 0;
+		if ( isset( $user_count['avail_roles'][ strtolower( $role ) ] ) ) {
+			$count = $user_count['avail_roles'][ strtolower( $role ) ];
+		}
+		echo '<option value="role-', $role, '" ', $selected, '>', $role, ' (', $count, ' Users)', '</option>';
 	}
 ?>
 		</optgroup>
 		<optgroup label="Users">
 	<?php
-	$user_count = count_users();
-
 	// if there are more than 100 users then use AJAX to load them dynamically.
 	// So just get only the selected users
 	if ( count( $selected_users ) > 0 && $user_count['total_users'] > 100 ) {
