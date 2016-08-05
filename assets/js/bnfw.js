@@ -41,6 +41,10 @@ jQuery(document).ready(function($) {
 			minimumInputLength: 1
 		} );
 
+		if ( ! $( '#notification' ).length ) {
+			return;
+		}
+
 		toggle_fields();
 
 		if ( 'new-user' === $('#notification').val() || 'welcome-email' === $('#notification').val() || 'reply-comment' === $('#notification').val() || notification.startsWith( 'commentreply-' ) ) {

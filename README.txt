@@ -4,7 +4,7 @@ Donate link: https://betternotificationsforwp.com/donate/
 Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from, author
 Requires at least: 3.5
 Tested up to: 4.5.3
-Stable tag: 1.5
+Stable tag: 1.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -177,6 +177,9 @@ An older version might work but this is untested. A lot of the newer features re
 
 
 == Changelog ==
+
+= 1.5.1 - 5th August July 2016 =
+* Fixed: 'Text' mode in the WYSIWYG editor didn't show any buttons when the BNFW Per-post Override Add-on was activated.
 
 = 1.5 - 25th July 2016 =
 * New: Global Site Shortcodes! Include these in any notification to output the site title (`[global_site_title]`), site tagline (`[global_site_tagline]`), or site URL (`[global_site_URL]`).
