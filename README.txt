@@ -3,8 +3,8 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from, author
 Requires at least: 3.5
-Tested up to: 4.5.3
-Stable tag: 1.5.1
+Tested up to: 4.6
+Stable tag: 1.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -177,6 +177,12 @@ An older version might work but this is untested. A lot of the newer features re
 
 
 == Changelog ==
+
+= 1.5.2 - 6th September 2016 =
+* Fixed: Custom User Roles were showing 0 users in the 'To' field.
+* Added: Generic CSS classes to BNFW admin.
+* Updated: German Translation to show English in certain places where translation text breaks the WP Admin UI.
+* Full code review and submission to WordPress VIP!
 
 = 1.5.1 - 5th August July 2016 =
 * Fixed: 'Text' mode in the WYSIWYG editor didn't show any buttons when the BNFW Per-post Override Add-on was activated.

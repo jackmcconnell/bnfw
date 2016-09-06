@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Send customisable emails to your users for different WordPress notifications.
- * Version: 1.5.1
+ * Version: 1.5.2
  * Author: Voltronik
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -188,7 +188,7 @@ class BNFW {
 	public function plugin_action_links( $links, $file ) {
 		$plugin_file = 'bnfw/bnfw.php';
 		if ( $file == $plugin_file ) {
-			$settings_link = '<a href="' . admin_url( 'edit.php?post_type=bnfw_notification&page=bnfw-settings' ) . '">' . 'Settings' . '</a>';
+			$settings_link = '<a href="' . esc_url( admin_url( 'edit.php?post_type=bnfw_notification&page=bnfw-settings' ) ) . '">' . esc_html__( 'Settings', 'bnfw' ) . '</a>';
 			array_unshift( $links, $settings_link );
 		}
 		return $links;
@@ -345,7 +345,8 @@ class BNFW {
 	 * @since 1.0
 	 */
 	function on_lost_password() {
-		$user = get_user_by( 'login', trim( $_POST['user_login'] ) );
+		$user_login = sanitize_text_field( $_POST['user_login'] );
+		$user = get_user_by( 'login', $user_login );
 		if ( $user ) {
 			$this->send_notification( 'admin-password', $user->ID );
 		}
@@ -355,6 +356,12 @@ class BNFW {
 	 * Change the title of the password reset email that is sent to the user.
 	 *
 	 * @since 1.1
+	 *
+	 * @param string $title
+	 * @param string $user_login
+	 * @param string $user_data
+	 *
+	 * @return string
 	 */
 	public function change_password_email_title( $title, $user_login = '', $user_data = '' ) {
 		$notifications = $this->notifier->get_notifications( 'user-password' );
@@ -378,6 +385,13 @@ class BNFW {
 	 * Change the message of the password reset email.
 	 *
 	 * @since 1.1
+	 *
+	 * @param string $message
+	 * @param string $key
+	 * @param string $user_login
+	 * @param string $user_data
+	 *
+	 * @return string
 	 */
 	public function change_password_email_message( $message, $key, $user_login = '', $user_data = '' ) {
 		$notifications = $this->notifier->get_notifications( 'user-password' );

@@ -16,22 +16,22 @@ function bnfw_search_users() {
 	$roles_data = array();
 	$user_count = count_users();
 	$roles = $wp_roles->get_names();
-	foreach ( $roles as $role ) {
+	foreach ( $roles as $role_slug => $role_name ) {
 		$count = 0;
-		if ( isset( $user_count['avail_roles'][ strtolower( $role ) ] ) ) {
-			$count = $user_count['avail_roles'][ strtolower( $role ) ];
+		if ( isset( $user_count['avail_roles'][ $role_slug ] ) ) {
+			$count = $user_count['avail_roles'][ $role_slug ];
 		}
 
 		$roles_data[] = array(
-			'id'   => 'role-' . $role,
-			'text' => $role . ' (' . $count . ' Users)',
+			'id'   => 'role-' . $role_slug,
+			'text' => $role_name . ' (' . $count . ' Users)',
 		);
 	}
 
 	$data = array(
 		array(
 			'id'       => 1,
-			'text'     => __( 'User Roles', 'bnfw' ),
+			'text'     => esc_html__( 'User Roles', 'bnfw' ),
 			'children' => $roles_data,
 		),
 	);
@@ -54,7 +54,7 @@ function bnfw_search_users() {
 
 	$data[] = array(
 		'id'       => 2,
-		'text'     => __( 'Users', 'bnfw' ),
+		'text'     => esc_html__( 'Users', 'bnfw' ),
 		'children' => $user_data,
 	);
 

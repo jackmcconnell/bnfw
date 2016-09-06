@@ -22,12 +22,12 @@ class BNFW_License {
 	/**
 	 * Class constructor
 	 *
-	 * @param string  $_file
-	 * @param string  $_item_name
-	 * @param string  $_version
-	 * @param string  $_author
-	 * @param string  $_optname
-	 * @param string  $_api_url
+	 * @param string $_file
+	 * @param string $_item_name
+	 * @param string $_version
+	 * @param string $_author
+	 * @param string $_optname
+	 * @param string $_api_url
 	 */
 	function __construct( $_file, $_item_name, $_version, $_author, $_optname = null, $_api_url = null ) {
 		$bnfw_options = get_option( 'bnfw_licenses' );
@@ -77,7 +77,7 @@ class BNFW_License {
 				'version'   => $this->version,
 				'license'   => $this->license,
 				'item_name' => $this->item_name,
-				'author'    => $this->author
+				'author'    => $this->author,
 			)
 		);
 	}
@@ -86,14 +86,16 @@ class BNFW_License {
 	 * Add license field to settings
 	 *
 	 * @access  public
-	 * @param array   $settings
+	 *
+	 * @param array $settings
+	 *
 	 * @return  array
 	 */
 	public function settings( $settings ) {
 		$bnfw_license_settings = array(
 			array(
 				'id'      => $this->item_shortname . '_license_key',
-				'name'    => sprintf( __( '%1$s License Key', 'bnfw' ), $this->item_name ),
+				'name'    => sprintf( esc_html__( '%1$s License Key', 'bnfw' ), $this->item_name ),
 				'desc'    => '',
 				'type'    => 'license_key',
 				'options' => array( 'is_valid_license_option' => $this->item_shortname . '_license_active' ),
@@ -111,14 +113,17 @@ class BNFW_License {
 	 * @return  void
 	 */
 	public function activate_license() {
-		if ( ! isset( $_POST['bnfw_licenses'] ) )
+		if ( ! isset( $_POST['bnfw_licenses'] ) ) {
 			return;
+		}
 
-		if ( ! isset( $_POST['bnfw_licenses'][ $this->item_shortname . '_license_key' ] ) )
+		if ( ! isset( $_POST['bnfw_licenses'][ $this->item_shortname . '_license_key' ] ) ) {
 			return;
+		}
 
-		if ( 'valid' == get_option( $this->item_shortname . '_license_active' ) )
+		if ( 'valid' == get_option( $this->item_shortname . '_license_active' ) ) {
 			return;
+		}
 
 		$license = sanitize_text_field( $_POST['bnfw_licenses'][ $this->item_shortname . '_license_key' ] );
 
@@ -135,13 +140,14 @@ class BNFW_License {
 			array(
 				'timeout'   => 15,
 				'body'      => $api_params,
-				'sslverify' => false
+				'sslverify' => false,
 			)
 		);
 
 		// Make sure there are no errors
-		if ( is_wp_error( $response ) )
+		if ( is_wp_error( $response ) ) {
 			return;
+		}
 
 		// Decode license data
 		$license_data = json_decode( wp_remote_retrieve_body( $response ) );
@@ -156,11 +162,13 @@ class BNFW_License {
 	 * @return  void
 	 */
 	public function deactivate_license() {
-		if ( ! isset( $_POST['bnfw_licenses'] ) )
+		if ( ! isset( $_POST['bnfw_licenses'] ) ) {
 			return;
+		}
 
-		if ( ! isset( $_POST['bnfw_licenses'][ $this->item_shortname . '_license_key' ] ) )
+		if ( ! isset( $_POST['bnfw_licenses'][ $this->item_shortname . '_license_key' ] ) ) {
 			return;
+		}
 
 		// Run on deactivate button press
 		if ( isset( $_POST[ $this->item_shortname . '_license_key_deactivate' ] ) ) {
@@ -177,19 +185,21 @@ class BNFW_License {
 				esc_url_raw( add_query_arg( $api_params, $this->api_url ) ),
 				array(
 					'timeout'   => 15,
-					'sslverify' => false
+					'sslverify' => false,
 				)
 			);
 
 			// Make sure there are no errors
-			if ( is_wp_error( $response ) )
+			if ( is_wp_error( $response ) ) {
 				return;
+			}
 
 			// Decode the license data
 			$license_data = json_decode( wp_remote_retrieve_body( $response ) );
 
-			if ( $license_data->license == 'deactivated' )
+			if ( 'deactivated' == $license_data->license ) {
 				delete_option( $this->item_shortname . '_license_active' );
+			}
 		}
 	}
 }

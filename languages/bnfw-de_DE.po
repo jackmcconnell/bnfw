@@ -73,7 +73,7 @@ msgstr "Nur Text"
 #: includes/admin/class-bnfw-notification.php:48
 #: includes/admin/class-bnfw-notification.php:49
 msgid "Notifications"
-msgstr "Benachrichtigungen"
+msgstr "Notifications"
 
 #: includes/admin/class-bnfw-notification.php:46
 msgid "Notification"

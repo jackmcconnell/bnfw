@@ -11,13 +11,14 @@ function bnfw_admin_menu() {
 	// New Notifications Sub-menu
 	add_submenu_page(
 		'edit.php?post_type=bnfw_notification',
-		__( 'Notification Settings', 'bnfw' ),
-		__( 'Settings', 'bnfw' ),
+		esc_html__( 'Notification Settings', 'bnfw' ),
+		esc_html__( 'Settings', 'bnfw' ),
 		'manage_options',
 		'bnfw-settings',
 		'bnfw_settings_page'
 	);
 }
+
 // Add the Admin pages to the WordPress menu
 add_action( 'admin_menu', 'bnfw_admin_menu' );
 add_action( 'admin_menu', 'bnfw_menu_item_links', 12 );
@@ -33,22 +34,21 @@ add_action( 'admin_head', 'bnfw_menu_item_link_targets' );
 function bnfw_settings_page() {
 	ob_start(); ?>
 
-    <div class="wrap">
-        <?php screen_icon(); ?>
-        <h2><?php _e( 'BNFW Settings', 'bnfw' ); ?></h2>
+	<div class="wrap">
+		<h2><?php esc_html_e( 'BNFW Settings', 'bnfw' ); ?></h2>
 
-        <form method="post" action="options.php" class="bnfw-form">
+		<form method="post" action="options.php" class="bnfw-form">
 			<?php
-				settings_errors();
-				settings_fields( 'bnfw-settings' );
-				do_settings_sections( 'bnfw-settings' );
+			settings_errors();
+			settings_fields( 'bnfw-settings' );
+			do_settings_sections( 'bnfw-settings' );
 
-				submit_button( 'Save Settings' );
+			submit_button( 'Save Settings' );
 			?>
-        </form>
-    </div>
+		</form>
+	</div>
 
-    <?php echo ob_get_clean();
+	<?php echo ob_get_clean();
 }
 
 /**
@@ -75,25 +75,25 @@ function bnfw_menu_item_links() {
 }
 
 function bnfw_menu_item_link_targets() {
-?>
+	?>
 	<script type="text/javascript">
-    	jQuery(document).ready(function($) {
-    		// Documentation Link
-			$('#bnfw-menu-item-documentation').parent().attr('target', '_blank');
-			$('#bnfw-menu-item-documentation').hover(function() {
-				$(this).css('color', '#a0e6f1');
-			}, function() {
-				$(this).css('color', '#73daeb');
-			});
+		jQuery( document ).ready( function ( $ ) {
+			// Documentation Link
+			$( '#bnfw-menu-item-documentation' ).parent().attr( 'target', '_blank' );
+			$( '#bnfw-menu-item-documentation' ).hover( function () {
+				$( this ).css( 'color', '#a0e6f1' );
+			}, function () {
+				$( this ).css( 'color', '#73daeb' );
+			} );
 
 			// Add-ons Link
-			$('#bnfw-menu-item-addons').parent().attr('target', '_blank');
-			$('#bnfw-menu-item-addons').hover(function() {
-				$(this).css('color', '#ff9b8c');
-			}, function() {
-				$(this).css('color', '#ff6f59');
-			});
-		});
+			$( '#bnfw-menu-item-addons' ).parent().attr( 'target', '_blank' );
+			$( '#bnfw-menu-item-addons' ).hover( function () {
+				$( this ).css( 'color', '#ff9b8c' );
+			}, function () {
+				$( this ).css( 'color', '#ff6f59' );
+			} );
+		} );
 	</script>
 <?php }
 
@@ -122,12 +122,12 @@ function bnfw_general_options() {
 	// Suppress notifications for SPAM comments
 	add_settings_field(
 		'bnfw_suppress_spam',           // Field ID
-		__( 'Suppress SPAM comment notification', 'bnfw' ),  // Label to the left
+		esc_html__( 'Suppress SPAM comment notification', 'bnfw' ),  // Label to the left
 		'bnfw_suppress_spam_checkbox',  // Name of function that renders options on the page
 		'bnfw-settings',                // Page to show on
 		'bnfw_general_options_section', // Associate with which settings section?
 		array(
-			__( "Don't send notifications for comments marked as SPAM by Akismet", 'bnfw' )
+			esc_html__( "Don't send notifications for comments marked as SPAM by Akismet", 'bnfw' )
 		)
 	);
 
@@ -140,16 +140,17 @@ function bnfw_general_options() {
 	// Suppress notifications for SPAM comments
 	add_settings_field(
 		'bnfw_email_format',           // Field ID
-		__( 'Default Email Format', 'bnfw' ),  // Label to the left
+		esc_html__( 'Default Email Format', 'bnfw' ),  // Label to the left
 		'bnfw_email_format_radio',  // Name of function that renders options on the page
 		'bnfw-settings',                // Page to show on
 		'bnfw_general_options_section', // Associate with which settings section?
 		array(
-			__( 'This will apply to all emails sent out via WordPress, even those from other plugins. For more details, please see the <a href="https://wordpress.org/plugins/bnfw/faq/" target="_blank">FAQ</a>.', 'bnfw' )
+			esc_html__( 'This will apply to all emails sent out via WordPress, even those from other plugins. For more details, please see the ', 'bnfw' ) . '<a href="https://wordpress.org/plugins/bnfw/faq/" target="_blank">FAQ</a>.'
 		)
 	);
 
 }
+
 add_action( 'admin_init', 'bnfw_general_options', 10 );
 
 /* ------------------------------------------------------------------------ *
@@ -159,7 +160,8 @@ add_action( 'admin_init', 'bnfw_general_options', 10 );
 /**
  *
  */
-function bnfw_general_options_callback() {}
+function bnfw_general_options_callback() {
+}
 
 /* ------------------------------------------------------------------------ *
  * Settings Page - Settings Field Callbacks
@@ -169,31 +171,36 @@ function bnfw_general_options_callback() {}
  * Suppress SPAM checkbox.
  *
  * @since 1.0
- * @param unknown $args
+ *
+ * @param $args
  */
 function bnfw_suppress_spam_checkbox( $args ) {
-?>
-    <input type="checkbox" id="bnfw_suppress_spam" name="bnfw_suppress_spam" value="1" <?php checked( 1, get_option( 'bnfw_suppress_spam' ), true );?>>
-    <label for="bnfw_suppress_spam"><?php echo $args[0]; ?></label>
-<?php
+	?>
+	<input type="checkbox" id="bnfw_suppress_spam" name="bnfw_suppress_spam"
+	       value="1" <?php checked( 1, get_option( 'bnfw_suppress_spam' ), true ); ?>>
+	<label for="bnfw_suppress_spam"><?php echo esc_html( $args[0] ); ?></label>
+	<?php
 }
 
 /**
  * Show email format radio
  *
  * @since 1.4
+ *
  * @param array $args
  */
 function bnfw_email_format_radio( $args ) {
 	$email_format = get_option( 'bnfw_email_format', 'html' );
-?>
+	?>
 	<label>
-		<input type="radio" value="html" name="bnfw_email_format" <?php checked( $email_format, 'html', true ); ?>><?php _e( 'HTML Formatting', 'bnfw' ); ?>
+		<input type="radio" value="html"
+		       name="bnfw_email_format" <?php checked( $email_format, 'html', true ); ?>><?php esc_html_e( 'HTML Formatting', 'bnfw' ); ?>
 	</label>
-	<br />
+	<br/>
 	<label>
-		<input type="radio" value="text" name="bnfw_email_format" <?php checked( $email_format, 'text', true ); ?>><?php _e( 'Plain Text', 'bnfw' ); ?>
+		<input type="radio" value="text"
+		       name="bnfw_email_format" <?php checked( $email_format, 'text', true ); ?>><?php esc_html_e( 'Plain Text', 'bnfw' ); ?>
 	</label>
-	<p><i><?php echo $args[0]; ?></i></p>
-<?php
+	<p><i><?php echo esc_html( $args[0] ); ?></i></p>
+	<?php
 }

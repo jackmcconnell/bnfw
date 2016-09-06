@@ -11,6 +11,8 @@ class BNFW_Engine {
 	 * Send test email.
 	 *
 	 * @since 1.2
+	 *
+	 * @param array $setting
 	 */
 	public function send_test_email( $setting ) {
 		$subject = $setting['subject'];
@@ -120,21 +122,30 @@ class BNFW_Engine {
 	public function send_comment_reply_email( $setting, $comment, $parent_comment ) {
 		$comment_id = $comment->comment_ID;
 
-		$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $comment_id );
-		$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $comment_id );
+		/**
+		 * BNFW - Whether notification is disabled?
+		 *
+		 * @since 1.3.6
+		 */
+		$notification_disabled = apply_filters( 'bnfw_notification_disabled', false, $comment_id, $setting );
 
-		$headers = array();
-		if ( 'html' == $setting['email-formatting'] ) {
-			$headers[] = 'Content-type: text/html';
+		if ( ! $notification_disabled ) {
+			$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $comment_id );
+			$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $comment_id );
+
+			$headers = array();
+			if ( 'html' == $setting['email-formatting'] ) {
+				$headers[] = 'Content-type: text/html';
+			}
+
+			if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
+				$message = wpautop( $message );
+			}
+
+			$subject = $this->handle_global_user_shortcodes( $subject, $parent_comment->comment_author_email );
+			$message = $this->handle_global_user_shortcodes( $message, $parent_comment->comment_author_email );
+			wp_mail( $parent_comment->comment_author_email, stripslashes( $subject ), $message, $headers );
 		}
-
-		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
-			$message = wpautop( $message );
-		}
-
-		$subject = $this->handle_global_user_shortcodes( $subject, $parent_comment->comment_author_email );
-		$message = $this->handle_global_user_shortcodes( $message, $parent_comment->comment_author_email );
-		wp_mail( $parent_comment->comment_author_email, stripslashes( $subject ), $message, $headers );
 	}
 
 	/**
@@ -361,9 +372,11 @@ class BNFW_Engine {
 	 * Handle comment shortcodes.
 	 *
 	 * @since 1.0
-	 * @param unknown $message
-	 * @param unknown $comment_id
-	 * @return unknown
+	 *
+	 * @param string $message String to be processed.
+	 * @param int $comment_id Comment id.
+	 *
+	 * @return string Processed string.
 	 */
 	private function comment_shortcodes( $message, $comment_id ) {
 		$comment = get_comment( $comment_id );
@@ -392,9 +405,11 @@ class BNFW_Engine {
 	 * Handle user shortcodes.
 	 *
 	 * @since 1.0
-	 * @param unknown $message
-	 * @param unknown $user_id
-	 * @return unknown
+	 *
+	 * @param string $message String to be processed.
+	 * @param int $user_id User id.
+	 *
+	 * @return string Processed string.
 	 */
 	public function user_shortcodes( $message, $user_id ) {
 		$user_info = get_userdata( $user_id );
@@ -413,9 +428,9 @@ class BNFW_Engine {
 		$message = str_replace( '[user_lastname]', $user_info->user_lastname, $message );
 		$message = str_replace( '[nickname]', $user_info->nickname, $message );
 		$message = str_replace( '[user_description]', $user_info->user_description, $message );
-		$message = str_replace( '[user_avatar]', get_avatar_url( $user_id), $message );
-		$message = str_replace( '[user_avatar]', get_avatar_url( $user_id), $message );
-		$message = str_replace( '[commenter_avatar]', get_avatar_url( $user_id), $message );
+		$message = str_replace( '[user_avatar]', get_avatar_url( $user_id ), $message );
+		$message = str_replace( '[user_avatar]', get_avatar_url( $user_id ), $message );
+		$message = str_replace( '[commenter_avatar]', get_avatar_url( $user_id ), $message );
 
 		if ( is_array( $user_info->wp_capabilities ) ) {
 			$message = str_replace( '[wp_capabilities]', implode( ',', $user_info->wp_capabilities ), $message );
@@ -430,6 +445,7 @@ class BNFW_Engine {
 	 *
 	 * @access private
 	 * @since 1.1
+	 *
 	 * @param string $message
 	 * @param string $taxonomy
 	 * @param int $term_id
@@ -513,11 +529,13 @@ class BNFW_Engine {
 	 * Get emails from users.
 	 *
 	 * @since 1.2
-	 * @param array $users Users Array
-	 * @param int $exclude User id to exclude
+	 *
+	 * @param array $users   Users Array
+	 * @param int   $exclude User id to exclude
+	 *
+	 * @return array
 	 */
 	public function get_emails_from_users( $users, $exclude = null ) {
-		$email_list = array();
 		$user_ids = array();
 		$user_roles = array();
 
@@ -547,8 +565,10 @@ class BNFW_Engine {
 	 * Get user emails by user ids.
 	 *
 	 * @since 1.0
-	 * @param mixed   $user_ids
-	 * @return unknown
+	 *
+	 * @param array $user_ids.
+	 *
+	 * @return array Emails.
 	 */
 	private function get_emails_from_id( $user_ids ) {
 		$email_list = array();
@@ -577,10 +597,12 @@ class BNFW_Engine {
 		$email_list = array();
 		foreach ( $roles as $role ) {
 			$role_name = $this->get_role_name_by_label( $role );
-			$users = get_users( array(
+			$users = get_users(
+				array(
 					'role' => $role_name,
 					'fields' => array( 'user_email', 'ID' ),
-				) );
+				)
+			);
 
 			foreach ( $users as $user ) {
 				if ( null != $exclude ) {
@@ -599,6 +621,11 @@ class BNFW_Engine {
 	 * Find if a string starts with another string.
 	 *
 	 * @since 1.2
+	 *
+	 * @param $haystack
+	 * @param $needle
+	 *
+	 * @return bool
 	 */
 	private function starts_with( $haystack, $needle ) {
 		// search backwards starting from haystack length characters from the end
@@ -608,13 +635,14 @@ class BNFW_Engine {
 	/**
 	 * Get User role name by label.
 	 *
-	 * @param mixed   $role_label
-	 * @return unknown
+	 * @param mixed $role_label
+	 *
+	 * @return int|string
 	 */
 	protected function get_role_name_by_label( $role_label ) {
 		global $wp_roles;
 		foreach ( $wp_roles->roles as $role_name => $role_info ) {
-			if ( $role_label == $role_info['name'] ) {
+			if ( $role_label == $role_info['name'] || $role_name == $role_label ) {
 				return $role_name;
 			}
 		}

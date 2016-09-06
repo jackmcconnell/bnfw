@@ -36,14 +36,14 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 
 			// The blogname option is escaped with esc_html on the way into the database in sanitize_option
 			// we want to reverse this for the plain text arena of emails.
-			$blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
+			$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
 
 			if ( ! $bnfw->notifier->notification_exists( 'admin-user', false ) ) {
-				$message  = sprintf(__('New user registration on your site %s:'), $blogname) . "\r\n\r\n";
-				$message .= sprintf(__('Username: %s'), $user->user_login) . "\r\n\r\n";
-				$message .= sprintf(__('E-mail: %s'), $user->user_email) . "\r\n";
+				$message = sprintf( esc_html__( 'New user registration on your site %s:' ), $blogname ) . "\r\n\r\n";
+				$message .= sprintf( esc_html__( 'Username: %s' ), $user->user_login ) . "\r\n\r\n";
+				$message .= sprintf( esc_html__( 'E-mail: %s' ), $user->user_email ) . "\r\n";
 
-				@wp_mail(get_option('admin_email'), sprintf(__('[%s] New User Registration'), $blogname), $message);
+				@wp_mail( get_option( 'admin_email' ), sprintf( esc_html__( '[%s] New User Registration' ), $blogname ), $message );
 			}
 
 			if ( 'admin' === $notify || empty( $notify ) ) {
@@ -66,18 +66,18 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 
 			if ( $bnfw->notifier->notification_exists( 'new-user', false ) ) {
 				$notifications = $bnfw->notifier->get_notifications( 'new-user' );
-				$password_url = network_site_url( "wp-login.php?action=rp&key=" . $key . "&login=" . rawurlencode( $user->user_login ), 'login' );
+				$password_url  = network_site_url( 'wp-login.php?action=rp&key=' . $key . '&login=' . rawurlencode( $user->user_login ), 'login' );
 				foreach ( $notifications as $notification ) {
 					$bnfw->engine->send_registration_email( $bnfw->notifier->read_settings( $notification->ID ), $user, $password_url );
 				}
 			} else {
-				$message = sprintf(__('Username: %s'), $user->user_login) . "\r\n\r\n";
-				$message .= __('To set your password, visit the following address:') . "\r\n\r\n";
-				$message .= '<' . network_site_url("wp-login.php?action=rp&key=$key&login=" . rawurlencode($user->user_login), 'login') . ">\r\n\r\n";
+				$message = sprintf( esc_html__( 'Username: %s' ), $user->user_login ) . "\r\n\r\n";
+				$message .= esc_html__( 'To set your password, visit the following address:' ) . "\r\n\r\n";
+				$message .= '<' . network_site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user->user_login ), 'login' ) . ">\r\n\r\n";
 
 				$message .= wp_login_url() . "\r\n";
 
-				wp_mail($user->user_email, sprintf(__('[%s] Your username and password info'), $blogname), $message);
+				wp_mail( $user->user_email, sprintf( esc_html__( '[%s] Your username and password info' ), $blogname ), $message );
 			}
 		} else {
 
@@ -89,11 +89,11 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 			$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
 
 			if ( ! $bnfw->notifier->notification_exists( 'admin-user', false ) ) {
-				$message  = sprintf( __( 'New user registration on your site %s:' ), $blogname ) . "\r\n\r\n";
-				$message .= sprintf( __( 'Username: %s' ), $user->user_login ) . "\r\n\r\n";
-				$message .= sprintf( __( 'E-mail: %s' ), $user->user_email ) . "\r\n";
+				$message = sprintf( esc_html__( 'New user registration on your site %s:' ), $blogname ) . "\r\n\r\n";
+				$message .= sprintf( esc_html__( 'Username: %s' ), $user->user_login ) . "\r\n\r\n";
+				$message .= sprintf( esc_html__( 'E-mail: %s' ), $user->user_email ) . "\r\n";
 
-				@wp_mail( get_option( 'admin_email' ), sprintf( __( '[%s] New User Registration' ), $blogname ), $message );
+				@wp_mail( get_option( 'admin_email' ), sprintf( esc_html__( '[%s] New User Registration' ), $blogname ), $message );
 			}
 
 			if ( empty( $plaintext_pass ) ) {
@@ -106,11 +106,11 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 					$bnfw->engine->send_registration_email( $bnfw->notifier->read_settings( $notification->ID ), $user, $plaintext_pass );
 				}
 			} else {
-				$message  = sprintf( __( 'Username: %s' ), $user->user_login ) . "\r\n";
-				$message .= sprintf( __( 'Password: %s' ), $plaintext_pass ) . "\r\n";
+				$message = sprintf( esc_html__( 'Username: %s' ), $user->user_login ) . "\r\n";
+				$message .= sprintf( esc_html__( 'Password: %s' ), $plaintext_pass ) . "\r\n";
 				$message .= wp_login_url() . "\r\n";
 
-				wp_mail( $user->user_email, sprintf( __( '[%s] Your username and password' ), $blogname ), $message );
+				wp_mail( $user->user_email, sprintf( esc_html__( '[%s] Your username and password' ), $blogname ), $message );
 			}
 		}
 	}

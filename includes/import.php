@@ -1,14 +1,22 @@
 <?php
+
 /**
  * Import notification from old plugin.
  *
  * @since 1.0
  */
-
 class BNFW_Import {
-	const EMAIL_OPTION   = 'bnfw_custom_email_settings';
+	const EMAIL_OPTION = 'bnfw_custom_email_settings';
 	const SETTING_OPTION = 'bnfw_settings';
-	private $events      = array( 'create_term', 'publish_post', 'comment_post', 'user_register', 'trackback_post', 'pingback_post', 'lostpassword_post' );
+	private $events = array(
+		'create_term',
+		'publish_post',
+		'comment_post',
+		'user_register',
+		'trackback_post',
+		'pingback_post',
+		'lostpassword_post',
+	);
 
 	/**
 	 * Import notification from old plugin.
@@ -26,7 +34,7 @@ class BNFW_Import {
 					$event_array = explode( '-', $event );
 					if ( 2 == count( $event_array ) ) {
 						if ( in_array( $event_array[0], $this->events ) && in_array( $event_array[1], array_keys( $roles ) ) ) {
-							$event_array[1] = $roles[$event_array[1]];
+							$event_array[1] = $roles[ $event_array[1] ];
 							$this->insert_notification( $event_array );
 						}
 					}
@@ -47,20 +55,21 @@ class BNFW_Import {
 		if ( get_option( self::EMAIL_OPTION ) && get_option( self::SETTING_OPTION ) ) {
 			return true;
 		}
+
 		return false;
 	}
 
 	/**
 	 * Insert notification.
 	 *
-	 * @param mixed   $event
+	 * @param mixed $event
 	 */
 	private function insert_notification( $event ) {
 		$post = array(
-			'post_title'   => $event[0] . __( ' for ', 'bnfw' ) . $event[1] .  __( ' (Auto Imported)', 'bnfw' ),
-			'post_type'    => BNFW_Notification::POST_TYPE,
+			'post_title' => $event[0] . esc_html__( ' for ', 'bnfw' ) . $event[1] . esc_html__( ' (Auto Imported)', 'bnfw' ),
+			'post_type' => BNFW_Notification::POST_TYPE,
 			'post_content' => '',
-			'post_status'  => 'publish',
+			'post_status' => 'publish',
 		);
 
 		$post_id = wp_insert_post( $post );
@@ -83,7 +92,8 @@ class BNFW_Import {
 	/**
 	 * Map old notification type to new notification type.
 	 *
-	 * @param mixed   $event_name
+	 * @param mixed $event_name
+	 *
 	 * @return unknown
 	 */
 	private function map_notification( $event_name ) {
@@ -116,6 +126,7 @@ class BNFW_Import {
 	 * Map content from old plugin.
 	 *
 	 * @param unknown $event_name
+	 *
 	 * @return unknown
 	 */
 	private function map_notification_content( $event_name ) {
@@ -123,7 +134,8 @@ class BNFW_Import {
 		if ( ! isset( $this->content_map ) ) {
 			$this->parse_content();
 		}
-		return $this->content_map[$event_name];
+
+		return $this->content_map[ $event_name ];
 	}
 
 	/**
@@ -137,7 +149,7 @@ class BNFW_Import {
 		foreach ( $old_content as $key => $value ) {
 			$key_array = explode( '-', $key );
 			if ( 3 == count( $key_array ) ) {
-				$content_map[$key_array[2]][$key_array[1]] = $value;
+				$content_map[ $key_array[2] ][ $key_array[1] ] = $value;
 			}
 		}
 		$this->content_map = $content_map;
@@ -153,4 +165,5 @@ class BNFW_Import {
 		delete_option( self::SETTING_OPTION );
 	}
 }
+
 ?>

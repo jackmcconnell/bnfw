@@ -26,6 +26,8 @@ function bnfw_get_user_select_class() {
  * Render users dropdown.
  *
  * @since 1.3.6
+ *
+ * @param $selected_users
  */
 function bnfw_render_users_dropdown( $selected_users ) {
 	global $wp_roles;
@@ -36,13 +38,20 @@ function bnfw_render_users_dropdown( $selected_users ) {
 	<?php
 	$roles = $wp_roles->get_names();
 
-	foreach ( $roles as $role ) {
-		$selected = selected( true, in_array( 'role-' . $role, $selected_users ), false );
-		$count = 0;
-		if ( isset( $user_count['avail_roles'][ strtolower( $role ) ] ) ) {
-			$count = $user_count['avail_roles'][ strtolower( $role ) ];
+	foreach ( $roles as $role_slug => $role_name ) {
+		$selected = selected( true, in_array( 'role-' . $role_slug, $selected_users ), false );
+
+		// Compatibility code, which will be eventually removed.
+		$selected_old = selected( true, in_array( 'role-' . $role_name, $selected_users ), false );
+		if ( ! empty( $selected_old ) ) {
+			$selected = $selected_old;
 		}
-		echo '<option value="role-', $role, '" ', $selected, '>', $role, ' (', $count, ' Users)', '</option>';
+
+		$count = 0;
+		if ( isset( $user_count['avail_roles'][ $role_slug ] ) ) {
+			$count = $user_count['avail_roles'][ $role_slug ];
+		}
+		echo '<option value="role-', esc_attr( $role_slug ), '" ', $selected, '>', esc_html( $role_name ), ' (', $count, ' Users)', '</option>';
 	}
 ?>
 		</optgroup>
@@ -66,7 +75,7 @@ function bnfw_render_users_dropdown( $selected_users ) {
 
 	foreach ( $users as $user ) {
 		$selected = selected( true, in_array( $user->ID, $selected_users ), false );
-		echo '<option value="', $user->ID, '" ', $selected, '>', $user->user_login, '</option>';
+		echo '<option value="', esc_attr( $user->ID ), '" ', $selected, '>', esc_html( $user->user_login ), '</option>';
 	}
 }
 
