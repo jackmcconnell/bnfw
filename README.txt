@@ -1,10 +1,10 @@
 === Better Notifications for WordPress ===
 Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
-Tags: notifications, email, mail, alerts, roles, user, users, admin, HTML, plain, wp_mail, shortcode, customize, post, page, updated, pending review, scheduled, category, tag, term, custom post type, comment, akismet, trackback, pingback, lost password, welcome, new user, bulk, notice, trigger, CC, BCC, from, author
+Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 3.5
-Tested up to: 4.6
-Stable tag: 1.5.2
+Tested up to: 4.6.1
+Stable tag: 1.5.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -126,7 +126,7 @@ It's not designed to send out newsletters. There is no send-this-out-on-this-dat
 
 = How do I set-up WordPress to work with this plugin correctly? =
 
-This will very much depend on what notifications you're using the plugin for. Out-of-the-box, this plugin works very well but there are a few tweaks that you will need to ensure 100% compatibility. All the below points refer to this plugin: 
+This will very much depend on what notifications you're using the plugin for. Out-of-the-box, this plugin works very well but there are a few tweaks that will ensure 100% compatibility. All the below points refer to this plugin: 
 
 * If you want to use the new comment notifications in BNFW, you need to un-tick 'Email me whenever anyone posts a comment' and 'A comment is held for moderation' under Settings > Discussion. It's OK if you don't do this but you might receive WordPress's own email notifications along with the ones you've configure using BNFW. It also goes without saying that you need to enable comments for your posts if you want the email notifications to come through. 
 
@@ -134,9 +134,9 @@ This will very much depend on what notifications you're using the plugin for. Ou
 
 = Notifications aren't coming through! =
 
-First of all, follow [this article](https://betternotificationsforwp.com/how-can-i-receive-the-best-support/) about how to find out what might be causing the problem. Additionally, this [very handy answer](http://stackoverflow.com/questions/371/how-do-you-make-sure-email-you-send-programmatically-is-not-automatically-marked) on Stack Overflow explains what you might need to do to make sure that emails don't make it through to your users SPAM / Junk folders. It's worth going through this and completing as much as you can.
+First of all, follow [this article](https://betternotificationsforwp.com/how-can-i-receive-the-best-support/) about how to find out what might be causing the problem. Additionally, this [very handy answer](http://stackoverflow.com/questions/371/how-do-you-make-sure-email-you-send-programmatically-is-not-automatically-marked) on Stack Overflow explains what you might need to do to make sure that emails don't make it through to your user's SPAM / Junk folders. It's worth going through this and completing as much as you can.
 
-Many hosts place a limit on the number of emails that can be sent out within an hour so this may also cause some delay in emails arriving. MailPoet has a fairly extensive list of hosts and their corresponding email rate limits that's worth checkout [here](https://support.mailpoet.com/knowledgebase/lists-of-hosts-and-their-sending-limits/). Alternatively, please check with your host directly to find out what your limit is. 
+Many hosts place a limit on the number of emails that can be sent out within an hour so this may also cause some delay in emails arriving. MailPoet has a fairly extensive list of hosts and their corresponding email rate limits that's worth checking out [here](https://support.mailpoet.com/knowledgebase/lists-of-hosts-and-their-sending-limits/). Alternatively, please check with your host directly to find out what your limit is. 
 
 If you're still having problems, please drop me a line in the [Free Support Forums](https://wordpress.org/support/plugin/bnfw) and I'll do my best to help. 
 
@@ -178,17 +178,21 @@ An older version might work but this is untested. A lot of the newer features re
 
 == Changelog ==
 
+= 1.5.3 - 13th September 2016 =
+* Fixed: User Roles in the 'User Roles / Users' admin column were being displayed only in lowercase.
+* Fixed: The `[wp_capabilities]` shortcode wasn't outputting properly. It now displays the higher-level capabilities that the user has.
+
 = 1.5.2 - 6th September 2016 =
 * Fixed: Custom User Roles were showing 0 users in the 'To' field.
 * Added: Generic CSS classes to BNFW admin.
-* Updated: German Translation to show English in certain places where translation text breaks the WP Admin UI.
+* Updated: German Translation to show English in certain places where translation text breaks the WP Admin UI (props @helmi).
 * Full code review and submission to WordPress VIP!
 
 = 1.5.1 - 5th August July 2016 =
 * Fixed: 'Text' mode in the WYSIWYG editor didn't show any buttons when the BNFW Per-post Override Add-on was activated.
 
 = 1.5 - 25th July 2016 =
-* New: Global Site Shortcodes! Include these in any notification to output the site title (`[global_site_title]`), site tagline (`[global_site_tagline]`), or site URL (`[global_site_URL]`).
+* New: Global Site Shortcodes! Include these in any notification to output the site title (`[global_site_title]`), site tagline (`[global_site_tagline]`), or site URL (`[global_site_url]`).
 * New: Global User Shortcodes! Include these in any notification to output the user's first name (`[global_user_firstname]`), user's last name (`[global_user_lastname]`), or user's email address (`[global_user_email]`).
 * New: The 'User Role Changed' notification has been split into two transactional notifications - one that can be sent to users and one that can be sent to admins.
 * New: Shortcode `[featured_image]`. Outputs the URL for the featured image (if one is available). 

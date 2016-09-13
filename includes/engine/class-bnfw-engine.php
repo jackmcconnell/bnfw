@@ -432,8 +432,9 @@ class BNFW_Engine {
 		$message = str_replace( '[user_avatar]', get_avatar_url( $user_id ), $message );
 		$message = str_replace( '[commenter_avatar]', get_avatar_url( $user_id ), $message );
 
-		if ( is_array( $user_info->wp_capabilities ) ) {
-			$message = str_replace( '[wp_capabilities]', implode( ',', $user_info->wp_capabilities ), $message );
+		$user_capabilities = bnfw_format_user_capabilities( $user_info->wp_capabilities );
+		if ( ! empty( $user_capabilities ) ) {
+			$message = str_replace( '[wp_capabilities]', $user_capabilities, $message );
 		}
 
 		$message = apply_filters( 'bnfw_shortcodes_user', $message, $user_id );

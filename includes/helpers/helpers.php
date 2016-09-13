@@ -106,3 +106,24 @@ function bnfw_is_comment_notification( $notification_name ) {
 
 	return $is_comment_notification;
 }
+
+/**
+ * Format user capabilities.
+ *
+ * @param array $wp_capabilities User capabilities.
+ *
+ * @return string Formatted capabilities.
+ */
+function bnfw_format_user_capabilities( $wp_capabilities ) {
+	$capabilities = array();
+
+	if ( is_array( $wp_capabilities ) ) {
+		foreach ( $wp_capabilities as $capability => $enabled ) {
+			if ( $enabled ) {
+				$capabilities[] = $capability;
+			}
+		}
+	}
+
+	return implode( ', ', $capabilities );
+}

@@ -856,14 +856,13 @@ class BNFW_Notification {
 	 * @since 1.2
 	 */
 	private function get_names_from_users( $users ) {
-		$email_list          = array();
 		$user_ids            = array();
 		$user_roles          = array();
 		$names_from_user_ids = array();
 
 		foreach ( $users as $user ) {
 			if ( $this->starts_with( $user, 'role-' ) ) {
-				$user_roles[] = str_replace( 'role-', '', $user );
+				$user_roles[] = ucfirst( str_replace( 'role-', '', $user ) );
 			} else {
 				$user_ids[] = absint( $user );
 			}
