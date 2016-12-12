@@ -155,10 +155,15 @@ class BNFW_Engine {
 	 *
 	 * @param array $setting Notification setting
 	 * @param int   $user_id User ID
+	 * @param array $old_role Old User Role.
+	 * @param array $new_role New User Role.
 	 */
-	public function send_user_role_changed_email( $setting, $user_id ) {
+	public function send_user_role_changed_email( $setting, $user_id, $old_role, $new_role ) {
 		$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $user_id );
 		$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $user_id );
+
+		$subject = $this->handle_user_role_shortcodes( $subject, $old_role, $new_role );
+		$message = $this->handle_user_role_shortcodes( $message, $old_role, $new_role );
 
 		$headers = array();
 		if ( 'html' == $setting['email-formatting'] ) {
@@ -177,18 +182,91 @@ class BNFW_Engine {
 	}
 
 	/**
+	 * Handle User Role shortcodes.
+	 *
+	 * @param string $message  String that needs shortcode processing.
+	 * @param array  $old_role Old User Role.
+	 * @param array  $new_role New User Role.
+	 *
+	 * @return string Processed string.
+	 */
+	public function handle_user_role_shortcodes( $message, $old_role, $new_role ) {
+		$roles = wp_roles();
+
+		$old_role_name = '';
+		$new_role_name = '';
+
+		if ( isset( $roles->role_names[$old_role] ) ) {
+			$old_role_name = $roles->role_names[$old_role];
+		}
+
+		if ( isset( $roles->role_names[$new_role] ) ) {
+			$new_role_name = $roles->role_names[$new_role];
+		}
+
+		$message = str_replace( '[user_role_old]', $old_role_name, $message );
+		$message = str_replace( '[user_role_new]', $new_role_name, $message );
+
+		return $message;
+	}
+
+	/**
+	 * Handle shortcodes for filtered data notifications like `password_changed` and `email_changed`.
+	 *
+	 * @since 1.6
+	 *
+	 * @param array      $email_data Email data.
+	 * @param array      $setting    Notification settings.
+	 * @param string|int $extra_data Extra data.
+	 *
+	 * @return array Modified email data.
+	 */
+	public function handle_filtered_data_notification( $email_data, $setting, $extra_data ) {
+		$email_data['message'] = $this->handle_shortcodes( $setting['message'], $setting['notification'], $extra_data );
+		$email_data['subject'] = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $extra_data );
+
+		$emails = $this->get_emails( $setting, $extra_data );
+		$headers = $this->get_headers( $emails );
+
+		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
+			$email_data['message'] = wpautop( $email_data['message'] );
+		}
+
+		if ( 'html' == $setting['email-formatting'] ) {
+			$headers[] = 'Content-type: text/html';
+		} else {
+			$headers[] = 'Content-type: text/plain';
+		}
+
+		$email_data['headers'] = $headers;
+
+		return $email_data;
+	}
+
+	/**
 	 * Handle shortcode for password reset email message.
 	 *
 	 * @since 1.1
+	 *
+	 * @param $setting
+	 * @param $key
+	 * @param $user_login
+	 * @param $user_data
+	 *
+	 * @return mixed|string
 	 */
 	public function handle_password_reset_shortcodes( $setting, $key, $user_login, $user_data ) {
+		$message = '';
+
 		if ( '' != $user_login ) {
 			// For WordPress version 4.1.0 or less, we could have empty user_login
-			$message = $this->user_shortcodes( $setting['message'], $user_data->ID );
+			$message = $this->handle_shortcodes( $setting['message'], 'user-password', $user_data->ID );
+			$message = $this->handle_global_user_shortcodes( $message, $user_data->user_email );
 
 			$reset_link = wp_login_url() . "?action=rp&key=$key&login=$user_login";
 			$message = str_replace( '[password_reset_link]', $reset_link, $message );
 		}
+
 		return $message;
 	}
 
@@ -196,20 +274,23 @@ class BNFW_Engine {
 	 * Generate message for notification.
 	 *
 	 * @since 1.0
-	 * @param string $message
-	 * @param string $notification
-	 * @param int $id
-	 * @return string
+	 * public since @since 1.6
+	 *
+	 * @param string     $message      String may have shortcode.
+	 * @param string     $notification Notification name.
+	 * @param string|int $extra_data   Additional data for shortcode.
+	 *
+	 * @return string Processed string.
 	 */
-	private function handle_shortcodes( $message, $notification, $id ) {
+	public function handle_shortcodes( $message, $notification, $extra_data ) {
 		switch ( $notification ) {
 			case 'new-comment':
 			case 'new-trackback':
 			case 'new-pingback':
 			case 'reply-comment':
 				// handle new comments, trackbacks and pingbacks
-				$message = $this->comment_shortcodes( $message, $id );
-				$comment = get_comment( $id );
+				$message = $this->comment_shortcodes( $message, $extra_data );
+				$comment = get_comment( $extra_data );
 				$message = $this->post_shortcodes( $message, $comment->comment_post_ID );
 				if ( 0 != $comment->user_id ) {
 					$message = $this->user_shortcodes( $message, $comment->user_id );
@@ -223,39 +304,46 @@ class BNFW_Engine {
 			case 'new-user':
 			case 'user-role':
 			case 'admin-role':
+			case 'password-changed':
+			case 'email-changed':
 				// handle users (lost password and new user registration)
-				$message = $this->user_shortcodes( $message, $id );
+				$message = $this->user_shortcodes( $message, $extra_data );
 				break;
 
 			case 'new-category':
 				// handle new category
-				$message = $this->taxonomy_shortcodes( $message, 'category', $id );
+				$message = $this->taxonomy_shortcodes( $message, 'category', $extra_data );
 				break;
 
 			case 'new-post_tag':
 				// handle new tag
-				$message = $this->taxonomy_shortcodes( $message, 'post_tag', $id );
+				$message = $this->taxonomy_shortcodes( $message, 'post_tag', $extra_data );
+				break;
+
+			case 'core-updated':
+				// handle core updated type
+				$message = $this->core_updated_shortcodes( $message, $extra_data );
 				break;
 
 			default:
 				$type = explode( '-', $notification, 2 );
 				if ( 'newterm' == $type[0] ) {
 					// handle new terms
-					$message = $this->taxonomy_shortcodes( $message, $type[1], $id );
+					$message = $this->taxonomy_shortcodes( $message, $type[1], $extra_data );
 
-				} else if ( 'new' == $type[0] || 'update' == $type[0] || 'pending' == $type[0] || 'future' == $type[0] ) {
+				} else if ( 'new' == $type[0] || 'update' == $type[0] || 'pending' == $type[0] || 'future' == $type[0] || 'private' == $type[0] ) {
 					// handle new, update and pending posts
 					$post_types = get_post_types( array( 'public' => true ), 'names' );
 					$post_types = array_diff( $post_types, array( BNFW_Notification::POST_TYPE ) );
 
 					if ( in_array( $type[1], $post_types ) ) {
-						$message = $this->post_shortcodes( $message, $id );
-						$post = get_post( $id );
+						$message = $this->post_shortcodes( $message, $extra_data );
+						$post = get_post( $extra_data );
 						$message = $this->user_shortcodes( $message, $post->post_author );
 					}
 				} else if ( 'comment' == $type[0] || 'commentreply' == $type[0] ) {
-					$message = $this->comment_shortcodes( $message, $id );
-					$comment = get_comment( $id );
+					$message = $this->comment_shortcodes( $message, $extra_data );
+					$comment = get_comment( $extra_data );
 					$message = $this->post_shortcodes( $message, $comment->comment_post_ID );
 					if ( 0 != $comment->user_id ) {
 						$message = $this->user_shortcodes( $message, $comment->user_id );
@@ -266,7 +354,7 @@ class BNFW_Engine {
 
 		$message = $this->global_shortcodes( $message );
 
-		$message = apply_filters( 'bnfw_shortcodes', $message, $notification, $id, $this );
+		$message = apply_filters( 'bnfw_shortcodes', $message, $notification, $extra_data, $this );
 		return $message;
 	}
 
@@ -295,7 +383,7 @@ class BNFW_Engine {
 	 * @param int $post_id
 	 * @return string
 	 */
-	public function post_shortcodes(  $message, $post_id  ) {
+	private function post_shortcodes(  $message, $post_id  ) {
 		$post = get_post( $post_id );
 
 		$post_content = apply_filters( 'the_content', $post->post_content );
@@ -411,7 +499,7 @@ class BNFW_Engine {
 	 *
 	 * @return string Processed string.
 	 */
-	public function user_shortcodes( $message, $user_id ) {
+	private function user_shortcodes( $message, $user_id ) {
 		$user_info = get_userdata( $user_id );
 
 		// deperecated
@@ -463,6 +551,23 @@ class BNFW_Engine {
 	}
 
 	/**
+	 * Handle Core Updated Shortcodes.
+	 *
+	 * @since 1.6
+	 *
+	 * @param string $message Original message with shortcodes.
+	 * @param string $type    The type of email being sent. Can be one of
+	 *                        'success', 'fail', 'manual', 'critical'.
+	 *
+	 * @return string Modified content.
+	 */
+	private function core_updated_shortcodes( $message, $type ) {
+		$message = str_replace( '[core_update_status]', $type, $message );
+
+		return $message;
+	}
+
+	/**
 	 * Get the list of emails from the notification settings.
 	 *
 	 * @since 1.0
@@ -490,8 +595,9 @@ class BNFW_Engine {
 				$post_id = $comment->comment_post_ID;
 			}
 
-			$author = get_user_by( 'id', get_post_field( 'post_author', $post_id ) );
-			if ( false !== $author ) {
+			$post_author = get_post_field( 'post_author', $post_id );
+			$author = get_user_by( 'id', $post_author );
+			if ( false !== $author && $post_author != $exclude ) {
 				$emails['to'] = array( $author->user_email );
 			}
 		} else {
@@ -512,6 +618,14 @@ class BNFW_Engine {
 				$emails['from'] = $setting['from-name'] . ' <' . $setting['from-email'] . '>' ;
 			} else {
 				$emails['from'] = get_option( 'blogname' ) . ' <' . get_option( 'admin_email' ) . '>' ;
+			}
+
+			if ( ! empty( $setting['reply-name'] ) ) {
+				$emails['reply-name'] = $setting['reply-name'];
+			}
+
+			if ( ! empty( $setting['reply-email'] ) ) {
+				$emails['reply-email'] = $setting['reply-email'];
 			}
 
 			if ( ! empty( $setting['cc'] ) ) {
@@ -664,6 +778,10 @@ class BNFW_Engine {
 
 		if ( ! empty( $emails['from'] ) ) {
 			$headers[] = 'From:' . $emails['from'];
+		}
+
+		if ( ! empty( $emails['reply-email'] ) ) {
+			$headers[] = 'Reply-To:' . $emails['reply-name'] . '<' . $emails['reply-email'] . '>';
 		}
 
 		if ( ! empty( $emails['cc'] ) ) {

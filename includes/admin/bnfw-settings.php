@@ -58,18 +58,26 @@ function bnfw_menu_item_links() {
 	global $submenu;
 
 	if ( current_user_can( 'manage_options' ) ) {
+		$doc_url = 'https://betternotificationsforwp.com/documentation/';
+		$store_url = 'https://betternotificationsforwp.com/store/';
+
+		if ( bnfw_is_tracking_allowed() ) {
+			$doc_url .= '?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Documentation"&amp;utm_medium=referral';
+			$store_url .= '?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Add-on"&amp;utm_medium=referral';
+		}
+
 		// Documentation Link
 		$submenu['edit.php?post_type=bnfw_notification'][500] = array(
 			'<div id="bnfw-menu-item-documentation" style="color: #73daeb;">Documentation</div>',
 			'manage_options',
-			'https://betternotificationsforwp.com/documentation/?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Documentation"&amp;utm_medium=referral',
+			$doc_url,
 		);
 
 		// Add-ons Link
 		$submenu['edit.php?post_type=bnfw_notification'][600] = array(
 			'<div id="bnfw-menu-item-addons" style="color: #ff6f59;">Add-ons</div>',
 			'manage_options',
-			'https://betternotificationsforwp.com/store/?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Add-on"&amp;utm_medium=referral',
+			$store_url,
 		);
 	}
 }
@@ -131,13 +139,12 @@ function bnfw_general_options() {
 		)
 	);
 
-	// Register - Suppress SPAM Checkbox
+	// Register - Email Format setting
 	register_setting(
 		'bnfw-settings',
 		'bnfw_email_format'
 	);
 
-	// Suppress notifications for SPAM comments
 	add_settings_field(
 		'bnfw_email_format',           // Field ID
 		esc_html__( 'Default Email Format', 'bnfw' ),  // Label to the left
@@ -149,6 +156,22 @@ function bnfw_general_options() {
 		)
 	);
 
+	// Register - Allow tracking setting
+	register_setting(
+		'bnfw-settings',
+		'bnfw_allow_tracking'
+	);
+
+	add_settings_field(
+		'bnfw_allow_tracking',           // Field ID
+		esc_html__( 'Allow Usage Tracking?', 'bnfw' ),  // Label to the left
+		'bnfw_render_allow_tracking',  // Name of function that renders options on the page
+		'bnfw-settings',                // Page to show on
+		'bnfw_general_options_section', // Associate with which settings section?
+		array(
+			esc_html__( 'Allow Better Notifications for WordPress to anonymously track how this plugin is used and help make the plugin better. Opt-in to tracking and the mailing list and instantly receive a coupon code worth 10% off any BNFW add-on via email. You can opt-out and unsubscribe at any time.', 'bnfw' )
+		)
+	);
 }
 
 add_action( 'admin_init', 'bnfw_general_options', 10 );
@@ -201,6 +224,21 @@ function bnfw_email_format_radio( $args ) {
 		<input type="radio" value="text"
 		       name="bnfw_email_format" <?php checked( $email_format, 'text', true ); ?>><?php esc_html_e( 'Plain Text', 'bnfw' ); ?>
 	</label>
-	<p><i><?php echo esc_html( $args[0] ); ?></i></p>
+	<p><i><?php echo $args[0]; ?></i></p>
+	<?php
+}
+
+/**
+ * Render allow tracking checkbox.
+ *
+ * @since 1.6
+ *
+ * @param array $args
+ */
+function bnfw_render_allow_tracking( $args ) {
+	?>
+	<input type="checkbox" id="bnfw_allow_tracking" name="bnfw_allow_tracking"
+	       value="on" <?php checked( 'on', get_option( 'bnfw_allow_tracking' ), true ); ?>>
+	<label for="bnfw_allow_tracking"><?php echo esc_html( $args[0] ); ?></label>
 	<?php
 }

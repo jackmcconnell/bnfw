@@ -16,6 +16,10 @@
     padding: 15px;
 }
 
+.manage-column.column-disabled {
+    width: 8% !important;
+}
+
 /* Fix 'jump' when hovering over 'x' in select2 box */
 /*ul.select2-choices li.select2-search-choice a {
 	-webkit-transition-property: none;

@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Send customisable emails to your users for different WordPress notifications.
- * Version: 1.5.3
+ * Version: 1.6
  * Author: Voltronik
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -121,15 +121,22 @@ class BNFW {
 		 */
 		$trigger_insert_post = apply_filters( 'bnfw_trigger_insert_post', false );
 
-		if ( in_array( $current_theme, $insert_post_themes ) || $trigger_insert_post ) {
+		if ( in_array( $current_theme->get( 'Name' ), $insert_post_themes ) || $trigger_insert_post ) {
 			add_action( 'wp_insert_post'        , array( $this, 'insert_post' ), 10, 3 );
 		}
+
+		add_action( 'draft_to_private'          , array( $this, 'private_post' ) );
+		add_action( 'future_to_private'         , array( $this, 'private_post' ) );
+		add_action( 'pending_to_private'        , array( $this, 'private_post' ) );
+		add_action( 'publish_to_private'        , array( $this, 'private_post' ) );
 
 		add_action( 'draft_to_publish'          , array( $this, 'publish_post' ) );
 		add_action( 'future_to_publish'         , array( $this, 'publish_post' ) );
 		add_action( 'pending_to_publish'        , array( $this, 'publish_post' ) );
 		add_action( 'private_to_publish'        , array( $this, 'publish_post' ) );
+
 		add_action( 'publish_to_publish'        , array( $this, 'update_post' ) );
+
 		add_action( 'init'                      , array( $this, 'custom_post_type_hooks' ), 100 );
 		add_action( 'create_term'               , array( $this, 'create_term' ), 10, 3 );
 
@@ -148,6 +155,11 @@ class BNFW {
 		}
 		add_action( 'lostpassword_post'         , array( $this, 'on_lost_password' ) );
 		add_filter( 'retrieve_password_message' , array( $this, 'change_password_email_message' ), 10, 4 );
+
+		add_filter( 'password_change_email'     , array( $this, 'on_password_changed' ), 10, 2 );
+		add_filter( 'email_change_email'        , array( $this, 'on_email_changed' ), 10, 2 );
+
+		add_filter( 'auto_core_update_email'    , array( $this, 'on_core_updated' ), 10, 4 );
 
 		add_filter( 'plugin_action_links'       , array( $this, 'plugin_action_links' ), 10, 4 );
 		add_action( 'shutdown'                  , array( $this, 'on_shutdown' ) );
@@ -230,6 +242,21 @@ class BNFW {
 
 		if ( BNFW_Notification::POST_TYPE != $post_type ) {
 			$this->send_notification_async( 'new-' . $post_type, $post_id );
+		}
+	}
+
+	/**
+	 * Fires when a private post is created.
+	 *
+	 * @since 1.6
+	 * @param object $post Post Object
+	 */
+	public function private_post( $post ) {
+		$post_id   = $post->ID;
+		$post_type = $post->post_type;
+
+		if ( BNFW_Notification::POST_TYPE != $post_type ) {
+			$this->send_notification_async( 'private-' . $post_type, $post_id );
 		}
 	}
 
@@ -371,8 +398,7 @@ class BNFW {
 			$setting = $this->notifier->read_settings( end( $notifications )->ID );
 
 			if ( '' === $user_data ) {
-				return $this->engine->user_shortcodes( $setting['subject'], $user_data->ID );
-
+				return $this->engine->handle_shortcodes( $setting['subject'], 'user-password', $user_data->ID );
 			} else {
 				return $setting['subject'];
 			}
@@ -411,6 +437,75 @@ class BNFW {
 		}
 
 		return $message;
+	}
+
+	/**
+	 * On Password Changed.
+	 *
+	 * @since 1.6
+	 *
+	 * @param array $email_data Email Data.
+	 * @param array $user       User data.
+	 *
+	 * @return array Modified Email Data
+	 */
+	public function on_password_changed( $email_data, $user ) {
+		return $this->handle_filtered_data_notification( 'password-changed', $email_data, $user['ID'] );
+	}
+
+	/**
+	 * On Email Changed.
+	 *
+	 * @since 1.6
+	 *
+	 * @param array $email_data Email Data.
+	 * @param array $user       User data.
+	 *
+	 * @return array Modified Email Data
+	 */
+	public function on_email_changed( $email_data, $user ) {
+		return $this->handle_filtered_data_notification( 'email-changed', $email_data, $user['ID'] );
+	}
+
+	/**
+	 * Send notification on core updated event.
+	 *
+	 * @since 1.6
+	 *
+	 * @param array  $email_data  Email Data.
+	 * @param string $type        The type of email being sent. Can be one of
+	 *                            'success', 'fail', 'manual', 'critical'.
+	 * @param object $core_update The update offer that was attempted.
+	 * @param mixed  $result      The result for the core update. Can be WP_Error.
+	 *
+	 * @return array Modified Email Data.
+	 */
+	public function on_core_updated( $email_data, $type, $core_update, $result ) {
+		return $this->handle_filtered_data_notification( 'core-updated', $email_data, $type );
+	}
+
+	/**
+	 * Process User update notifications.
+	 *
+	 * @since 1.6
+	 *
+	 * @param string     $notification_name Notification Name.
+	 * @param array      $email_data        Email Data.
+	 * @param string|int $extra_data        User Id.
+	 *
+	 * @return array Modified Email Data.
+	 */
+	private function handle_filtered_data_notification( $notification_name, $email_data, $extra_data ) {
+		$notifications = $this->notifier->get_notifications( $notification_name );
+		if ( count( $notifications ) > 0 ) {
+			// Ideally there should be only one notification for this type.
+			// If there are multiple notification then we will read data about only the last one
+			$setting = $this->notifier->read_settings( end( $notifications )->ID );
+
+			$email_data = $this->engine->handle_filtered_data_notification( $email_data, $setting, $extra_data );
+		}
+
+		return $email_data;
 	}
 
 	/**
@@ -467,10 +562,22 @@ class BNFW {
 		if ( ! empty( $old_role ) ) {
 			$notifications = $this->notifier->get_notifications( 'user-role' );
 			foreach ( $notifications as $notification ) {
-				$this->engine->send_user_role_changed_email( $this->notifier->read_settings( $notification->ID ), $user_id );
+				$this->engine->send_user_role_changed_email(
+					$this->notifier->read_settings( $notification->ID ),
+					$user_id,
+					$old_role[0],
+					$new_role
+				);
 			}
 
-			$this->send_notification( 'admin-role', $user_id );
+			$notifications = $this->notifier->get_notifications( 'admin-role' );
+			foreach ( $notifications as $notification ) {
+				$setting = $this->notifier->read_settings( $notification->ID );
+				$setting['message'] = $this->engine->handle_user_role_shortcodes( $setting['message'], $old_role[0], $new_role );
+				$setting['subject'] = $this->engine->handle_user_role_shortcodes( $setting['subject'], $old_role[0], $new_role );
+
+				$this->engine->send_notification( $setting , $user_id );
+			}
 		}
 	}
 

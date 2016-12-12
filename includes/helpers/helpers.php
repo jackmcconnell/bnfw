@@ -127,3 +127,18 @@ function bnfw_format_user_capabilities( $wp_capabilities ) {
 
 	return implode( ', ', $capabilities );
 }
+
+/**
+ * Has the user opted-in for tracking?
+ *
+ * @return bool True if tracking is allowed, False otherwise.
+ */
+function bnfw_is_tracking_allowed() {
+	$tracking_allowed = false;
+
+	if ( get_option( 'bnfw_allow_tracking' ) == 'on' ) {
+		$tracking_allowed = true;
+	}
+
+	return $tracking_allowed;
+}

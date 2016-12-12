@@ -164,6 +164,12 @@ class BNFW_Notification {
 								value="admin-password" <?php selected( 'admin-password', $setting['notification'] ); ?>><?php esc_html_e( 'Lost Password - For Admin', 'bnfw' ); ?></option>
 							<option
 								value="admin-user" <?php selected( 'admin-user', $setting['notification'] ); ?>><?php esc_html_e( 'New User Registration - For Admin', 'bnfw' ); ?></option>
+							<option
+								value="password-changed" <?php selected( 'password-changed', $setting['notification'] ); ?>><?php esc_html_e( 'User Password Changed', 'bnfw' ); ?></option>
+							<option
+								value="email-changed" <?php selected( 'email-changed', $setting['notification'] ); ?>><?php esc_html_e( 'User Email Changed', 'bnfw' ); ?></option>
+							<option
+								value="core-updated" <?php selected( 'core-updated', $setting['notification'] ); ?>><?php esc_html_e( 'WordPress Core Automatic Background Updates', 'bnfw' ); ?></option>
 						</optgroup>
 						<optgroup label="Transactional">
 							<option
@@ -187,6 +193,8 @@ class BNFW_Notification {
 							<option
 								value="pending-post" <?php selected( 'pending-post', $setting['notification'] ); ?>><?php esc_html_e( 'Post Pending Review', 'bnfw' ); ?></option>
 							<option
+								value="private-post" <?php selected( 'private-post', $setting['notification'] ); ?>><?php esc_html_e( 'New Private Post', 'bnfw' ); ?></option>
+							<option
 								value="future-post" <?php selected( 'future-post', $setting['notification'] ); ?>><?php esc_html_e( 'Post Scheduled', 'bnfw' ); ?></option>
 							<option
 								value="newterm-category" <?php selected( 'newterm-category', $setting['notification'] ); ?>><?php esc_html_e( 'New Category', 'bnfw' ); ?></option>
@@ -201,6 +209,8 @@ class BNFW_Notification {
 								value="update-page" <?php selected( 'update-page', $setting['notification'] ); ?>><?php esc_html_e( 'Page Updated', 'bnfw' ); ?></option>
 							<option
 								value="pending-page" <?php selected( 'pending-page', $setting['notification'] ); ?>><?php esc_html_e( 'Page Pending Review', 'bnfw' ); ?></option>
+							<option
+								value="private-page" <?php selected( 'private-page', $setting['notification'] ); ?>><?php esc_html_e( 'New Private Page', 'bnfw' ); ?></option>
 							<option
 								value="future-page" <?php selected( 'future-page', $setting['notification'] ); ?>><?php esc_html_e( 'Page Scheduled', 'bnfw' ); ?></option>
 							<option
@@ -229,6 +239,8 @@ class BNFW_Notification {
 										value="update-<?php echo esc_attr( $type ); ?>" <?php selected( 'update-' . $type, $setting['notification'] ); ?>><?php echo "'$label' " . esc_html__( 'Update ', 'bnfw' ); ?></option>
 									<option
 										value="pending-<?php echo esc_attr( $type ); ?>" <?php selected( 'pending-' . $type, $setting['notification'] ); ?>><?php echo "'$label' ", esc_html__( 'Pending Review', 'bnfw' ); ?></option>
+									<option
+										value="private-<?php echo esc_attr( $type ); ?>" <?php selected( 'private-' . $type, $setting['notification'] ); ?>><?php echo esc_html__( 'New Private ', 'bnfw' ), "'$label'"; ?></option>
 									<option
 										value="future-<?php echo esc_attr( $type ); ?>" <?php selected( 'future-' . $type, $setting['notification'] ); ?>><?php echo "'$label' ", esc_html__( 'Scheduled', 'bnfw' ); ?></option>
 									<option
@@ -306,7 +318,7 @@ class BNFW_Notification {
 				<td>
 					<input type="checkbox" id="show-fields" name="show-fields"
 					       value="true" <?php checked( $setting['show-fields'], 'true', true ); ?>>
-					<label for="show-fields"><?php esc_html_e( 'Set "From" Name & Email, CC, BCC', 'bnfw' ); ?></label>
+					<label for="show-fields"><?php esc_html_e( 'Set "From" Name & Email, Reply To, CC, BCC', 'bnfw' ); ?></label>
 				</td>
 			</tr>
 
@@ -319,6 +331,18 @@ class BNFW_Notification {
 					       placeholder="Site Name" style="width: 37.35%">
 					<input type="email" name="from-email" value="<?php echo esc_attr( $setting['from-email'] ); ?>"
 					       placeholder="Admin Email" style="width: 37.3%">
+				</td>
+			</tr>
+
+			<tr valign="top" id="reply">
+				<th scope="row">
+					<?php esc_html_e( 'Reply To', 'bnfw' ); ?>
+				</th>
+				<td>
+					<input type="text" name="reply-name" value="<?php echo esc_attr( $setting['reply-name'] ); ?>"
+					       placeholder="Name" style="width: 37.35%">
+					<input type="email" name="reply-email" value="<?php echo esc_attr( $setting['reply-email'] ); ?>"
+					       placeholder="Email" style="width: 37.3%">
 				</td>
 			</tr>
 
@@ -359,6 +383,17 @@ class BNFW_Notification {
 				</td>
 			</tr>
 
+            <tr valign="top" id="current-user">
+                <th></th>
+                <td>
+                    <label>
+                        <input type="checkbox" name="disable-current-user"
+                               value="true" <?php checked( 'true', $setting['disable-current-user'] ); ?>>
+						<?php esc_html_e( 'Do not send this Notification to the User that triggered it', 'bnfw' ); ?>
+                    </label>
+                </td>
+            </tr>
+
 			<tr valign="top" id="users">
 				<th scope="row">
 					<?php esc_html_e( 'Send To', 'bnfw' ); ?>
@@ -369,17 +404,6 @@ class BNFW_Notification {
 					        data-placeholder="Select User Roles / Users" style="width:75%">
 						<?php bnfw_render_users_dropdown( $setting['users'] ); ?>
 					</select>
-				</td>
-			</tr>
-
-			<tr valign="top" id="current-user">
-				<th></th>
-				<td>
-					<label>
-						<input type="checkbox" name="disable-current-user"
-						       value="true" <?php checked( 'true', $setting['disable-current-user'] ); ?>>
-						<?php esc_html_e( 'Disable this Notification for the User that triggered it', 'bnfw' ); ?>
-					</label>
 				</td>
 			</tr>
 
@@ -402,8 +426,15 @@ class BNFW_Notification {
 							<span
 								class="dashicons dashicons-editor-help"></span> <?php esc_html_e( 'Need some help?', 'bnfw' ); ?>
 						</p>
+						<?php
+						$doc_url = 'https://betternotificationsforwp.com/documentation/';
+
+						if ( bnfw_is_tracking_allowed() ) {
+							$doc_url .= "?utm_source=WP%20Admin%20Notification%20Editor%20-%20'Documentation'&amp;utm_medium=referral";
+						}
+						?>
 						<p>
-							<a href="https://betternotificationsforwp.com/documentation/?utm_source=WP%20Admin%20Notification%20Editor%20-%20'Documentation'&amp;utm_medium=referral"
+							<a href="<?php echo $doc_url; ?>"
 							   target="_blank" class="button-secondary"><?php esc_html_e( 'Documentation', 'bnfw' ); ?></a>
 						</p>
 						<p>
@@ -600,6 +631,8 @@ class BNFW_Notification {
 			'notification'         => '',
 			'from-name'            => '',
 			'from-email'           => '',
+			'reply-name'           => '',
+			'reply-email'          => '',
 			'cc'                   => array(),
 			'bcc'                  => array(),
 			'users'                => array(),
@@ -761,6 +794,9 @@ class BNFW_Notification {
 			);
 		}
 
+		$args['posts_per_page'] = -1;
+		$args['nopagging'] = true;
+
 		$wp_query = new WP_Query();
 		$posts    = $wp_query->query( $args );
 
@@ -824,7 +860,7 @@ class BNFW_Notification {
 				}
 				break;
 			case 'type':
-				echo $this->get_notifications_name( $setting['notification'] );
+				echo $this->get_notification_name( $setting['notification'] );
 				break;
 			case 'subject':
 				echo ! empty( $setting['subject'] ) ? $setting['subject'] : '';
@@ -881,11 +917,11 @@ class BNFW_Notification {
 	/**
 	 * Get name of the notification based on slug.
 	 *
-	 * @param mixed $slug
+	 * @param string $slug Notification Slug.
 	 *
-	 * @return unknown
+	 * @return string Notification Name.
 	 */
-	private function get_notifications_name( $slug ) {
+	private function get_notification_name( $slug ) {
 		$name = '';
 		switch ( $slug ) {
 			case 'new-comment':
@@ -905,6 +941,15 @@ class BNFW_Notification {
 				break;
 			case 'admin-password':
 				$name = esc_html__( 'Lost Password - For Admin', 'bnfw' );
+				break;
+			case 'password-changed':
+				$name = esc_html__( 'User Password Changed', 'bnfw' );
+				break;
+			case 'email-changed':
+				$name = esc_html__( 'User Email Changed', 'bnfw' );
+				break;
+			case 'core-updated':
+				$name = esc_html__( 'WordPress Core Automatic Background Updates', 'bnfw' );
 				break;
 			case 'new-user':
 				$name = esc_html__( 'New User Registration - For User', 'bnfw' );
@@ -930,8 +975,14 @@ class BNFW_Notification {
 			case 'pending-post':
 				$name = esc_html__( 'Post Pending Review', 'bnfw' );
 				break;
+			case 'private-post':
+				$name = esc_html__( 'New Private Post', 'bnfw' );
+				break;
 			case 'future-post':
 				$name = esc_html__( 'Post Scheduled', 'bnfw' );
+				break;
+			case 'new-page':
+				$name = esc_html__( 'New Page Published', 'bnfw' );
 				break;
 			case 'newterm-category':
 				$name = esc_html__( 'New Category', 'bnfw' );
@@ -960,6 +1011,9 @@ class BNFW_Notification {
 						break;
 					case 'future':
 						$name = $label . esc_html__( ' Scheduled', 'bnfw' );
+						break;
+					case 'private':
+						$name = esc_html__( 'New Private ', 'bnfw' ) . $label;
 						break;
 					case 'comment':
 						$name = $label . esc_html__( ' Comment', 'bnfw' );

@@ -3,8 +3,8 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 3.5
-Tested up to: 4.6.1
-Stable tag: 1.5.3
+Tested up to: 4.7
+Stable tag: 1.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,9 @@ Notifications that are currently available to use are:
 * New Pingback
 * Lost Password - For Admin
 * New User Registration - For Admin
+* User Password Changed
+* User Email Changed
+* WordPress Core Automatic Background Updates 
 
 **Transactional**
 
@@ -49,6 +52,7 @@ Notifications that are currently available to use are:
 * New Post Published
 * Post Updated
 * Post Pending Review
+* New Private Post
 * Post Scheduled
 * Post - Custom Field Updated ([Custom Fields Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
 * Post - Update Reminder ([Update Reminder Add-on](https://betternotificationsforwp.com/downloads/update-reminder/))
@@ -58,6 +62,7 @@ Notifications that are currently available to use are:
 * New Page Published
 * Page Updated
 * Page Pending Review
+* New Private Page
 * Page Scheduled
 * Page - New Comment
 * Page - Comment Reply
@@ -120,6 +125,10 @@ Yes! There is an option for suppressing comments marked as SPAM by Akismet in th
 
 Yes and no - some notifications work, others don't, and some are missing entirely. I do plan on adding full Multisite support at a later date however, this will be in the form of an add-on. 
 
+= Can I send notifications to email addresses that aren't WordPress users? =
+
+No. This is to prevent SPAM and/or abuse of the plugin and to abide by anti-SPAM laws in various countries.
+
 = What isn't this plugin? =
 
 It's not designed to send out newsletters. There is no send-this-out-on-this-date style functionality included. There are many other great plugins available that you could use for that instead. Additionally, users cannot currently unsubscribe automatically from notifications so you'll have to work out how you manage unsubscribers manually.
@@ -177,6 +186,25 @@ An older version might work but this is untested. A lot of the newer features re
 
 
 == Changelog ==
+
+= 1.6 - 12th December 2016 =
+* Merry Christmas & Happy New Year!
+* New: Anonymous tracking of the features you use in BNFW is now an opt-in checkbox on the Notifications > Settings page. Please consider checking this box to help make BNFW even better. You'll also receive a 10% off coupon code when you sign-up to the [mailing list](http://voltronik.us2.list-manage2.com/subscribe?u=57c012217219b2d81dda0085f&id=28eebdab28) too.
+* New: Notifications for privately published posts / pages / custom post types.
+* New: Notification and accompanying shortcode for customising WordPress Core Automatic Background Updates (Success / Fail / Critical).
+* New: Notification for User Password Changed.
+* New: Notification for User Email Changed.
+* New: Shortcodes for showing the old and new user role when used in conjunction with the User Role Changed notifications.
+* New: You can now add a 'Reply To' name and email address in the Additional Email Fields for all notifications that support it.
+* New: You can now prevent yourself from receiving notifications of comments or replies to comments on one of your posts by combining the two checkboxes 'Send this notification to the Author only' and 'Do not send this Notification to the User that triggered it'.
+* New: All transactional notifications can now be set to either HTML or Plain Text.
+* New: Better compatibility with [Theme My Login](https://en-gb.wordpress.org/plugins/theme-my-login/).
+* Improved: Re-worded a checkbox to be more understandable. It did say, "Disable this Notification for the User that triggered it", but now says, "Do not send this Notification to the User that triggered it".
+* Improved: Compatibility with Mashshare.
+* Fixed: Global User Shortcodes weren't being outputted correctly in the 'Lost Password - For User' notification.
+* Fixed: Child themes weren't being registered correctly in the filter when using the front-end forms filter.
+* Fixed: The number of options within notifications was being limited to the number of blog posts WordPress was set to show.
+* Fixed: The 'Shortcode Help' button wasn't linking to the BNFW website correctly for some BNFW add-ons.
 
 = 1.5.3 - 13th September 2016 =
 * Fixed: User Roles in the 'User Roles / Users' admin column were being displayed only in lowercase.

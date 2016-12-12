@@ -3,9 +3,9 @@ jQuery(document).ready(function($) {
     	var show_fields = $('#show-fields').is(":checked");
 
     	if ( show_fields ) {
-			$('#email, #cc, #bcc').show();
+			$('#email, #cc, #bcc, #reply').show();
     	} else {
-			$('#email, #cc, #bcc').hide();
+			$('#email, #cc, #bcc, #reply').hide();
     	}
     }
 
@@ -15,6 +15,10 @@ jQuery(document).ready(function($) {
     	} else {
     		$( '#users, #current-user' ).show();
     	}
+
+	    if ( 'new-comment' === $( '#notification' ).val() ) {
+		    $( '#current-user' ).show();
+	    }
     }
 
 	function init() {
@@ -47,17 +51,24 @@ jQuery(document).ready(function($) {
 
 		toggle_fields();
 
-		if ( 'new-user' === $('#notification').val() || 'welcome-email' === $('#notification').val() || 'reply-comment' === $('#notification').val() || notification.startsWith( 'commentreply-' ) ) {
-			$('#toggle-fields, #email, #cc, #bcc, #users, #email-formatting, #disable-autop, #current-user, #post-author').hide();
-			$('#user-password-msg').show();
-		} else if ( 'user-password' === $('#notification').val() || 'user-role' === notification ) {
-			$('#toggle-fields, #email, #cc, #bcc, #users, #current-user, #post-author').hide();
+		if ( 'reply-comment' === notification || notification.startsWith( 'commentreply-' ) ||
+				'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
+				'user-role' === notification ) {
+
+			$('#toggle-fields, #email, #cc, #bcc, #reply, #users, #current-user, #post-author').hide();
 			$('#user-password-msg, #disable-autop, #email-formatting').show();
-		} else if ( 'new-comment' === $('#notification').val() || 'new-trackback' === $('#notification').val() || 'new-pingback' === $('#notification').val() || 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() || 'admin-role' === notification ) {
-			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user, #post-author').show();
+		} else if ( 'new-comment' === notification || 'new-trackback' === notification || 'new-pingback' === notification ||
+				'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
+
+			$( '#toggle-fields, #users, #email-formatting, #disable-autop, #current-user, #post-author' ).show();
 			toggle_fields();
 			toggle_users();
-			$('#user-password-msg').hide();
+			$( '#user-password-msg' ).hide();
+		} else if ( 'password-changed' === notification || 'email-changed' === notification || 'core-updated' === notification ) {
+			$( '#toggle-fields, #users, #email-formatting, #disable-autop' ).show();
+			toggle_fields();
+			toggle_users();
+			$( '#user-password-msg, #current-user, #post-author' ).hide();
 		} else {
 			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user, #post-author').show();
 			toggle_fields();
@@ -71,18 +82,23 @@ jQuery(document).ready(function($) {
 		var $this = $(this),
 			notification = $this.val();
 
-		if ( 'new-user' === $this.val() || 'welcome-email' === $this.val() || 'reply-comment' === $this.val() || notification.startsWith( 'commentreply-' ) ) {
-			$('#toggle-fields, #email, #cc, #bcc, #users, #email-formatting, #disable-autop, #current-user, #post-author').hide();
-			$('#user-password-msg').show();
-		} else if ( 'user-password' === $this.val() || 'user-role' === notification ) {
-			$('#toggle-fields, #email, #cc, #bcc, #users, #current-user, #post-author').hide();
+		if ( 'reply-comment' === notification || notification.startsWith( 'commentreply-' ) ||
+			'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
+			'user-role' === notification ) {
+
+			$('#toggle-fields, #email, #cc, #bcc, #reply, #users, #current-user, #post-author').hide();
 			$('#user-password-msg, #disable-autop, #email-formatting').show();
-		} else if ( 'admin-password' === $('#notification').val() || 'admin-user' === $('#notification').val() || 'admin-role' === notification ) {
+		} else if ( 'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
 			$('#post-author').hide();
 			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user').show();
 			$('#user-password-msg').hide();
 			toggle_fields();
 			toggle_users();
+		} else if ( 'password-changed' === notification || 'email-changed' === notification || 'core-updated' === notification ) {
+			$( '#toggle-fields, #users, #email-formatting, #disable-autop' ).show();
+			toggle_fields();
+			toggle_users();
+			$( '#user-password-msg, #current-user, #post-author' ).hide();
 		} else {
 			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user, #post-author').show();
 			$('#user-password-msg').hide();
@@ -130,12 +146,15 @@ jQuery(document).ready(function($) {
 			case 'commentreply-page':
 			case 'user-password':
 			case 'admin-password':
+			case 'password-changed':
+			case 'email-changed':
 			case 'new-user':
 			case 'welcome-email':
 			case 'user-role':
 			case 'admin-role':
 			case 'admin-user':
 			case 'new-post':
+			case 'core-updated':
 			case 'update-post':
 			case 'pending-post':
 			case 'future-post':
@@ -150,6 +169,7 @@ jQuery(document).ready(function($) {
 					case 'new':
 					case 'update':
 					case 'pending':
+					case 'private':
 					case 'future':
 					case 'comment':
 						notification_slug = splited[0] + '-post';
@@ -159,6 +179,13 @@ jQuery(document).ready(function($) {
 						break;
 					case 'newterm':
 						notification_slug = 'newterm-category';
+						break;
+					// ideally these should be in the add-ons. But hardcoding them here for now
+					case 'customfield':
+						notification_slug = 'customfield-post';
+						break;
+					case 'updatereminder':
+						notification_slug = 'updatereminder-post';
 						break;
 				}
 
