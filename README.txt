@@ -4,7 +4,7 @@ Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 3.5
 Tested up to: 4.7.2
-Stable tag: 1.6.1
+Stable tag: 1.6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,10 +26,15 @@ You want all the users in the Editor role to be notified via email when a new po
 Power-up your notifications using add-ons: 
 
 [Conditional Notifications](https://betternotificationsforwp.com/downloads/conditional-notifications/) - Limit certain notifications depending on which categories, tags, post formats, or terms you choose.
+
 [Custom Fields](https://betternotificationsforwp.com/downloads/custom-fields/) - Provides a number of new shortcodes allowing you to include data from custom fields and custom user fields created using [ACF](https://wordpress.org/plugins/advanced-custom-fields/).
+
 [Per-post Override](https://betternotificationsforwp.com/downloads/per-post-override/) - Override some of the settings of notifications directly when editing a post, page, or custom post type.
+
 [Update Reminder](https://betternotificationsforwp.com/downloads/update-reminder/) - Send a reminder to your users and/or user roles when a post, page, or custom post type hasn't been updated in a certain number of days.
+
 Send to Any Email - Coming Soon!
+
 Multisite Notifications - Coming Soon!
 
 ...and more coming soon!
@@ -91,7 +96,7 @@ The notifications that are currently available to use are:
 
 If you'd like to see a notification in the list above, please drop me a line in the forum and I'll see what I can do to add it.
 
-> Like this plugin? Please leave it [a great review](https://wordpress.org/support/view/plugin-reviews/bnfw?rate=5#postform)! Don't think the plugin is worthy of 5 stars? Having problems? Let me know in the [forum](https://wordpress.org/support/plugin/bnfw) and I'll do my best to help.
+> Like this plugin? Please leave it [a great review](https://wordpress.org/support/plugin/bnfw/reviews/?rate=5#new-post)! Don't think the plugin is worthy of 5 stars? Having problems? Let me know in the [forum](https://wordpress.org/support/plugin/bnfw/) and I'll do my best to help.
 
 > DISCLAIMER
 > This is an incredibly useful and highly rated plugin however, it's possible that overuse or abuse of this plugin could upset your users by sending them too many notifications. By downloading / installing / using this plugin, you take full responsibility of the management / quantity / types of notifications that are sent out from it including abiding by any SPAM laws in your country / operating areas, dealing with / responding to subscription / unsubscription requests, complaints, and so on. I accept no liability or responsibility for SPAM or abuse of this plugin from the user(s) of or anyone that may receive notifications as a result of the use of this plugin. I'm trusting you, please don't abuse your users.
@@ -199,7 +204,13 @@ An older version might work but this is untested. A lot of the newer features re
 
 == Changelog ==
 
+= 1.6.2 - 17th February 2017 =
+* Fixed: The 'Shortcode Help' button wasn't working correctly for some of the new notifications.
+
 = 1.6.1 - 17th February 2017 =
+* New & Improved: The 'Password Changed - For User', 'Password Changed - For Admin', and 'User Email Changed - For User' notifications have now been fully implemented. 
+* New: You can now use `[post_term taxonomy="TAXONOMY_NAME"]` to output the term(s) from the chosen taxonomy.
+* Improved: Any anti-SPAM plugin should now work with BNFW, not just Akismet. 
 * Improved: Emails sent via the "Send me a Test Email" button now prepend the Subject line with "Test Email: " so that you can tell which is a test notification and which is a real notification when using an email log plugin.
 * Fixed: The Global User Shortcodes weren't outputting anything when used in the 'User Email Changed - For User' notification. 
 Fixed: When a 'Lost Password – For User' notification had been set-up but disabled, it wasn't disabling the default WordPress notification.

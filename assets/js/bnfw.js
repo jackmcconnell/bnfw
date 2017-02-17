@@ -146,6 +146,7 @@ jQuery(document).ready(function($) {
 			case 'commentreply-page':
 			case 'user-password':
 			case 'admin-password':
+			case 'admin-password-changed':
 			case 'password-changed':
 			case 'email-changed':
 			case 'new-user':
