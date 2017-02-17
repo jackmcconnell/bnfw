@@ -75,7 +75,7 @@ function bnfw_menu_item_links() {
 
 		// Add-ons Link
 		$submenu['edit.php?post_type=bnfw_notification'][600] = array(
-			'<div id="bnfw-menu-item-addons" style="color: #ff6f59;">Add-ons</div>',
+			'<div id="bnfw-menu-item-addons" style="color: #ff6f59;">Premium Add-ons</div>',
 			'manage_options',
 			$store_url,
 		);
@@ -135,7 +135,7 @@ function bnfw_general_options() {
 		'bnfw-settings',                // Page to show on
 		'bnfw_general_options_section', // Associate with which settings section?
 		array(
-			esc_html__( "Don't send notifications for comments marked as SPAM by Akismet", 'bnfw' )
+			esc_html__( "Don't send notifications for comments marked as SPAM by another plugin", 'bnfw' )
 		)
 	);
 

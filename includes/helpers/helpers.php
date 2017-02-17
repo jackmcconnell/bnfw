@@ -16,9 +16,9 @@ function bnfw_get_user_select_class() {
 	$user_count = count_users();
 
 	if ( $user_count['total_users'] > 100 ) {
-		return 'user-select2';
+		return 'user-ajax-select2';
 	} else {
-		return 'select2';
+		return 'user-select2';
 	}
 }
 

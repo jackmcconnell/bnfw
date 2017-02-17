@@ -401,5 +401,5 @@ msgid "Voltronik"
 msgstr "Voltronik"
 
 #. Author URI of the plugin/theme
-msgid "http://www.voltronik.co.uk/"
-msgstr "http://www.voltronik.co.uk/"
+msgid "https://betternotificationsforwp.com/"
+msgstr "https://betternotificationsforwp.com/"

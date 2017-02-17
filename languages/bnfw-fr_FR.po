@@ -41,7 +41,7 @@ msgstr "Envoyez d’emails personnalisés à vos utilisateurs pour les différen
 
 #. Author of the plugin/theme
 msgid "Voltronik"
-msgstr "Ludovic D"
+msgstr "Voltronik"
 
 #. Author URI of the plugin/theme
 msgid "https://betternotificationsforwp.com/"

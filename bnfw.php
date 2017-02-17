@@ -2,8 +2,8 @@
 /**
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: https://wordpress.org/plugins/bnfw/
- * Description: Send customisable emails to your users for different WordPress notifications.
- * Version: 1.6
+ * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
+ * Version: 1.6.1
  * Author: Voltronik
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -14,7 +14,7 @@
  */
 
 /**
- * Copyright © 2016 Voltronik (hello@betternotificationsforwp.com)
+ * Copyright © 2016 Made with Fuel Ltd. (hello@betternotificationsforwp.com)
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
  * published by the Free Software Foundation.
@@ -156,6 +156,7 @@ class BNFW {
 		add_action( 'lostpassword_post'         , array( $this, 'on_lost_password' ) );
 		add_filter( 'retrieve_password_message' , array( $this, 'change_password_email_message' ), 10, 4 );
 
+		add_action( 'after_password_reset'      , array( $this, 'on_password_reset' ) );
 		add_filter( 'password_change_email'     , array( $this, 'on_password_changed' ), 10, 2 );
 		add_filter( 'email_change_email'        , array( $this, 'on_email_changed' ), 10, 2 );
 
@@ -434,9 +435,26 @@ class BNFW {
 			} else {
 				add_filter( 'wp_mail_content_type', array( $this, 'set_text_content_type' ) );
 			}
+		} else {
+			if ( $this->notifier->notification_exists( 'user-password', false ) ) {
+				// disabled notification exists, so disable the email by returning empty string.
+				return '';
+			}
 		}
 
 		return $message;
+	}
+
+	/**
+	 * On Password reset.
+	 *
+	 * @param WP_User $user User who's password was changed.
+	 */
+	public function on_password_reset( $user ) {
+		$notifications = $this->notifier->get_notifications( 'password-changed' );
+		foreach ( $notifications as $notification ) {
+			$this->engine->send_password_changed_email( $this->notifier->read_settings( $notification->ID ), $user );
+		}
 	}
 
 	/**
@@ -481,7 +499,16 @@ class BNFW {
 	 * @return array Modified Email Data.
 	 */
 	public function on_core_updated( $email_data, $type, $core_update, $result ) {
-		return $this->handle_filtered_data_notification( 'core-updated', $email_data, $type );
+		$notifications = $this->notifier->get_notifications( 'core-updated' );
+		if ( count( $notifications ) > 0 ) {
+			// Ideally there should be only one notification for this type.
+			// If there are multiple notification then we will read data about only the last one
+			$setting = $this->notifier->read_settings( end( $notifications )->ID );
+
+			$email_data = $this->engine->handle_core_updated_notification( $email_data, $setting, $type );
+		}
+
+		return $email_data;
 	}
 
 	/**

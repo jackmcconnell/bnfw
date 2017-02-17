@@ -24,8 +24,8 @@ jQuery(document).ready(function($) {
 	function init() {
 		var notification = $('#notification').val();
 
-		$(".select2").select2();
-		$(".user-select2").select2( {
+		$("#notification, .user-select2").select2();
+		$(".user-ajax-select2").select2( {
 			ajax: {
 				url: ajaxurl,
 				dataType: 'json',
@@ -53,7 +53,7 @@ jQuery(document).ready(function($) {
 
 		if ( 'reply-comment' === notification || notification.startsWith( 'commentreply-' ) ||
 				'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
-				'user-role' === notification ) {
+				'password-changed' === notification || 'email-changed' === notification || 'user-role' === notification ) {
 
 			$('#toggle-fields, #email, #cc, #bcc, #reply, #users, #current-user, #post-author').hide();
 			$('#user-password-msg, #disable-autop, #email-formatting').show();
@@ -64,7 +64,7 @@ jQuery(document).ready(function($) {
 			toggle_fields();
 			toggle_users();
 			$( '#user-password-msg' ).hide();
-		} else if ( 'password-changed' === notification || 'email-changed' === notification || 'core-updated' === notification ) {
+		} else if ( 'admin-password-changed' === notification || 'core-updated' === notification ) {
 			$( '#toggle-fields, #users, #email-formatting, #disable-autop' ).show();
 			toggle_fields();
 			toggle_users();
@@ -84,7 +84,7 @@ jQuery(document).ready(function($) {
 
 		if ( 'reply-comment' === notification || notification.startsWith( 'commentreply-' ) ||
 			'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
-			'user-role' === notification ) {
+			'password-changed' === notification || 'email-changed' === notification || 'user-role' === notification ) {
 
 			$('#toggle-fields, #email, #cc, #bcc, #reply, #users, #current-user, #post-author').hide();
 			$('#user-password-msg, #disable-autop, #email-formatting').show();
@@ -94,7 +94,7 @@ jQuery(document).ready(function($) {
 			$('#user-password-msg').hide();
 			toggle_fields();
 			toggle_users();
-		} else if ( 'password-changed' === notification || 'email-changed' === notification || 'core-updated' === notification ) {
+		} else if ( 'admin-password-changed' === notification || 'core-updated' === notification ) {
 			$( '#toggle-fields, #users, #email-formatting, #disable-autop' ).show();
 			toggle_fields();
 			toggle_users();

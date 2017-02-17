@@ -164,22 +164,24 @@ class BNFW_Notification {
 								value="admin-password" <?php selected( 'admin-password', $setting['notification'] ); ?>><?php esc_html_e( 'Lost Password - For Admin', 'bnfw' ); ?></option>
 							<option
 								value="admin-user" <?php selected( 'admin-user', $setting['notification'] ); ?>><?php esc_html_e( 'New User Registration - For Admin', 'bnfw' ); ?></option>
+                            <option
+                                value="admin-password-changed" <?php selected( 'admin-password-changed', $setting['notification'] ); ?>><?php esc_html_e( 'Password Changed - For Admin', 'bnfw' ); ?></option>
 							<option
-								value="password-changed" <?php selected( 'password-changed', $setting['notification'] ); ?>><?php esc_html_e( 'User Password Changed', 'bnfw' ); ?></option>
-							<option
-								value="email-changed" <?php selected( 'email-changed', $setting['notification'] ); ?>><?php esc_html_e( 'User Email Changed', 'bnfw' ); ?></option>
+								value="admin-role" <?php selected( 'admin-role', $setting['notification'] ); ?>><?php esc_html_e( 'User Role Changed - For Admin', 'bnfw' ); ?></option>
 							<option
 								value="core-updated" <?php selected( 'core-updated', $setting['notification'] ); ?>><?php esc_html_e( 'WordPress Core Automatic Background Updates', 'bnfw' ); ?></option>
 						</optgroup>
 						<optgroup label="Transactional">
 							<option
 								value="user-password" <?php selected( 'user-password', $setting['notification'] ); ?>><?php esc_html_e( 'Lost Password - For User', 'bnfw' ); ?></option>
+                            <option
+                                    value="password-changed" <?php selected( 'password-changed', $setting['notification'] ); ?>><?php esc_html_e( 'Password Changed - For User', 'bnfw' ); ?></option>
+                            <option
+                                    value="email-changed" <?php selected( 'email-changed', $setting['notification'] ); ?>><?php esc_html_e( 'User Email Changed - For User', 'bnfw' ); ?></option>
 							<option
 								value="new-user" <?php selected( 'new-user', $setting['notification'] ); ?>><?php esc_html_e( 'New User Registration - For User', 'bnfw' ); ?></option>
 							<option
 								value="welcome-email" <?php selected( 'welcome-email', $setting['notification'] ); ?>><?php esc_html_e( 'New User - Post-registration Email', 'bnfw' ); ?></option>
-							<option
-								value="admin-role" <?php selected( 'admin-role', $setting['notification'] ); ?>><?php esc_html_e( 'User Role Changed - For Admin', 'bnfw' ); ?></option>
 							<option
 								value="user-role" <?php selected( 'user-role', $setting['notification'] ); ?>><?php esc_html_e( 'User Role Changed - For User', 'bnfw' ); ?></option>
 							<option
@@ -287,7 +289,7 @@ class BNFW_Notification {
 				<td>&nbsp;</td>
 				<td>
 					<div>
-						<p style="margin-top: 0;"><?php esc_html_e( "This notification doesn't support additional email fields.", 'bnfw' ); ?></p>
+						<p style="margin-top: 0;"><?php esc_html_e( "This notification doesn't support additional email fields due to a limitation in WordPress.", 'bnfw' ); ?></p>
 					</div>
 				</td>
 			</tr>
@@ -942,11 +944,14 @@ class BNFW_Notification {
 			case 'admin-password':
 				$name = esc_html__( 'Lost Password - For Admin', 'bnfw' );
 				break;
+			case 'admin-password-changed':
+				$name = esc_html__( 'Password Changed - For Admin', 'bnfw' );
+				break;
 			case 'password-changed':
-				$name = esc_html__( 'User Password Changed', 'bnfw' );
+				$name = esc_html__( 'Password Changed - For User', 'bnfw' );
 				break;
 			case 'email-changed':
-				$name = esc_html__( 'User Email Changed', 'bnfw' );
+				$name = esc_html__( 'User Email Changed - For User', 'bnfw' );
 				break;
 			case 'core-updated':
 				$name = esc_html__( 'WordPress Core Automatic Background Updates', 'bnfw' );

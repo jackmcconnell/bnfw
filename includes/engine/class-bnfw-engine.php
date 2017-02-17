@@ -15,7 +15,7 @@ class BNFW_Engine {
 	 * @param array $setting
 	 */
 	public function send_test_email( $setting ) {
-		$subject = $setting['subject'];
+		$subject = 'Test Email: ' . $setting['subject'];
 		$message = '<p><strong>This is a test email. All shortcodes below will show in place but not be replaced with content.</strong></p>' . stripslashes( $setting['message'] );
 
 		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
@@ -30,8 +30,6 @@ class BNFW_Engine {
 			$headers[] = 'Content-type: text/html';
 		}
 
-		$subject = $this->handle_global_user_shortcodes( $subject, $email );
-		$message = $this->handle_global_user_shortcodes( $message, $email );
 		wp_mail( $email, stripslashes( $subject ), $message, $headers );
 	}
 
@@ -225,11 +223,47 @@ class BNFW_Engine {
 		$email_data['message'] = $this->handle_shortcodes( $setting['message'], $setting['notification'], $extra_data );
 		$email_data['subject'] = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $extra_data );
 
-		$emails = $this->get_emails( $setting, $extra_data );
-		$headers = $this->get_headers( $emails );
+		$email_data['message'] = $this->handle_global_user_shortcodes( $email_data['message'], $email_data['to'] );
+		$email_data['subject'] = $this->handle_global_user_shortcodes( $email_data['subject'], $email_data['to'] );
 
 		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
 			$email_data['message'] = wpautop( $email_data['message'] );
+		}
+
+		if ( 'html' == $setting['email-formatting'] ) {
+			$headers[] = 'Content-type: text/html';
+		} else {
+			$headers[] = 'Content-type: text/plain';
+		}
+
+		$email_data['headers'] = $headers;
+
+		return $email_data;
+	}
+
+	/**
+	 * Handle shortcodes for core updated notification.
+	 *
+	 * @since    1.6
+	 *
+	 * @param array  $email_data Email data.
+	 * @param array  $setting    Notification settings.
+	 * @param string $type       Result of update.
+	 *
+	 * @return array Modified email data.
+	 */
+	public function handle_core_updated_notification( $email_data, $setting, $type ) {
+		$email_data['body'] = $this->handle_shortcodes( $setting['message'], $setting['notification'], $type );
+		$email_data['subject'] = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $type );
+
+		$emails  = $this->get_emails( $setting, $type );
+		$headers = $this->get_headers( $emails );
+
+		$email_data['body'] = $this->handle_global_user_shortcodes( $email_data['body'], $emails['to'][0] );
+		$email_data['subject'] = $this->handle_global_user_shortcodes( $email_data['subject'], $emails['to'][0] );
+
+		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
+			$email_data['body'] = wpautop( $email_data['body'] );
 		}
 
 		if ( 'html' == $setting['email-formatting'] ) {
@@ -271,6 +305,32 @@ class BNFW_Engine {
 	}
 
 	/**
+	 * Send Password Changed email.
+	 *
+	 * @param array   $setting Notification Setting.
+	 * @param WP_User $user    User for whom the password has changed.
+	 */
+	public function send_password_changed_email( $setting, $user ) {
+		$user_id = $user->ID;
+
+		$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $user_id );
+		$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $user_id );
+
+		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
+			$message = wpautop( $message );
+		}
+
+		$headers = array();
+		if ( 'html' == $setting['email-formatting'] ) {
+			$headers[] = 'Content-type: text/html';
+		}
+
+		$subject = $this->handle_global_user_shortcodes( $subject, $user->user_email );
+		$message = $this->handle_global_user_shortcodes( $message, $user->user_email );
+		wp_mail( $user->user_email, stripslashes( $subject ), $message, $headers );
+	}
+
+	/**
 	 * Generate message for notification.
 	 *
 	 * @since 1.0
@@ -298,6 +358,7 @@ class BNFW_Engine {
 				break;
 
 			case 'admin-password':
+			case 'admin-password-changed':
 			case 'user-password':
 			case 'admin-user':
 			case 'welcome-email':
@@ -376,6 +437,29 @@ class BNFW_Engine {
 	}
 
 	/**
+	 * Handle Global User Shortcodes.
+	 *
+	 * @param string $message String to be processed.
+	 * @param string $email   Email of the user.
+	 *
+	 * @return string Processed string.
+	 */
+	private function handle_global_user_shortcodes( $message, $email ) {
+		$user = get_user_by( 'email', $email );
+
+		if ( false === $user ) {
+			$message = str_replace( '[global_user_firstname]', $email, $message );
+			$message = str_replace( '[global_user_lastname]', $email, $message );
+		} else {
+			$message = str_replace( '[global_user_firstname]', $user->first_name, $message );
+			$message = str_replace( '[global_user_lastname]', $user->last_name, $message );
+		}
+		$message = str_replace( '[global_user_email]', $email, $message );
+
+		return $message;
+	}
+
+	/**
 	 * Handle post shortcodes.
 	 *
 	 * @since 1.0
@@ -383,7 +467,7 @@ class BNFW_Engine {
 	 * @param int $post_id
 	 * @return string
 	 */
-	private function post_shortcodes(  $message, $post_id  ) {
+	public function post_shortcodes(  $message, $post_id  ) {
 		$post = get_post( $post_id );
 
 		$post_content = apply_filters( 'the_content', $post->post_content );
@@ -416,12 +500,14 @@ class BNFW_Engine {
 		$message = str_replace( '[permalink]', get_permalink( $post->ID ), $message );
 		$message = str_replace( '[edit_post]', get_edit_post_link( $post->ID ), $message );
 
+		$featured_image = '';
 		if ( has_post_thumbnail( $post->ID ) ) {
 			$image_url = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'single-post-thumbnail' );
 			if ( is_array( $image_url ) ) {
-				$message = str_replace( '[featured_image]', $image_url[0], $message );
+				$featured_image = $image_url[0];
 			}
 		}
+		$message = str_replace( '[featured_image]', $featured_image, $message );
 
 		if ( 'future' == $post->post_status ) {
 			$message = str_replace( '[post_scheduled_date]', $post->post_date, $message );
@@ -452,8 +538,20 @@ class BNFW_Engine {
 			$message = str_replace( '[post_update_author]', $last_user_info->display_name, $message );
 		}
 
-		$message = apply_filters( 'bnfw_shortcodes_post', $message, $post_id );
-		return $message;
+		$terms_list = '';
+		$taxonomy_matches = array();
+		preg_match( '/\[post_term taxonomy="([^"]*)"\]/i', $message, $taxonomy_matches );
+
+		if ( count( $taxonomy_matches ) > 0 ) {
+			$terms = wp_get_post_terms( $post_id, $taxonomy_matches[1], array( 'fields'   => 'names' ) );
+
+			if ( ! is_wp_error( $terms ) ) {
+				$terms_list = implode( ', ', $terms );
+			}
+		}
+		$message = preg_replace( '/\[post_term taxonomy="([^"]*)"\]/i', $terms_list, $message );
+
+		return apply_filters( 'bnfw_shortcodes_post', $message, $post_id );
 	}
 
 	/**
@@ -792,28 +890,5 @@ class BNFW_Engine {
 		}
 
 		return $headers;
-	}
-
-	/**
-	 * Handle Global User Shortcodes.
-	 *
-	 * @param string $message String to be processed.
-	 * @param string $email   Email of the user.
-	 *
-	 * @return string Processed string.
-	 */
-	private function handle_global_user_shortcodes( $message, $email ) {
-		$user = get_user_by( 'email', $email );
-
-		if ( false === $user ) {
-			$message = str_replace( '[global_user_firstname]', $email, $message );
-			$message = str_replace( '[global_user_lastname]', $email, $message );
-		} else {
-			$message = str_replace( '[global_user_firstname]', $user->first_name, $message );
-			$message = str_replace( '[global_user_lastname]', $user->last_name, $message );
-		}
-		$message = str_replace( '[global_user_email]', $email, $message );
-
-		return $message;
 	}
 }

@@ -115,4 +115,36 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 		}
 	}
 }
-?>
+
+if ( ! function_exists( 'wp_password_change_notification' ) ) {
+	/**
+	 * Notify the blog admin of a user changing password, normally via email.
+	 *
+	 * @param WP_User $user User object.
+	 */
+	function wp_password_change_notification( $user ) {
+		$bnfw = BNFW::factory();
+
+		if ( $bnfw->notifier->notification_exists( 'admin-password-changed', false ) ) {
+			$notifications = $bnfw->notifier->get_notifications( 'admin-password-changed' );
+
+			if ( count( $notifications ) > 0 ) {
+				// Ideally there should be only one notification for this type.
+				// If there are multiple notification then we will read data about only the last one
+				$bnfw->engine->send_notification( $bnfw->notifier->read_settings( end( $notifications )->ID ), $user->ID );
+			}
+		} else {
+			// send a copy of password change notification to the admin
+			// but check to see if it's the admin whose password we're changing, and skip this.
+			if ( 0 !== strcasecmp( $user->user_email, get_option( 'admin_email' ) ) ) {
+				/* translators: %s: user name */
+				$message = sprintf( __( 'Password changed for user: %s' ), $user->user_login ) . "\r\n";
+				// The blogname option is escaped with esc_html on the way into the database in sanitize_option
+				// we want to reverse this for the plain text arena of emails.
+				$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
+				/* translators: %s: site title */
+				wp_mail( get_option( 'admin_email' ), sprintf( __( '[%s] Password Changed' ), $blogname ), $message );
+			}
+		}
+	}
+}
