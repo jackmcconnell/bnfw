@@ -550,6 +550,8 @@ class BNFW_Engine {
 			}
 		}
 		$message = preg_replace( '/\[post_term taxonomy="([^"]*)"\]/i', $terms_list, $message );
+		
+		$message = do_shortcode( $message );
 
 		return apply_filters( 'bnfw_shortcodes_post', $message, $post_id );
 	}
