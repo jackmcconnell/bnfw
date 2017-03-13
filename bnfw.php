@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.6.2
+ * Version: 1.6.3
  * Author: Voltronik
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -14,7 +14,7 @@
  */
 
 /**
- * Copyright © 2016 Made with Fuel Ltd. (hello@betternotificationsforwp.com)
+ * Copyright © 2017 Made with Fuel Ltd. (hello@betternotificationsforwp.com)
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
  * published by the Free Software Foundation.
@@ -134,6 +134,7 @@ class BNFW {
 		add_action( 'future_to_publish'         , array( $this, 'publish_post' ) );
 		add_action( 'pending_to_publish'        , array( $this, 'publish_post' ) );
 		add_action( 'private_to_publish'        , array( $this, 'publish_post' ) );
+		add_action( 'acf/save_post'             , array( $this, 'acf_save_post' ) );
 
 		add_action( 'publish_to_publish'        , array( $this, 'update_post' ) );
 
@@ -229,6 +230,15 @@ class BNFW {
 	 */
 	public function insert_post( $post_id, $post, $update ) {
 		$this->publish_post( $post );
+	}
+
+	/**
+	 * Trigger New Post published notification for ACF forms.
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	public function acf_save_post( $post_id ) {
+		$this->publish_post( get_post( $post_id ) );
 	}
 
 	/**

@@ -551,6 +551,8 @@ class BNFW_Engine {
 		}
 		$message = preg_replace( '/\[post_term taxonomy="([^"]*)"\]/i', $terms_list, $message );
 
+		$message = do_shortcode( $message );
+
 		return apply_filters( 'bnfw_shortcodes_post', $message, $post_id );
 	}
 
@@ -702,7 +704,7 @@ class BNFW_Engine {
 			$to_emails = array();
 
 			if ( ! empty( $setting['users'] ) ) {
-				$to_emails = $this->get_emails_from_users( $setting['users'], $exclude );
+				$to_emails = $this->get_emails_from_users( $setting['users'], $exclude, $id );
 			}
 
 			/**
@@ -727,11 +729,11 @@ class BNFW_Engine {
 			}
 
 			if ( ! empty( $setting['cc'] ) ) {
-				$emails['cc'] = $this->get_emails_from_users( $setting['cc'], $exclude );
+				$emails['cc'] = $this->get_emails_from_users( $setting['cc'], $exclude, $id );
 			}
 
 			if ( ! empty( $setting['bcc'] ) ) {
-				$emails['bcc'] = $this->get_emails_from_users( $setting['bcc'], $exclude );
+				$emails['bcc'] = $this->get_emails_from_users( $setting['bcc'], $exclude, $id );
 			}
 		}
 
@@ -745,12 +747,14 @@ class BNFW_Engine {
 	 *
 	 * @param array $users   Users Array
 	 * @param int   $exclude User id to exclude
+	 * @param int   $post_id Post id.
 	 *
 	 * @return array
 	 */
-	public function get_emails_from_users( $users, $exclude = null ) {
+	public function get_emails_from_users( $users, $exclude = null, $post_id = 0 ) {
 		$user_ids = array();
 		$user_roles = array();
+		$non_wp_users = array();
 
 		if ( empty( $users ) ) {
 			return array();
@@ -759,19 +763,22 @@ class BNFW_Engine {
 		foreach ( $users as $user ) {
 			if ( $this->starts_with( $user, 'role-' ) ) {
 				$user_roles[] = str_replace( 'role-', '', $user );
-			} else {
+			} else if (absint( $user ) > 0 ) {
 				$user_ids[] = absint( $user );
+			} else {
+				$non_wp_users[] = $user;
 			}
 		}
 
 		if ( null != $exclude ) {
 			$user_ids = array_diff( $user_ids, array( $exclude ) );
 		}
+
 		$emails_from_user_ids   = $this->get_emails_from_id( $user_ids );
-
 		$emails_from_user_roles = $this->get_emails_from_role( $user_roles, $exclude );
+		$non_wp_emails = apply_filters( 'bnfw_non_wp_emails', array(), $non_wp_users, $post_id );
 
-		return array_merge( $emails_from_user_roles, $emails_from_user_ids );
+		return array_merge( $emails_from_user_roles, $emails_from_user_ids, $non_wp_emails );
 	}
 
 	/**

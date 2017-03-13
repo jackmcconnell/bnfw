@@ -32,30 +32,35 @@ function bnfw_get_user_select_class() {
 function bnfw_render_users_dropdown( $selected_users ) {
 	global $wp_roles;
 
+	$non_wp_users = $selected_users;
 	$user_count = count_users();
-?>
-		<optgroup label="User Roles">
-	<?php
-	$roles = $wp_roles->get_names();
+	?>
+    <optgroup label="User Roles">
+		<?php
+		$roles = $wp_roles->get_names();
 
-	foreach ( $roles as $role_slug => $role_name ) {
-		$selected = selected( true, in_array( 'role-' . $role_slug, $selected_users ), false );
+		foreach ( $roles as $role_slug => $role_name ) {
+			$selected = selected( true, in_array( 'role-' . $role_slug, $selected_users ), false );
 
-		// Compatibility code, which will be eventually removed.
-		$selected_old = selected( true, in_array( 'role-' . $role_name, $selected_users ), false );
-		if ( ! empty( $selected_old ) ) {
-			$selected = $selected_old;
+			if ( ! empty( $selected ) ) {
+			    $non_wp_users = array_diff( $non_wp_users, array( 'role-' . $role_slug ) );
+            }
+
+			// Compatibility code, which will be eventually removed.
+			$selected_old = selected( true, in_array( 'role-' . $role_name, $selected_users ), false );
+			if ( ! empty( $selected_old ) ) {
+				$selected = $selected_old;
+			}
+
+			$count = 0;
+			if ( isset( $user_count['avail_roles'][ $role_slug ] ) ) {
+				$count = $user_count['avail_roles'][ $role_slug ];
+			}
+			echo '<option value="role-', esc_attr( $role_slug ), '" ', $selected, '>', esc_html( $role_name ), ' (', $count, ' Users)', '</option>';
 		}
-
-		$count = 0;
-		if ( isset( $user_count['avail_roles'][ $role_slug ] ) ) {
-			$count = $user_count['avail_roles'][ $role_slug ];
-		}
-		echo '<option value="role-', esc_attr( $role_slug ), '" ', $selected, '>', esc_html( $role_name ), ' (', $count, ' Users)', '</option>';
-	}
-?>
-		</optgroup>
-		<optgroup label="Users">
+		?>
+    </optgroup>
+    <optgroup label="Users">
 	<?php
 	// if there are more than 100 users then use AJAX to load them dynamically.
 	// So just get only the selected users
@@ -68,21 +73,39 @@ function bnfw_render_users_dropdown( $selected_users ) {
 	} else {
 		$users = get_users( array(
 			'order_by' => 'email',
-			'number' => 100,
-			'fields' => array( 'ID', 'user_login' ),
+			'number'   => 100,
+			'fields'   => array( 'ID', 'user_login' ),
 		) );
 	}
 
 	foreach ( $users as $user ) {
 		$selected = selected( true, in_array( $user->ID, $selected_users ), false );
+
+		if ( ! empty( $selected ) ) {
+			$non_wp_users = array_diff( $non_wp_users, array( $user->ID ) );
+		}
+
 		echo '<option value="', esc_attr( $user->ID ), '" ', $selected, '>', esc_html( $user->user_login ), '</option>';
 	}
+
+	?>
+    </optgroup>
+
+	<?php if ( ! empty( $non_wp_users ) ) { ?>
+        <optgroup label="Non WordPress Users">
+	        <?php foreach ( $non_wp_users as $non_wp_user ) {
+		        echo '<option value="', esc_attr( $non_wp_user ), '" selected >', esc_html( $non_wp_user ), '</option>';
+            }
+            ?>
+        </optgroup>
+	<?php }
 }
 
 /**
  * Find whether the notification name is a comment notification.
  *
  * @param  string $notification_name Notification Name.
+ *
  * @return bool                      True if it is a comment notification, False otherwise.
  */
 function bnfw_is_comment_notification( $notification_name ) {

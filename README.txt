@@ -3,8 +3,8 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 3.5
-Tested up to: 4.7.2
-Stable tag: 1.6.2
+Tested up to: 4.7.3
+Stable tag: 1.6.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,11 +29,11 @@ Power-up your notifications using add-ons:
 
 [Custom Fields](https://betternotificationsforwp.com/downloads/custom-fields/) - Provides a number of new shortcodes allowing you to include data from custom fields and custom user fields created using [ACF](https://wordpress.org/plugins/advanced-custom-fields/).
 
+[Send to Any Email](https://betternotificationsforwp.com/downloads/send-to-any-email/) - Send notifications to non-WordPress Users.
+
 [Per-post Override](https://betternotificationsforwp.com/downloads/per-post-override/) - Override some of the settings of notifications directly when editing a post, page, or custom post type.
 
 [Update Reminder](https://betternotificationsforwp.com/downloads/update-reminder/) - Send a reminder to your users and/or user roles when a post, page, or custom post type hasn't been updated in a certain number of days.
-
-Send to Any Email - Coming Soon!
 
 Multisite Notifications - Coming Soon!
 
@@ -47,7 +47,7 @@ The notifications that are currently available to use are:
 * New Comment / Comment Awaiting Moderation
 * New Trackback
 * New Pingback
-* Lost Password - For Admin
+* User Lost Password - For Admin
 * New User Registration - For Admin
 * Password Changed - For Admin
 * User Role Changed - For Admin
@@ -55,7 +55,7 @@ The notifications that are currently available to use are:
 
 **Transactional**
 
-* Lost Password - For User
+* User Lost Password - For User
 * Password Changed - For User
 * User Email Changed - For Admin
 * New User Registration - For User
@@ -134,17 +134,13 @@ Shortcodes can be used in the 'Subject' and 'Message Body' of your notifications
 
 The possibilities are endless! 
 
-= Does this plugin work with Akismet? =
+= Does this plugin work with anti-spam plugins, such as Akismet? =
 
-Yes! There is an option for suppressing comments marked as SPAM by Akismet in the plugin settings.
+Yes! There is an option for suppressing comments marked as SPAM in the plugin settings.
 
 = Does this plugin work with Multisite? =
 
 Yes and no - some notifications work, others don't, and some are missing entirely. I do plan on adding full Multisite support at a later date however, this will be in the form of an add-on. 
-
-= Can I send notifications to email addresses that aren't WordPress users? =
-
-No. This is to prevent SPAM and/or abuse of the plugin and to abide by anti-SPAM laws in various countries.
 
 = What isn't this plugin? =
 
@@ -160,7 +156,7 @@ This will very much depend on what notifications you're using the plugin for. Ou
 
 = Notifications aren't coming through! =
 
-First of all, follow [this article](https://betternotificationsforwp.com/how-can-i-receive-the-best-support/) about how to find out what might be causing the problem. Additionally, this [very handy answer](http://stackoverflow.com/questions/371/how-do-you-make-sure-email-you-send-programmatically-is-not-automatically-marked) on Stack Overflow explains what you might need to do to make sure that emails don't make it through to your user's SPAM / Junk folders. It's worth going through this and completing as much as you can.
+First of all, follow [this article](https://betternotificationsforwp.com/how-can-i-receive-the-best-support/) about how to find out what might be causing the problem. Additionally, please take a look at [this help document](https://betternotificationsforwp.com/documentation/getting-started/how-to-improve-email-delivery/) to see how you might improve email delivery when using Better Notifications for WordPress.
 
 Many hosts place a limit on the number of emails that can be sent out within an hour so this may also cause some delay in emails arriving. MailPoet has a fairly extensive list of hosts and their corresponding email rate limits that's worth checking out [here](https://support.mailpoet.com/knowledgebase/lists-of-hosts-and-their-sending-limits/). Alternatively, please check with your host directly to find out what your limit is. 
 
@@ -203,6 +199,15 @@ An older version might work but this is untested. A lot of the newer features re
 
 
 == Changelog ==
+
+= 1.6.3 - 13th March 2017 =
+* Added: Support for the new [Send to Any Email add-on](https://betternotificationsforwp.com/downloads/send-to-any-email/).
+* Added: Support for Advanced Custom Field (ACF) front-end forms. Finally!
+* Updated: French translation (props @matcho).
+* Improved: The 'Lost Password' notifications now begin with 'User Lost Password' to make them easier to understand.
+* Fixed: The 'Reply To' fields weren't saving correctly.
+* Fixed: Ensure post shortcodes are rendered before sending (props @cliffpaulick). 
+* Fixed: A minor issue with the custom field selection box when using the [Custom Fields add-on](https://betternotificationsforwp.com/downloads/custom-fields/). 
 
 = 1.6.2 - 17th February 2017 =
 * Fixed: The 'Shortcode Help' button wasn't working correctly for some of the new notifications.

@@ -24,7 +24,10 @@ jQuery(document).ready(function($) {
 	function init() {
 		var notification = $('#notification').val();
 
-		$("#notification, .user-select2").select2();
+		$("#notification, .bnfw-select2").select2();
+		$(".user-select2").select2({
+			tags: BNFW.enableTags
+		} );
 		$(".user-ajax-select2").select2( {
 			ajax: {
 				url: ajaxurl,
@@ -42,7 +45,8 @@ jQuery(document).ready(function($) {
 					};
 				}
 			},
-			minimumInputLength: 1
+			minimumInputLength: 1,
+			tags: BNFW.enableTags
 		} );
 
 		if ( ! $( '#notification' ).length ) {

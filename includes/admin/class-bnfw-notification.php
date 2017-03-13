@@ -161,7 +161,7 @@ class BNFW_Notification {
 							<option
 								value="new-pingback" <?php selected( 'new-pingback', $setting['notification'] ); ?>><?php esc_html_e( 'New Pingback', 'bnfw' ); ?></option>
 							<option
-								value="admin-password" <?php selected( 'admin-password', $setting['notification'] ); ?>><?php esc_html_e( 'Lost Password - For Admin', 'bnfw' ); ?></option>
+								value="admin-password" <?php selected( 'admin-password', $setting['notification'] ); ?>><?php esc_html_e( 'User Lost Password - For Admin', 'bnfw' ); ?></option>
 							<option
 								value="admin-user" <?php selected( 'admin-user', $setting['notification'] ); ?>><?php esc_html_e( 'New User Registration - For Admin', 'bnfw' ); ?></option>
                             <option
@@ -173,7 +173,7 @@ class BNFW_Notification {
 						</optgroup>
 						<optgroup label="Transactional">
 							<option
-								value="user-password" <?php selected( 'user-password', $setting['notification'] ); ?>><?php esc_html_e( 'Lost Password - For User', 'bnfw' ); ?></option>
+								value="user-password" <?php selected( 'user-password', $setting['notification'] ); ?>><?php esc_html_e( 'User Lost Password - For User', 'bnfw' ); ?></option>
                             <option
                                     value="password-changed" <?php selected( 'password-changed', $setting['notification'] ); ?>><?php esc_html_e( 'Password Changed - For User', 'bnfw' ); ?></option>
                             <option
@@ -355,7 +355,7 @@ class BNFW_Notification {
 
 				<td>
 					<select multiple name="cc[]" class="<?php echo sanitize_html_class( bnfw_get_user_select_class() ); ?>"
-					        data-placeholder="Select User Roles / Users" style="width:75%">
+					        data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
 						<?php bnfw_render_users_dropdown( $setting['cc'] ); ?>
 					</select>
 				</td>
@@ -368,7 +368,7 @@ class BNFW_Notification {
 
 				<td>
 					<select multiple name="bcc[]" class="<?php echo sanitize_html_class( bnfw_get_user_select_class() ); ?>"
-					        data-placeholder="Select User Roles / Users" style="width:75%">
+                            data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
 						<?php bnfw_render_users_dropdown( $setting['bcc'] ); ?>
 					</select>
 				</td>
@@ -403,7 +403,7 @@ class BNFW_Notification {
 				<td>
 					<select multiple id="users-select" name="users[]"
 					        class="<?php echo sanitize_html_class( bnfw_get_user_select_class() ); ?>"
-					        data-placeholder="Select User Roles / Users" style="width:75%">
+                            data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
 						<?php bnfw_render_users_dropdown( $setting['users'] ); ?>
 					</select>
 				</td>
@@ -503,7 +503,15 @@ class BNFW_Notification {
 
 		$strings = array(
 			'empty_user' => esc_html__( 'You must choose at least one User or User Role to send the notification to before you can save', 'bnfw' ),
+            'enableTags' => false,
 		);
+
+		/**
+		 * Filter the localized array that is sent to scripts.
+		 *
+		 * @since 1.7.0
+		 */
+		$strings = apply_filters( 'bnfw_localize_script', $strings );
 
 		wp_localize_script( 'bnfw', 'BNFW', $strings );
 	}
@@ -558,6 +566,8 @@ class BNFW_Notification {
 			$setting['show-fields'] = 'true';
 			$setting['from-name']   = sanitize_text_field( $_POST['from-name'] );
 			$setting['from-email']  = sanitize_email( $_POST['from-email'] );
+			$setting['reply-name']  = sanitize_text_field( $_POST['reply-name'] );
+			$setting['reply-email'] = sanitize_email( $_POST['reply-email'] );
 			$setting['cc']          = isset( $_POST['cc'] ) ? array_map( 'sanitize_text_field', $_POST['cc'] ) : '';
 			$setting['bcc']         = isset( $_POST['bcc'] ) ? array_map( 'sanitize_text_field', $_POST['bcc'] ) : '';
 		} else {
@@ -896,14 +906,17 @@ class BNFW_Notification {
 	private function get_names_from_users( $users ) {
 		$user_ids            = array();
 		$user_roles          = array();
+		$emails = array();
 		$names_from_user_ids = array();
 
 		foreach ( $users as $user ) {
 			if ( $this->starts_with( $user, 'role-' ) ) {
 				$user_roles[] = ucfirst( str_replace( 'role-', '', $user ) );
-			} else {
+			} else if ( absint( $user ) > 0 ) {
 				$user_ids[] = absint( $user );
-			}
+			} else {
+				$emails[] = $user;
+            }
 		}
 
 		if ( ! empty( $user_ids ) ) {
@@ -913,7 +926,7 @@ class BNFW_Notification {
 			}
 		}
 
-		return array_merge( $user_roles, $names_from_user_ids );
+		return array_merge( $user_roles, $names_from_user_ids, $emails );
 	}
 
 	/**
@@ -939,10 +952,10 @@ class BNFW_Notification {
 				$name = esc_html__( 'Comment Reply', 'bnfw' );
 				break;
 			case 'user-password':
-				$name = esc_html__( 'Lost Password - For User', 'bnfw' );
+				$name = esc_html__( 'User Lost Password - For User', 'bnfw' );
 				break;
 			case 'admin-password':
-				$name = esc_html__( 'Lost Password - For Admin', 'bnfw' );
+				$name = esc_html__( 'User Lost Password - For Admin', 'bnfw' );
 				break;
 			case 'admin-password-changed':
 				$name = esc_html__( 'Password Changed - For Admin', 'bnfw' );
