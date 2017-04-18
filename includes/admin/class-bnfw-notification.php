@@ -236,9 +236,9 @@ class BNFW_Notification {
 								<optgroup
 									label="<?php esc_attr( printf( "%s - '%s'", esc_html__( 'Custom Post Type', 'bnfw' ), $label ) ); ?>">
 									<option
-										value="new-<?php echo esc_attr( $type ); ?>" <?php selected( 'new-' . $type, $setting['notification'] ); ?>><?php echo esc_html__( 'New ', 'bnfw' ), "'$label'"; ?></option>
+										value="new-<?php echo esc_attr( $type ); ?>" <?php selected( 'new-' . $type, $setting['notification'] ); ?>><?php echo esc_html__( 'New ', 'bnfw' ), "'$label'", esc_html__( ' Published', 'bnfw' ); ?></option>
 									<option
-										value="update-<?php echo esc_attr( $type ); ?>" <?php selected( 'update-' . $type, $setting['notification'] ); ?>><?php echo "'$label' " . esc_html__( 'Update ', 'bnfw' ); ?></option>
+										value="update-<?php echo esc_attr( $type ); ?>" <?php selected( 'update-' . $type, $setting['notification'] ); ?>><?php echo "'$label' " . esc_html__( 'Updated', 'bnfw' ); ?></option>
 									<option
 										value="pending-<?php echo esc_attr( $type ); ?>" <?php selected( 'pending-' . $type, $setting['notification'] ); ?>><?php echo "'$label' ", esc_html__( 'Pending Review', 'bnfw' ); ?></option>
 									<option
@@ -495,8 +495,8 @@ class BNFW_Notification {
 		wp_deregister_script( 'um_admin_scripts' );
 		wp_dequeue_script( 'um_admin_scripts' );
 
-		wp_enqueue_style( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css', array(), '4.0.1' );
-		wp_enqueue_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.full.min.js', array( 'jquery' ), '4.0.1', true );
+		wp_enqueue_style( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css', array(), '4.0.3' );
+		wp_enqueue_script( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js', array( 'jquery' ), '4.0.3', true );
 
 		wp_enqueue_script( 'bnfw', plugins_url( '../assets/js/bnfw.js', dirname( __FILE__ ) ), array( 'select2' ), '0.1', true );
 		wp_enqueue_style( 'bnfw', plugins_url( '../assets/css/bnfw.css', dirname( __FILE__ ) ), array( 'dashicons', 'select2' ), '0.1' );
@@ -1019,7 +1019,7 @@ class BNFW_Notification {
 
 				switch ( $splited[0] ) {
 					case 'new':
-						$name = esc_html__( 'New ', 'bnfw' ) . $label;
+						$name = esc_html__( 'New ', 'bnfw' ) . $label . ' ' . esc_html__( 'Published', 'bnfw' );
 						break;
 					case 'update':
 						$name = esc_html__( 'Updated ', 'bnfw' ) . $label;

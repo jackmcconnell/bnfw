@@ -450,10 +450,13 @@ class BNFW_Engine {
 		if ( false === $user ) {
 			$message = str_replace( '[global_user_firstname]', $email, $message );
 			$message = str_replace( '[global_user_lastname]', $email, $message );
+			$message = str_replace( '[global_user_username]', $email, $message );
 		} else {
 			$message = str_replace( '[global_user_firstname]', $user->first_name, $message );
 			$message = str_replace( '[global_user_lastname]', $user->last_name, $message );
+			$message = str_replace( '[global_user_username]', $user->user_login, $message );
 		}
+
 		$message = str_replace( '[global_user_email]', $email, $message );
 
 		return $message;
@@ -599,7 +602,7 @@ class BNFW_Engine {
 	 *
 	 * @return string Processed string.
 	 */
-	private function user_shortcodes( $message, $user_id ) {
+	public function user_shortcodes( $message, $user_id ) {
 		$user_info = get_userdata( $user_id );
 
 		// deperecated
@@ -830,7 +833,10 @@ class BNFW_Engine {
 						continue;
 					}
 				}
-				$email_list[] = $user->user_email;
+
+				if ( ! in_array( $user->user_email, $email_list ) ) {
+					$email_list[] = $user->user_email;
+				}
 			}
 		}
 

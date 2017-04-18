@@ -197,6 +197,6 @@ jQuery(document).ready(function($) {
 				break;
 		}
 
-		$(this).attr( 'href', 'https://betternotificationsforwp.com/shortcodes/?notification=' + notification_slug + '&utm_source=WP%20Admin%20Notification%20Editor%20-%20"Shortcode%20Help"&utm_medium=referral' );
+		$(this).attr( 'href', 'https://betternotificationsforwp.com/documentation/notifications/shortcodes/?notification=' + notification_slug + '&utm_source=WP%20Admin%20Notification%20Editor%20-%20"Shortcode%20Help"&utm_medium=referral' );
 	});
 });

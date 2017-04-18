@@ -60,23 +60,31 @@ function bnfw_render_users_dropdown( $selected_users ) {
 		}
 		?>
     </optgroup>
+
     <optgroup label="Users">
 	<?php
-	// if there are more than 100 users then use AJAX to load them dynamically.
-	// So just get only the selected users
-	if ( count( $selected_users ) > 0 && $user_count['total_users'] > 100 ) {
-		$users = get_users( array(
-			'include'  => $selected_users,
-			'order_by' => 'email',
-			'fields'   => array( 'ID', 'user_login' ),
-		) );
-	} else {
-		$users = get_users( array(
-			'order_by' => 'email',
-			'number'   => 100,
-			'fields'   => array( 'ID', 'user_login' ),
-		) );
+	$args = array(
+		'order_by' => 'email',
+		'fields'   => array( 'ID', 'user_login' ),
+		'number'   => 200,
+	);
+
+	// if there are more than 200 users then use AJAX to load them dynamically.
+	// So just get only the selected users.
+	if ( $user_count['total_users'] > 200 ) {
+	    $selected_user_ids = array();
+		foreach ( $selected_users as $selected_user ) {
+		    if ( absint( $selected_user ) > 0 ) {
+			    $selected_user_ids[] = $selected_user;
+		    }
+	    }
+
+	    if ( $selected_user_ids > 0 ) {
+	        $args['include'] = $selected_user_ids;
+	    }
 	}
+
+	$users = get_users( $args );
 
 	foreach ( $users as $user ) {
 		$selected = selected( true, in_array( $user->ID, $selected_users ), false );

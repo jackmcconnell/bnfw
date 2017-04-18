@@ -4,7 +4,7 @@ Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 3.5
 Tested up to: 4.7.3
-Stable tag: 1.6.3
+Stable tag: 1.6.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -199,6 +199,14 @@ An older version might work but this is untested. A lot of the newer features re
 
 
 == Changelog ==
+
+= 1.6.4 - 18th April 2017 =
+* New: You can now use `[global_user_username]` in any notification to output the recipient's username.
+* New: When a user is assigned to multiple roles which have been added to a notification, they will only receive the notification once and not once for each role that the notification is configured to send to.
+* Improved: Clearer labelling on new custom post type notifications.
+* Removed / Fixed: The addition of ACF Form compatibility in the last version was causing a range of issues, some minor, some serious. Until a more robust solution is found, this has been removed from the plugin whilst I try and get in touch with the author of ACF and work on a solution or collaboration.
+* Fixed: The 'Send To' select box was being overlayed by the dropdown that shows when clicking in the box.
+* Fixed: Searching for a user when a site has more than 200 users in the 'Send To' box now works as expected.
 
 = 1.6.3 - 13th March 2017 =
 * Added: Support for the new [Send to Any Email add-on](https://betternotificationsforwp.com/downloads/send-to-any-email/).
