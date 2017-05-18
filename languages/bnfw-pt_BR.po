@@ -397,8 +397,8 @@ msgid "Send customisable HTML emails to your users for different WordPress notif
 msgstr "Enviar emails HTML com notificações personalizáveis para usuários diferentes do WordPress."
 
 #. Author of the plugin/theme
-msgid "Voltronik"
-msgstr "Voltronik"
+msgid "Made with Fuel"
+msgstr "Made with Fuel"
 
 #. Author URI of the plugin/theme
 msgid "https://betternotificationsforwp.com/"

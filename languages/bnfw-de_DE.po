@@ -438,8 +438,8 @@ msgstr ""
 "Ihre Benutzer versenden."
 
 #. Author of the plugin/theme
-msgid "Voltronik"
-msgstr "Voltronik"
+msgid "Made with Fuel"
+msgstr "Made with Fuel"
 
 #. Author URI of the plugin/theme
 msgid "https://betternotificationsforwp.com/"

@@ -3,8 +3,8 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.6.4
- * Author: Voltronik
+ * Version: 1.6.5
+ * Author: Made with Fuel
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
  * License: GPLv2 or later
@@ -134,6 +134,7 @@ class BNFW {
 		add_action( 'future_to_publish'         , array( $this, 'publish_post' ) );
 		add_action( 'pending_to_publish'        , array( $this, 'publish_post' ) );
 		add_action( 'private_to_publish'        , array( $this, 'publish_post' ) );
+		add_action( 'acf/submit_form'           , array( $this, 'acf_submit_form' ), 10, 2 );
 
 		add_action( 'publish_to_publish'        , array( $this, 'update_post' ) );
 
@@ -229,6 +230,16 @@ class BNFW {
 	 */
 	public function insert_post( $post_id, $post, $update ) {
 		$this->publish_post( $post );
+	}
+
+	/**
+	 * Trigger New Post published notification for ACF forms.
+	 *
+	 * @param string $form ACF Form.
+	 * @param int    $post_id Post ID.
+	 */
+	public function acf_submit_form( $form, $post_id ) {
+		$this->publish_post( get_post( $post_id ) );
 	}
 
 	/**
@@ -581,29 +592,45 @@ class BNFW {
 	 *
 	 * @since 1.3.9
 	 *
-	 * @param int    $user_id  User ID
-	 * @param string $new_role New User role
-	 * @param array  $old_role Old User role
+	 * @param int    $user_id   User ID
+	 * @param string $new_role  New User role
+	 * @param array  $old_roles Old User role
 	 */
-	public function user_role_changed( $user_id, $new_role, $old_role ) {
-		if ( ! empty( $old_role ) ) {
+	public function user_role_changed( $user_id, $new_role, $old_roles ) {
+		if ( ! empty( $old_roles ) ) {
 			$notifications = $this->notifier->get_notifications( 'user-role' );
 			foreach ( $notifications as $notification ) {
-				$this->engine->send_user_role_changed_email(
-					$this->notifier->read_settings( $notification->ID ),
-					$user_id,
-					$old_role[0],
-					$new_role
-				);
+
+				/**
+				 * Trigger User Role Changed - For User notification.
+				 *
+				 * @since 1.6.5
+				 */
+				if ( apply_filters( 'bnfw_trigger_user-role_notification', true, $notification, $new_role, $old_roles ) ) {
+					$this->engine->send_user_role_changed_email(
+						$this->notifier->read_settings( $notification->ID ),
+						$user_id,
+						$old_roles[0],
+						$new_role
+					);
+				}
 			}
 
 			$notifications = $this->notifier->get_notifications( 'admin-role' );
 			foreach ( $notifications as $notification ) {
-				$setting = $this->notifier->read_settings( $notification->ID );
-				$setting['message'] = $this->engine->handle_user_role_shortcodes( $setting['message'], $old_role[0], $new_role );
-				$setting['subject'] = $this->engine->handle_user_role_shortcodes( $setting['subject'], $old_role[0], $new_role );
 
-				$this->engine->send_notification( $setting , $user_id );
+				/**
+				 * Trigger User Role Changed - For User notification.
+				 *
+				 * @since 1.6.5
+				 */
+				if ( apply_filters( 'bnfw_trigger_admin-role_notification', true, $notification, $new_role, $old_roles ) ) {
+					$setting            = $this->notifier->read_settings( $notification->ID );
+					$setting['message'] = $this->engine->handle_user_role_shortcodes( $setting['message'], $old_roles[0], $new_role );
+					$setting['subject'] = $this->engine->handle_user_role_shortcodes( $setting['subject'], $old_roles[0], $new_role );
+
+					$this->engine->send_notification( $setting, $user_id );
+				}
 			}
 		}
 	}

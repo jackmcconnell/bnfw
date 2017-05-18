@@ -3,8 +3,8 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 3.5
-Tested up to: 4.7.3
-Stable tag: 1.6.4
+Tested up to: 4.7.5
+Stable tag: 1.6.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -199,6 +199,10 @@ An older version might work but this is untested. A lot of the newer features re
 
 
 == Changelog ==
+
+= 1.6.5 - 18th May 2017 =
+* New: ACF Form compatibility has now been re-added! Props to @elliotcondon for the help. 
+* Remember to subscribe to the [mailing list](http://voltronik.us2.list-manage2.com/subscribe?u=57c012217219b2d81dda0085f&id=28eebdab28) if you want to be notified of new add-ons for BNFW and receive 10% off your first add-on purchase.
 
 = 1.6.4 - 18th April 2017 =
 * New: You can now use `[global_user_username]` in any notification to output the recipient's username.

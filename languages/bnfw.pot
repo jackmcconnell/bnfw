@@ -411,7 +411,7 @@ msgid ""
 msgstr ""
 
 #. Author of the plugin/theme
-msgid "Voltronik"
+msgid "Made with Fuel"
 msgstr ""
 
 #. Author URI of the plugin/theme
