@@ -46,7 +46,7 @@ class BNFW_Engine {
 		 *
 		 * @since 1.3.6
 		 */
-		$notification_disabled = apply_filters( 'bnfw_notification_disabled', false, $id, $setting );
+		$notification_disabled = apply_filters( 'bnfw_notification_disabled', ( 'true' === $setting['disabled'] ), $id, $setting );
 
 		if ( ! $notification_disabled ) {
 			$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $id );
@@ -81,6 +81,17 @@ class BNFW_Engine {
 	 * @param string $password_url Plain text password in WP < 4.3 and password url in WP > 4.3
 	 */
 	public function send_registration_email( $setting, $user, $password_url = '' ) {
+		/**
+		 * Whether to trigger welcome email notification or not.
+		 *
+		 * @since 1.7
+		 */
+		$trigger_notification = apply_filters( 'bnfw_trigger_welcome-email_notification', true, $setting, $user );
+
+		if ( ! $trigger_notification ) {
+			return;
+		}
+
 		$user_id = $user->ID;
 
 		$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $user_id );
@@ -444,7 +455,7 @@ class BNFW_Engine {
 	 *
 	 * @return string Processed string.
 	 */
-	private function handle_global_user_shortcodes( $message, $email ) {
+	public function handle_global_user_shortcodes( $message, $email ) {
 		$user = get_user_by( 'email', $email );
 
 		if ( false === $user ) {
@@ -678,7 +689,7 @@ class BNFW_Engine {
 	 * @param int $id
 	 * @return array Emails
 	 */
-	private function get_emails( $setting, $id ) {
+	public function get_emails( $setting, $id ) {
 		global $current_user;
 
 		$emails = array();
@@ -707,7 +718,7 @@ class BNFW_Engine {
 			$to_emails = array();
 
 			if ( ! empty( $setting['users'] ) ) {
-				$to_emails = $this->get_emails_from_users( $setting['users'], $exclude, $id );
+				$to_emails = $this->get_emails_from_users( $setting['users'], $exclude, $id, $setting );
 			}
 
 			/**
@@ -732,11 +743,11 @@ class BNFW_Engine {
 			}
 
 			if ( ! empty( $setting['cc'] ) ) {
-				$emails['cc'] = $this->get_emails_from_users( $setting['cc'], $exclude, $id );
+				$emails['cc'] = $this->get_emails_from_users( $setting['cc'], $exclude, $id, $setting );
 			}
 
 			if ( ! empty( $setting['bcc'] ) ) {
-				$emails['bcc'] = $this->get_emails_from_users( $setting['bcc'], $exclude, $id );
+				$emails['bcc'] = $this->get_emails_from_users( $setting['bcc'], $exclude, $id, $setting );
 			}
 		}
 
@@ -746,15 +757,16 @@ class BNFW_Engine {
 	/**
 	 * Get emails from users.
 	 *
-	 * @since 1.2
+	 * @since    1.2
 	 *
 	 * @param array $users   Users Array
 	 * @param int   $exclude User id to exclude
 	 * @param int   $post_id Post id.
+	 * @param array $setting Notification setting.
 	 *
 	 * @return array
 	 */
-	public function get_emails_from_users( $users, $exclude = null, $post_id = 0 ) {
+	public function get_emails_from_users( $users, $exclude = null, $post_id = 0, $setting = array() ) {
 		$user_ids = array();
 		$user_roles = array();
 		$non_wp_users = array();
@@ -779,6 +791,14 @@ class BNFW_Engine {
 
 		$emails_from_user_ids   = $this->get_emails_from_id( $user_ids );
 		$emails_from_user_roles = $this->get_emails_from_role( $user_roles, $exclude );
+
+		if ( ! empty( $setting ) ) {
+			if ( $this->starts_with( $setting['notification'], 'comment-' ) ) {
+				// for new comment notifications, we need to use post id instead of comment id.
+				$post_id = bnfw_get_post_id_from_comment( $post_id );
+			}
+		}
+
 		$non_wp_emails = apply_filters( 'bnfw_non_wp_emails', array(), $non_wp_users, $post_id );
 
 		return array_merge( $emails_from_user_roles, $emails_from_user_ids, $non_wp_emails );
@@ -884,7 +904,7 @@ class BNFW_Engine {
 	 * @param array $emails
 	 * @return array
 	 */
-	private function get_headers( $emails ) {
+	public function get_headers( $emails ) {
 		$headers = array();
 
 		if ( ! empty( $emails['from'] ) ) {

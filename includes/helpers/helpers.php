@@ -173,3 +173,19 @@ function bnfw_is_tracking_allowed() {
 
 	return $tracking_allowed;
 }
+
+/**
+ * Get post id from comment id.
+ *
+ * @param int $comment_id Comment ID for which we need Post ID.
+ * @return int Post ID. 0 if invalid comment id.
+ */
+function bnfw_get_post_id_from_comment( $comment_id ) {
+	$comment = get_comment( $comment_id );
+
+	if ( null !== $comment ) {
+		return $comment->comment_post_ID;
+	}
+
+	return 0;
+}

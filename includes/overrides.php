@@ -67,8 +67,14 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 			if ( $bnfw->notifier->notification_exists( 'new-user', false ) ) {
 				$notifications = $bnfw->notifier->get_notifications( 'new-user' );
 				$password_url  = network_site_url( 'wp-login.php?action=rp&key=' . $key . '&login=' . rawurlencode( $user->user_login ), 'login' );
+
 				foreach ( $notifications as $notification ) {
-					$bnfw->engine->send_registration_email( $bnfw->notifier->read_settings( $notification->ID ), $user, $password_url );
+					$setting = $bnfw->notifier->read_settings( $notification->ID );
+					$trigger_notification = apply_filters( 'bnfw_trigger_new-user_notification', true, $setting, $user );
+
+					if ( $trigger_notification ) {
+						$bnfw->engine->send_registration_email( $setting, $user, $password_url );
+					}
 				}
 			} else {
 				$message = sprintf( esc_html__( 'Username: %s' ), $user->user_login ) . "\r\n\r\n";

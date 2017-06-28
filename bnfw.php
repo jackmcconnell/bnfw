@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.6.5
+ * Version: 1.6.6
  * Author: Made with Fuel
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -38,7 +38,18 @@ class BNFW {
 		$this->includes();
 		$this->hooks();
 
+		/**
+		 * BNFW Notification.
+		 *
+		 * @var \BNFW_Notification
+		 */
 		$this->notifier = new BNFW_Notification;
+
+		/**
+		 * BNFW Engine.
+		 *
+		 * @var \BNFW_Engine
+		 */
 		$this->engine   = new BNFW_Engine;
 	}
 
@@ -47,7 +58,7 @@ class BNFW {
 	 *
 	 * Makes sure that only one instance is created.
 	 *
-	 * @return object Instance of the class
+	 * @return \BNFW Instance of the class.
 	 */
 	public static function factory() {
 		static $instance = false;
@@ -110,25 +121,12 @@ class BNFW {
 
 		register_activation_hook( __FILE__, array( $this, 'activate' ) );
 
-		// Some themes like P2, directly insert posts into DB.
-		$insert_post_themes = apply_filters( 'bnfw_insert_post_themes', array( 'P2', 'Syncope' ) );
-		$current_theme = wp_get_theme();
-
-		/**
-		 * Whether to trigger insert post hook.
-		 *
-		 * @since 1.4
-		 */
-		$trigger_insert_post = apply_filters( 'bnfw_trigger_insert_post', false );
-
-		if ( in_array( $current_theme->get( 'Name' ), $insert_post_themes ) || $trigger_insert_post ) {
-			add_action( 'wp_insert_post'        , array( $this, 'insert_post' ), 10, 3 );
-		}
-
 		add_action( 'draft_to_private'          , array( $this, 'private_post' ) );
 		add_action( 'future_to_private'         , array( $this, 'private_post' ) );
 		add_action( 'pending_to_private'        , array( $this, 'private_post' ) );
 		add_action( 'publish_to_private'        , array( $this, 'private_post' ) );
+
+		add_action( 'wp_insert_post'            , array( $this, 'insert_post' ), 10, 2 );
 
 		add_action( 'draft_to_publish'          , array( $this, 'publish_post' ) );
 		add_action( 'future_to_publish'         , array( $this, 'publish_post' ) );
@@ -226,10 +224,22 @@ class BNFW {
 	 * @since 1.3.1
 	 * @param int $post_id Post ID
 	 * @param object $post Post object
-	 * @param bool $update Whether it was an update
 	 */
-	public function insert_post( $post_id, $post, $update ) {
-		$this->publish_post( $post );
+	public function insert_post( $post_id, $post ) {
+		// Some themes like P2, directly insert posts into DB.
+		$insert_post_themes = apply_filters( 'bnfw_insert_post_themes', array( 'P2', 'Syncope' ) );
+		$current_theme = wp_get_theme();
+
+		/**
+		 * Whether to trigger insert post hook.
+		 *
+		 * @since 1.4
+		 */
+		$trigger_insert_post = apply_filters( 'bnfw_trigger_insert_post', false );
+
+		if ( in_array( $current_theme->get( 'Name' ), $insert_post_themes ) || $trigger_insert_post ) {
+			$this->publish_post( $post );
+		}
 	}
 
 	/**
@@ -580,7 +590,7 @@ class BNFW {
 	 * @since 1.1
 	 * @param int $user_id New user id
 	 */
-	function welcome_email( $user_id ) {
+	public function welcome_email( $user_id ) {
 		$notifications = $this->notifier->get_notifications( 'welcome-email' );
 		foreach ( $notifications as $notification ) {
 			$this->engine->send_registration_email( $this->notifier->read_settings( $notification->ID ), get_userdata( $user_id ) );
@@ -658,7 +668,7 @@ class BNFW {
 	 * @param  int     $ref_id Reference id.
 	 */
 	private function send_notification_async( $type, $ref_id ) {
-		$notifications = $this->notifier->get_notifications( $type );
+		$notifications = $this->notifier->get_notifications( $type, false );
 		foreach ( $notifications as $notification ) {
 			$transient = get_transient( 'bnfw-async-notifications' );
 			if ( ! is_array( $transient ) ) {

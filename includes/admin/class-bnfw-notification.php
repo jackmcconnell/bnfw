@@ -170,6 +170,8 @@ class BNFW_Notification {
 								value="admin-role" <?php selected( 'admin-role', $setting['notification'] ); ?>><?php esc_html_e( 'User Role Changed - For Admin', 'bnfw' ); ?></option>
 							<option
 								value="core-updated" <?php selected( 'core-updated', $setting['notification'] ); ?>><?php esc_html_e( 'WordPress Core Automatic Background Updates', 'bnfw' ); ?></option>
+
+							<?php do_action( 'bnfw_after_default_notifications', $setting ); ?>
 						</optgroup>
 						<optgroup label="Transactional">
 							<option
@@ -186,6 +188,8 @@ class BNFW_Notification {
 								value="user-role" <?php selected( 'user-role', $setting['notification'] ); ?>><?php esc_html_e( 'User Role Changed - For User', 'bnfw' ); ?></option>
 							<option
 								value="reply-comment" <?php selected( 'reply-comment', $setting['notification'] ); ?>><?php esc_html_e( 'Comment Reply', 'bnfw' ); ?></option>
+
+							<?php do_action( 'bnfw_after_transactional_notifications', $setting ); ?>
 						</optgroup>
 						<optgroup label="Posts">
 							<option

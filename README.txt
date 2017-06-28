@@ -3,8 +3,8 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 3.5
-Tested up to: 4.7.5
-Stable tag: 1.6.5
+Tested up to: 4.8
+Stable tag: 1.6.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -199,6 +199,14 @@ An older version might work but this is untested. A lot of the newer features re
 
 
 == Changelog ==
+
+= 1.6.6 - 28th June 2017 =
+* Fixed: New Comments on Custom Post Types weren't always sending notifications.
+* Fixed: An issue where using the `bnfw_trigger_insert_post()` filter wasn't always working correctly. 
+* Fixed: An issue where checking a notification was disabled wasn't always working correctly. 
+* Added: Support for limiting 'New User Registration - For User' notifications to specific user roles in the recently updated [Conditional Notifications add-on](https://betternotificationsforwp.com/downloads/conditional-notifications/).
+* Added: Support for huge logic enhancements to the soon to be updated [Global Override add-on](https://betternotificationsforwp.com/downloads/per-post-override/).
+* Added: Support for the new 'User Login Reminder' notification in the soon to be updated [Reminders add-on](https://betternotificationsforwp.com/downloads/update-reminder/).
 
 = 1.6.5 - 18th May 2017 =
 * New: ACF Form compatibility has now been re-added! Props to @elliotcondon for the help. 
