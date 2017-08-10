@@ -444,6 +444,10 @@ class BNFW_Engine {
 		$message = str_replace( '[global_site_tagline]', get_bloginfo( 'description' ), $message );
 		$message = str_replace( '[global_site_url]', get_bloginfo( 'url' ), $message );
 
+		$message = str_replace( '[current_time]', current_time( get_option( 'time_format' ) ), $message );
+		$message = str_replace( '[current_date]', current_time( get_option( 'date_format' ) ), $message );
+		$message = str_replace( '[admin_email]', get_option( 'admin_email' ), $message );
+
 		return $message;
 	}
 

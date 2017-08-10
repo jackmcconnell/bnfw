@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.6.6
+ * Version: 1.6.7
  * Author: Made with Fuel
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -26,6 +26,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
+require_once 'includes/freemius.php';
+
 class BNFW {
 
 	/**
@@ -135,6 +138,7 @@ class BNFW {
 		add_action( 'acf/submit_form'           , array( $this, 'acf_submit_form' ), 10, 2 );
 
 		add_action( 'publish_to_publish'        , array( $this, 'update_post' ) );
+		add_action( 'private_to_private'        , array( $this, 'update_post' ) );
 
 		add_action( 'init'                      , array( $this, 'custom_post_type_hooks' ), 100 );
 		add_action( 'create_term'               , array( $this, 'create_term' ), 10, 3 );
@@ -238,7 +242,7 @@ class BNFW {
 		$trigger_insert_post = apply_filters( 'bnfw_trigger_insert_post', false );
 
 		if ( in_array( $current_theme->get( 'Name' ), $insert_post_themes ) || $trigger_insert_post ) {
-			$this->publish_post( $post );
+			$this->handle_inserted_post( $post_id );
 		}
 	}
 
@@ -249,7 +253,40 @@ class BNFW {
 	 * @param int    $post_id Post ID.
 	 */
 	public function acf_submit_form( $form, $post_id ) {
-		$this->publish_post( get_post( $post_id ) );
+		$this->handle_inserted_post( $post_id );
+	}
+
+	/**
+	 * Trigger correct notifications for inserted posts.
+	 *
+	 * @since 1.6.7
+	 *
+	 * @param int $post_id Post id.
+	 */
+	private function handle_inserted_post( $post_id ) {
+		$post = get_post( $post_id );
+
+		if ( ! is_a( $post, 'WP_Post' ) ) {
+			return;
+		}
+
+		switch ( $post->post_status ) {
+			case 'publish':
+				$this->publish_post( $post );
+				break;
+
+			case 'private':
+				$this->private_post( $post );
+				break;
+
+			case 'pending':
+				$this->on_post_pending( $post_id, $post );
+				break;
+
+			case 'future':
+				$this->on_post_scheduled( $post_id, $post );
+				break;
+		}
 	}
 
 	/**

@@ -729,8 +729,15 @@ class BNFW_Notification {
 				$setting = $this->read_settings( $post->ID );
 				?>
 				<label>
-					<input type="checkbox" name="disabled"
-					       value="true" <?php checked( $setting['disabled'], 'true', true ); ?>><?php esc_html_e( 'Disable Notification', 'bnfw' ); ?>
+					<input type="radio" name="disabled"
+					       value="false" <?php checked( $setting['disabled'], 'false', true ); ?>><?php esc_html_e( 'Notification Enabled', 'bnfw' ); ?>
+				</label>
+
+				<br>
+
+				<label>
+					<input type="radio" name="disabled"
+					       value="true" <?php checked( $setting['disabled'], 'true', true ); ?>><?php esc_html_e( 'Notification Disabled', 'bnfw' ); ?>
 				</label>
 
 				<br>

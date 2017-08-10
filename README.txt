@@ -3,8 +3,8 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 3.5
-Tested up to: 4.8
-Stable tag: 1.6.6
+Tested up to: 4.8.1
+Stable tag: 1.6.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,9 +31,9 @@ Power-up your notifications using add-ons:
 
 [Send to Any Email](https://betternotificationsforwp.com/downloads/send-to-any-email/) - Send notifications to non-WordPress Users.
 
-[Per-post Override](https://betternotificationsforwp.com/downloads/per-post-override/) - Override some of the settings of notifications directly when editing a post, page, or custom post type.
+[Global Override](https://betternotificationsforwp.com/downloads/per-post-override/) - Override some of the settings of notifications directly when editing a post, page, or custom post type.
 
-[Update Reminder](https://betternotificationsforwp.com/downloads/update-reminder/) - Send a reminder to your users and/or user roles when a post, page, or custom post type hasn't been updated in a certain number of days.
+[Reminders](https://betternotificationsforwp.com/downloads/update-reminder/) - Send a reminder to your users and/or user roles when a post, page, or custom post type hasn't been updated after a set amount of time. Also send a notification when a user hasn't logged in for a set amount of time.
 
 Multisite Notifications - Coming Soon!
 
@@ -62,6 +62,7 @@ The notifications that are currently available to use are:
 * New User - Post-registration Email
 * User Role Changed - For User
 * Comment Reply
+* User Login Reminder ([Reminders Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
 
 **Posts / Custom Post Types**
 
@@ -71,7 +72,7 @@ The notifications that are currently available to use are:
 * New Private Post
 * Post Scheduled
 * Post - Custom Field Updated ([Custom Fields Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
-* Post - Update Reminder ([Update Reminder Add-on](https://betternotificationsforwp.com/downloads/update-reminder/))
+* Post - Update Reminder ([Reminders Add-on](https://betternotificationsforwp.com/downloads/update-reminder/))
 
 **Pages**
 
@@ -83,7 +84,7 @@ The notifications that are currently available to use are:
 * Page - New Comment
 * Page - Comment Reply
 * Page - Custom Field Updated ([Custom Fields Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
-* Page - Update Reminder ([Update Reminder Add-on](https://betternotificationsforwp.com/downloads/update-reminder/))
+* Page - Update Reminder ([Reminders Add-on](https://betternotificationsforwp.com/downloads/update-reminder/))
 
 **Posts**
 
@@ -199,6 +200,14 @@ An older version might work but this is untested. A lot of the newer features re
 
 
 == Changelog ==
+
+= 1.6.7 - 10th August 2017 =
+* New: Shortcode - `[current_time]` Will output the current time as per the settings in WordPress > Settings.
+* New: Shortcode - `[current_date]` Will output the current date as per the settings in WordPress > Settings.
+* New: Shortcode - `[admin_email]` Adds the email address of the main site admin as per the settings in WordPress > Settings.
+* Fixed: BNFW now respects the post status of posts submitted via ACF's front-end forms (acf_form).
+* Fixed: Privately Published posts that are updated now trigger the 'Post Updated' notification.
+Changed: The opt-in for plugin tracking in BNFW has changed. You may be asked to opt-in / opt-out when updating the plugin.
 
 = 1.6.6 - 28th June 2017 =
 * Fixed: New Comments on Custom Post Types weren't always sending notifications.
