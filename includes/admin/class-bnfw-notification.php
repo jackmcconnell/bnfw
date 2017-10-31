@@ -53,7 +53,7 @@ class BNFW_Notification {
 				'search_items'       => esc_html__( 'Search Notifications', 'bnfw' ),
 				'not_found'          => esc_html__( 'No Notifications found', 'bnfw' ),
 				'not_found_in_trash' => esc_html__( 'No Notifications found in trash', 'bnfw' ),
-				'all_items'          => esc_html__( 'All Notifications', 'bnfw' )
+				'all_items'          => esc_html__( 'All Notifications', 'bnfw' ),
 			),
 			'public'            => false,
 			'show_in_nav_menus' => true,
@@ -164,8 +164,8 @@ class BNFW_Notification {
 								value="admin-password" <?php selected( 'admin-password', $setting['notification'] ); ?>><?php esc_html_e( 'User Lost Password - For Admin', 'bnfw' ); ?></option>
 							<option
 								value="admin-user" <?php selected( 'admin-user', $setting['notification'] ); ?>><?php esc_html_e( 'New User Registration - For Admin', 'bnfw' ); ?></option>
-                            <option
-                                value="admin-password-changed" <?php selected( 'admin-password-changed', $setting['notification'] ); ?>><?php esc_html_e( 'Password Changed - For Admin', 'bnfw' ); ?></option>
+							<option
+								value="admin-password-changed" <?php selected( 'admin-password-changed', $setting['notification'] ); ?>><?php esc_html_e( 'Password Changed - For Admin', 'bnfw' ); ?></option>
 							<option
 								value="admin-role" <?php selected( 'admin-role', $setting['notification'] ); ?>><?php esc_html_e( 'User Role Changed - For Admin', 'bnfw' ); ?></option>
 							<option
@@ -173,13 +173,15 @@ class BNFW_Notification {
 
 							<?php do_action( 'bnfw_after_default_notifications', $setting ); ?>
 						</optgroup>
+						<?php do_action( 'bnfw_after_default_notifications_optgroup', $setting ); ?>
+
 						<optgroup label="Transactional">
 							<option
 								value="user-password" <?php selected( 'user-password', $setting['notification'] ); ?>><?php esc_html_e( 'User Lost Password - For User', 'bnfw' ); ?></option>
-                            <option
-                                    value="password-changed" <?php selected( 'password-changed', $setting['notification'] ); ?>><?php esc_html_e( 'Password Changed - For User', 'bnfw' ); ?></option>
-                            <option
-                                    value="email-changed" <?php selected( 'email-changed', $setting['notification'] ); ?>><?php esc_html_e( 'User Email Changed - For User', 'bnfw' ); ?></option>
+							<option
+								value="password-changed" <?php selected( 'password-changed', $setting['notification'] ); ?>><?php esc_html_e( 'Password Changed - For User', 'bnfw' ); ?></option>
+							<option
+								value="email-changed" <?php selected( 'email-changed', $setting['notification'] ); ?>><?php esc_html_e( 'User Email Changed - For User', 'bnfw' ); ?></option>
 							<option
 								value="new-user" <?php selected( 'new-user', $setting['notification'] ); ?>><?php esc_html_e( 'New User Registration - For User', 'bnfw' ); ?></option>
 							<option
@@ -191,6 +193,8 @@ class BNFW_Notification {
 
 							<?php do_action( 'bnfw_after_transactional_notifications', $setting ); ?>
 						</optgroup>
+						<?php do_action( 'bnfw_after_transactional_notifications_optgroup', $setting ); ?>
+
 						<optgroup label="Posts">
 							<option
 								value="new-post" <?php selected( 'new-post', $setting['notification'] ); ?>><?php esc_html_e( 'New Post Published', 'bnfw' ); ?></option>
@@ -208,6 +212,8 @@ class BNFW_Notification {
 								value="newterm-post_tag" <?php selected( 'newterm-post_tag', $setting['notification'] ); ?>><?php esc_html_e( 'New Tag', 'bnfw' ); ?></option>
 							<?php do_action( 'bnfw_after_notification_options', 'post', 'Post', $setting ); ?>
 						</optgroup>
+						<?php do_action( 'bnfw_after_notification_options_optgroup', 'post', 'Post', $setting ); ?>
+
 						<optgroup label="Page">
 							<option
 								value="new-page" <?php selected( 'new-page', $setting['notification'] ); ?>><?php esc_html_e( 'New Page Published', 'bnfw' ); ?></option>
@@ -225,12 +231,13 @@ class BNFW_Notification {
 								value="commentreply-page" <?php selected( 'commentreply-page', $setting['notification'] ); ?>><?php esc_html_e( 'Page - Comment Reply', 'bnfw' ); ?></option>
 							<?php do_action( 'bnfw_after_notification_options', 'page', 'Page', $setting ); ?>
 						</optgroup>
+						<?php do_action( 'bnfw_after_notification_options_optgroup', 'page', 'Page', $setting ); ?>
 						<?php
-						$types = get_post_types( array(
+						$types = apply_filters( 'bnfw_notification_dropdown_posttypes', get_post_types( array(
 							'public'   => true,
 							'_builtin' => false,
-						), 'names'
-						);
+							), 'names'
+						) );
 
 						foreach ( $types as $type ) {
 							if ( $type != self::POST_TYPE ) {
@@ -253,35 +260,38 @@ class BNFW_Notification {
 										value="comment-<?php echo esc_attr( $type ); ?>" <?php selected( 'comment-' . $type, $setting['notification'] ); ?>><?php echo "'$label' ", esc_html__( 'New Comment', 'bnfw' ); ?></option>
 									<option
 										value="commentreply-<?php echo esc_attr( $type ); ?>" <?php selected( 'commentreply-' . $type, $setting['notification'] ); ?>><?php echo "'$label' ", esc_html__( 'Comment Reply', 'bnfw' ); ?></option>
-									<?php do_action( 'bnfw_after_notification_options', $type, $label, $setting ); ?>
+									<?php do_action( 'bnfw_after_notification_options_option', $type, $label, $setting ); ?>
 								</optgroup>
+								<?php do_action( 'bnfw_after_notification_options_optgroup', $type, $label, $setting ); ?>
+
 								<?php
 							}
 						}
 
-						$taxs = get_taxonomies(
+						$taxs = apply_filters( 'bnfw_notification_dropdown_taxonomies', get_taxonomies(
 							array(
 								'public'   => true,
 								'_builtin' => false,
 							),
 							'objects'
-						);
+						) );
 
-						if ( count( $taxs ) > 0 ) {
-							?>
-							<optgroup label="<?php esc_html_e( 'Custom Taxonomy', 'bnfw' ); ?>">
-								<?php
-								foreach ( $taxs as $tax ) {
-									$tax_name = 'newterm-' . $tax->name;
-									?>
-									<option
-										value="<?php echo esc_attr( $tax_name ); ?>" <?php selected( $tax_name, $setting['notification'] ); ?>><?php printf( "%s '%s'", esc_html__( 'New', 'bnfw' ), $tax->labels->name ); ?></option>
-									<?php
-								}
-								?>
-							</optgroup>
-							<?php
-						}
+		if ( count( $taxs ) > 0 ) {
+			?>
+			<optgroup label="<?php esc_html_e( 'Custom Taxonomy', 'bnfw' ); ?>">
+<?php
+foreach ( $taxs as $tax ) {
+	$tax_name = 'newterm-' . $tax->name;
+	?>
+	<option
+		value="<?php echo esc_attr( $tax_name ); ?>" <?php selected( $tax_name, $setting['notification'] ); ?>><?php printf( "%s '%s'", esc_html__( 'New', 'bnfw' ), $tax->labels->name ); ?></option>
+					<?php
+}
+?>
+</optgroup>
+<?php
+		}
+						do_action( 'bnfw_after_notification_optgroups', $setting );
 						?>
 					</select>
 				</td>
@@ -317,6 +327,8 @@ class BNFW_Notification {
 				</td>
 			</tr>
 
+			<?php do_action( 'bnfw_after_email_formatting', $setting ); ?>
+
 			<tr valign="top" id="toggle-fields">
 				<th>
 					<?php esc_html_e( 'Additional Email Fields', 'bnfw' ); ?>
@@ -327,6 +339,7 @@ class BNFW_Notification {
 					<label for="show-fields"><?php esc_html_e( 'Set "From" Name & Email, Reply To, CC, BCC', 'bnfw' ); ?></label>
 				</td>
 			</tr>
+
 
 			<tr valign="top" id="email">
 				<th scope="row">
@@ -339,6 +352,7 @@ class BNFW_Notification {
 					       placeholder="Admin Email" style="width: 37.3%">
 				</td>
 			</tr>
+
 
 			<tr valign="top" id="reply">
 				<th scope="row">
@@ -372,11 +386,13 @@ class BNFW_Notification {
 
 				<td>
 					<select multiple name="bcc[]" class="<?php echo sanitize_html_class( bnfw_get_user_select_class() ); ?>"
-                            data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
+							data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
 						<?php bnfw_render_users_dropdown( $setting['bcc'] ); ?>
 					</select>
 				</td>
 			</tr>
+
+			<?php do_action( 'bnfw_after_additional_email_fields', $setting ); ?>
 
 			<tr valign="top" id="post-author">
 				<th></th>
@@ -389,16 +405,20 @@ class BNFW_Notification {
 				</td>
 			</tr>
 
-            <tr valign="top" id="current-user">
-                <th></th>
-                <td>
-                    <label>
-                        <input type="checkbox" name="disable-current-user"
-                               value="true" <?php checked( 'true', $setting['disable-current-user'] ); ?>>
+			<?php do_action( 'bnfw_after_only_post_author', $setting ); ?>
+
+			<tr valign="top" id="current-user">
+				<th></th>
+				<td>
+					<label>
+						<input type="checkbox" name="disable-current-user"
+							   value="true" <?php checked( 'true', $setting['disable-current-user'] ); ?>>
 						<?php esc_html_e( 'Do not send this Notification to the User that triggered it', 'bnfw' ); ?>
-                    </label>
-                </td>
-            </tr>
+					</label>
+				</td>
+			</tr>
+
+			<?php do_action( 'bnfw_after_disable_current_user', $setting ); ?>
 
 			<tr valign="top" id="users">
 				<th scope="row">
@@ -407,11 +427,13 @@ class BNFW_Notification {
 				<td>
 					<select multiple id="users-select" name="users[]"
 					        class="<?php echo sanitize_html_class( bnfw_get_user_select_class() ); ?>"
-                            data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
+							data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
 						<?php bnfw_render_users_dropdown( $setting['users'] ); ?>
 					</select>
 				</td>
 			</tr>
+
+			<?php do_action( 'bnfw_after_send_to', $setting ); ?>
 
 			<tr valign="top">
 				<th scope="row">
@@ -423,6 +445,9 @@ class BNFW_Notification {
 				</td>
 			</tr>
 
+			<?php do_action( 'bnfw_after_user_dropdown', $setting ); ?>
+
+			<?php do_action( 'bnfw_before_message_body', $setting ); ?>
 			<tr valign="top">
 				<th scope="row">
 					<?php esc_html_e( 'Message Body', 'bnfw' ); ?>
@@ -506,8 +531,9 @@ class BNFW_Notification {
 		wp_enqueue_style( 'bnfw', plugins_url( '../assets/css/bnfw.css', dirname( __FILE__ ) ), array( 'dashicons', 'select2' ), '0.1' );
 
 		$strings = array(
+			'validation_element' => apply_filters( 'bnfw_validation_element', '#users-select' ),
 			'empty_user' => esc_html__( 'You must choose at least one User or User Role to send the notification to before you can save', 'bnfw' ),
-            'enableTags' => false,
+			'enableTags' => false,
 		);
 
 		/**
@@ -923,11 +949,11 @@ class BNFW_Notification {
 		foreach ( $users as $user ) {
 			if ( $this->starts_with( $user, 'role-' ) ) {
 				$user_roles[] = ucfirst( str_replace( 'role-', '', $user ) );
-			} else if ( absint( $user ) > 0 ) {
+			} elseif ( absint( $user ) > 0 ) {
 				$user_ids[] = absint( $user );
 			} else {
 				$emails[] = $user;
-            }
+			}
 		}
 
 		if ( ! empty( $user_ids ) ) {
