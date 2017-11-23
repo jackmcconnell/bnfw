@@ -485,10 +485,11 @@ class BNFW_Engine {
 	 * @param int $post_id
 	 * @return string
 	 */
-	public function post_shortcodes(  $message, $post_id  ) {
+	public function post_shortcodes( $message, $post_id ) {
 		$post = get_post( $post_id );
 
-		$post_content = apply_filters( 'the_content', $post->post_content );
+		$post_content = strip_shortcodes( $post->post_content );
+		$post_content = apply_filters( 'the_content', $post_content );
 		$post_content = str_replace( ']]>', ']]&gt;', $post_content );
 
 		$message = str_replace( '[ID]', $post->ID, $message );
@@ -496,7 +497,7 @@ class BNFW_Engine {
 		$message = str_replace( '[post_date_gmt]', $post->post_date_gmt, $message );
 		$message = str_replace( '[post_content]', $post_content, $message );
 		$message = str_replace( '[post_title]', $post->post_title, $message );
-		$message = str_replace( '[post_excerpt]', ( $post->post_excerpt ? $post->post_excerpt : wp_trim_words( $post_content ) ), $message );
+		$message = str_replace( '[post_excerpt]', ( strip_shortcodes( $post->post_excerpt ? $post->post_excerpt : wp_trim_words( $post_content ) ) ), $message );
 		$message = str_replace( '[post_status]', $post->post_status, $message );
 		$message = str_replace( '[comment_status]', $post->comment_status, $message );
 		$message = str_replace( '[ping_status]', $post->ping_status, $message );

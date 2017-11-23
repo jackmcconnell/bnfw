@@ -3,8 +3,9 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 3.5
-Tested up to: 4.8.1
-Stable tag: 1.6.7
+Tested up to: 4.9.1
+Requires PHP: 5.6
+Stable tag: 1.6.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,7 +110,7 @@ If you'd like to see a notification in the list above, please drop me a line in 
 1. Upload the 'bnfw' plugin folder to the '/wp-content/plugins/' directory or install it via your WordPress Admin.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Use the settings in the new 'Notifications' Menu item in the sidebar to configure the plugin.
-4. (Optional) Install a plugin to use SMTP instead of `wp_mail()`. I recommend [Postman SMTP Mailer/Email Log](https://wordpress.org/plugins/postman-smtp/).
+4. (Optional) Install a plugin to use SMTP instead of `wp_mail()`. I recommend [Post SMTP Mailer/Email Log](https://wordpress.org/plugins/post-smtp/).
 5. Test by creating a notification with some [shortcodes](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WordPress").
 
 
@@ -201,13 +202,19 @@ An older version might work but this is untested. A lot of the newer features re
 
 == Changelog ==
 
+= 1.6.8 - 23rd November 2017 = 
+* New: All shortcodes that are correctly registered within WordPress will now be stripped from the `[post_excerpt]` and `[post_content]` shortcodes so as to not cause layout or styling issues within your notifications.
+* Added: A minimum PHP version of 5.6 is now required to run BNFW.
+* Fixed: Compatibility with the [Reminders](https://betternotificationsforwp.com/downloads/update-reminder/) and [Conditional Notifications](https://betternotificationsforwp.com/downloads/conditional-notifications/) add-ons.
+* Reminder: You may be asked to opt into plugin tracking when updating. Please consider doing so as it really helps with the development of the plugin. Full details on what is tracked is available on [this page](https://betternotificationsforwp.com/documentation/settings/what-information-will-be-tracked-by-opting-into-usage-tracking/).
+
 = 1.6.7 - 10th August 2017 =
 * New: Shortcode - `[current_time]` Will output the current time as per the settings in WordPress > Settings.
 * New: Shortcode - `[current_date]` Will output the current date as per the settings in WordPress > Settings.
 * New: Shortcode - `[admin_email]` Adds the email address of the main site admin as per the settings in WordPress > Settings.
 * Fixed: BNFW now respects the post status of posts submitted via ACF's front-end forms (acf_form).
 * Fixed: Privately Published posts that are updated now trigger the 'Post Updated' notification.
-Changed: The opt-in for plugin tracking in BNFW has changed. You may be asked to opt-in / opt-out when updating the plugin.
+* Changed: The opt-in for plugin tracking in BNFW has changed. You may be asked to opt-in / opt-out when updating the plugin.
 
 = 1.6.6 - 28th June 2017 =
 * Fixed: New Comments on Custom Post Types weren't always sending notifications.
