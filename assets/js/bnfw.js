@@ -192,6 +192,10 @@ jQuery(document).ready(function($) {
 					case 'updatereminder':
 						notification_slug = 'updatereminder-post';
 						break;
+
+					default:
+						notification_slug = notification;
+						break;
 				}
 
 				break;
