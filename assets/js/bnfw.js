@@ -127,7 +127,7 @@ jQuery(document).ready(function($) {
 	// Validate before saving notification
 	$( '#publish' ).click(function() {
 		if ( $('#users').is(':visible') ) {
-			if ( null === $('#users-select').val() ) {
+			if ( null === $(BNFW.validation_element).val() ) {
 				$('#bnfw_error').remove();
 				$('.wrap h1').after('<div class="error" id="bnfw_error"><p>' + BNFW.empty_user + '</p></div>');
 				return false;

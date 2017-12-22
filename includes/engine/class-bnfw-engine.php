@@ -28,6 +28,7 @@ class BNFW_Engine {
 		$headers = array();
 		if ( 'html' == $setting['email-formatting'] ) {
 			$headers[] = 'Content-type: text/html';
+			$message = apply_filters( 'bnfw_test_email_message', $message, $setting );
 		}
 
 		wp_mail( $email, stripslashes( $subject ), $message, $headers );
@@ -60,6 +61,7 @@ class BNFW_Engine {
 
 			if ( 'html' == $setting['email-formatting'] ) {
 				$headers[] = 'Content-type: text/html';
+				$message = apply_filters( 'bnfw_notification_message', $message, $setting );
 			} else {
 				$headers[] = 'Content-type: text/plain';
 			}
@@ -113,6 +115,7 @@ class BNFW_Engine {
 		$headers = array();
 		if ( 'html' == $setting['email-formatting'] ) {
 			$headers[] = 'Content-type: text/html';
+			$message = apply_filters( 'bnfw_registration_email_message', $message, $setting );
 		}
 
 		$subject = $this->handle_global_user_shortcodes( $subject, $user->user_email );
@@ -149,6 +152,7 @@ class BNFW_Engine {
 
 			if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
 				$message = wpautop( $message );
+				$message = apply_filters( 'bnfw_comment_reply_email_message', $message, $setting );
 			}
 
 			$subject = $this->handle_global_user_shortcodes( $subject, $parent_comment->comment_author_email );
@@ -175,12 +179,13 @@ class BNFW_Engine {
 		$message = $this->handle_user_role_shortcodes( $message, $old_role, $new_role );
 
 		$headers = array();
-		if ( 'html' == $setting['email-formatting'] ) {
-			$headers[] = 'Content-type: text/html';
-		}
-
 		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
 			$message = wpautop( $message );
+		}
+
+		if ( 'html' == $setting['email-formatting'] ) {
+			$headers[] = 'Content-type: text/html';
+			$message = apply_filters( 'bnfw_user_role_changed_email_message', $message, $setting );
 		}
 
 		$user = get_user_by( 'id', $user_id );
@@ -205,12 +210,12 @@ class BNFW_Engine {
 		$old_role_name = '';
 		$new_role_name = '';
 
-		if ( isset( $roles->role_names[$old_role] ) ) {
-			$old_role_name = $roles->role_names[$old_role];
+		if ( isset( $roles->role_names[ $old_role ] ) ) {
+			$old_role_name = $roles->role_names[ $old_role ];
 		}
 
-		if ( isset( $roles->role_names[$new_role] ) ) {
-			$new_role_name = $roles->role_names[$new_role];
+		if ( isset( $roles->role_names[ $new_role ] ) ) {
+			$new_role_name = $roles->role_names[ $new_role ];
 		}
 
 		$message = str_replace( '[user_role_old]', $old_role_name, $message );
@@ -403,7 +408,7 @@ class BNFW_Engine {
 					// handle new terms
 					$message = $this->taxonomy_shortcodes( $message, $type[1], $extra_data );
 
-				} else if ( 'new' == $type[0] || 'update' == $type[0] || 'pending' == $type[0] || 'future' == $type[0] || 'private' == $type[0] ) {
+				} elseif ( 'new' == $type[0] || 'update' == $type[0] || 'pending' == $type[0] || 'future' == $type[0] || 'private' == $type[0] ) {
 					// handle new, update and pending posts
 					$post_types = get_post_types( array( 'public' => true ), 'names' );
 					$post_types = array_diff( $post_types, array( BNFW_Notification::POST_TYPE ) );
@@ -413,7 +418,7 @@ class BNFW_Engine {
 						$post = get_post( $extra_data );
 						$message = $this->user_shortcodes( $message, $post->post_author );
 					}
-				} else if ( 'comment' == $type[0] || 'commentreply' == $type[0] ) {
+				} elseif ( 'comment' == $type[0] || 'commentreply' == $type[0] ) {
 					$message = $this->comment_shortcodes( $message, $extra_data );
 					$comment = get_comment( $extra_data );
 					$message = $this->post_shortcodes( $message, $comment->comment_post_ID );
@@ -562,7 +567,7 @@ class BNFW_Engine {
 		preg_match( '/\[post_term taxonomy="([^"]*)"\]/i', $message, $taxonomy_matches );
 
 		if ( count( $taxonomy_matches ) > 0 ) {
-			$terms = wp_get_post_terms( $post_id, $taxonomy_matches[1], array( 'fields'   => 'names' ) );
+			$terms = wp_get_post_terms( $post_id, $taxonomy_matches[1], array( 'fields' => 'names' ) );
 
 			if ( ! is_wp_error( $terms ) ) {
 				$terms_list = implode( ', ', $terms );
@@ -783,7 +788,7 @@ class BNFW_Engine {
 		foreach ( $users as $user ) {
 			if ( $this->starts_with( $user, 'role-' ) ) {
 				$user_roles[] = str_replace( 'role-', '', $user );
-			} else if (absint( $user ) > 0 ) {
+			} elseif ( absint( $user ) > 0 ) {
 				$user_ids[] = absint( $user );
 			} else {
 				$non_wp_users[] = $user;
