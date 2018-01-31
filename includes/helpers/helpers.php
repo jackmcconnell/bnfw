@@ -165,8 +165,10 @@ function bnfw_format_user_capabilities( $wp_capabilities ) {
  * @return bool True if tracking is allowed, False otherwise.
  */
 function bnfw_is_tracking_allowed() {
-	// Since we are using Freemius this is temporarily disabled.
-	return bnfw_fs()->is_registered();
+	if ( function_exists( 'bnfw_fs' ) ) {
+		// Since we are using Freemius this is temporarily disabled.
+		return bnfw_fs()->is_registered();
+	}
 
 	$tracking_allowed = false;
 
@@ -191,4 +193,18 @@ function bnfw_get_post_id_from_comment( $comment_id ) {
 	}
 
 	return 0;
+}
+
+/**
+ * Format date based on date format stored in options.
+ *
+ * @param string $date Date.
+ *
+ * @return string Formatted date.
+ */
+function bnfw_format_date( $date ) {
+	$date_format = get_option( 'date_format' );
+	$time_format = get_option( 'time_format' );
+
+	return date( $date_format . ' ' . $time_format, strtotime( $date ) );
 }

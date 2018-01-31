@@ -82,6 +82,21 @@ jQuery(document).ready(function($) {
 	}
 
 	init();
+
+	/**
+	 * Show a warning message if a notification is configured for more than 200 emails.
+	 */
+	$( '#users-select' ).on( 'change', function () {
+		var emailCount = $( '#users-select' ).find( ':selected' ).length,
+			$msg = $( '#users-count-msg' );
+
+		if ( emailCount > 200 ) {
+			$msg.show();
+		} else {
+			$msg.hide();
+		}
+	} );
+
     $('#notification').on('change', function() {
 		var $this = $(this),
 			notification = $this.val();
@@ -127,7 +142,7 @@ jQuery(document).ready(function($) {
 	// Validate before saving notification
 	$( '#publish' ).click(function() {
 		if ( $('#users').is(':visible') ) {
-			if ( null === $('#users-select').val() ) {
+			if ( null === $(BNFW.validation_element).val() ) {
 				$('#bnfw_error').remove();
 				$('.wrap h1').after('<div class="error" id="bnfw_error"><p>' + BNFW.empty_user + '</p></div>');
 				return false;
@@ -203,4 +218,108 @@ jQuery(document).ready(function($) {
 
 		$(this).attr( 'href', 'https://betternotificationsforwp.com/documentation/notifications/shortcodes/?notification=' + notification_slug + '&utm_source=WP%20Admin%20Notification%20Editor%20-%20"Shortcode%20Help"&utm_medium=referral' );
 	});
+
+	/**
+	 * Insert Default Message for notification.
+	 */
+	$( '#insert-default-msg' ).on( 'click', function() {
+		var notification = $( '#notification' ).val(),
+			subject = '',
+			body = '';
+
+		switch ( notification ) {
+			case 'new-comment':
+			case 'new-trackback':
+			case 'new-pingback':
+			case 'reply-comment':
+				subject = '[[global_site_title]] Comment: "[post_title]"';
+				body = 'New comment on your post "[post_title]"<br>' +
+					'Author: [comment_author] (IP address: [comment_author_IP]) <br>' +
+					'Email: [comment_author_email] <br>' +
+				    'URL: [comment_author_url] <br>' +
+					'Comment: <br> ' +
+					'[comment_content] <br>' +
+					'<br>' +
+					'You can see all comments on this post here: <br>' +
+					'[permalink]#comments';
+
+				break;
+
+			case 'admin-user':
+				subject = '[[global_site_title]] New User Registration';
+				body = 'New user registration on your site [global_site_title]: <br>' +
+					'Username: [user_login] <br>' +
+					'E-mail: [user_email]';
+
+				break;
+
+			case 'admin-password-changed':
+				subject = '[[global_site_title]] Password Changed';
+				body = 'Password changed for user: [user_login]: <br>';
+
+				break;
+
+			case 'user-password':
+				subject = '[[global_site_title]] Password Reset';
+				body = 'Someone has requested a password reset for the following account: <br>' +
+					'Site Name: [global_site_title] <br>' +
+					'Username: [user_login] <br>' +
+					'If this was a mistake, just ignore this email and nothing will happen. <br>' +
+					'To reset your password, visit the following address: [password_reset_link]';
+
+				break;
+
+			case 'password-changed':
+				subject = '[[global_site_title]] Notice of Password Change';
+				body = 'Hi [user_nicename], <br>' +
+					'<br>' +
+					'This notice confirms that your password was changed on [global_site_title].' +
+					'<br>' +
+					'If you did not change your password, please contact the Site Administrator at [admin_email] <br>' +
+					'<br>' +
+					'This email has been sent to [global_user_email]' +
+					'<br>' +
+					'Regards, <br>' +
+					'All at [global_site_title] <br>' +
+					'[global_site_url]';
+				break;
+
+			case 'email-changed':
+				subject = '[[global_site_title]] Notice of Email Change';
+				body = 'Hi [user_nicename], <br>' +
+					'<br>' +
+					'This notice confirms that your email address was changed to [user_email].' +
+					'<br>' +
+					'If you did not change your email, please contact the Site Administrator at [admin_email] <br>' +
+					'<br>' +
+					'This email has been sent to [global_user_email]' +
+					'<br>' +
+					'Regards, <br>' +
+					'All at [global_site_title] <br>' +
+					'[global_site_url]';
+				break;
+
+			case 'new-user':
+				subject = '[[global_site_title]] Your username and password info';
+				body = 'Username: [user_login] <br>' +
+					'To set your password, visit the following address: [password_url]';
+
+				break;
+			default:
+				alert( "This is a new notification that is not available in WordPress by default and has been added by Better Notifications for WordPress. As such, it doesn't have any default content." );
+				break;
+		}
+
+		if ( subject !== '' ) {
+			$( '#subject' ).val( subject );
+		}
+
+		if ( body !== '' ) {
+			if ( tinyMCE && tinyMCE.editors && tinyMCE.editors['notification_message'] ) {
+				tinyMCE.editors['notification_message'].selection.setContent( '<div>' + body + '</div>' );
+			}
+		}
+
+		return false;
+	} );
 });

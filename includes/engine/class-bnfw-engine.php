@@ -28,6 +28,7 @@ class BNFW_Engine {
 		$headers = array();
 		if ( 'html' == $setting['email-formatting'] ) {
 			$headers[] = 'Content-type: text/html';
+			$message = apply_filters( 'bnfw_test_email_message', $message, $setting );
 		}
 
 		wp_mail( $email, stripslashes( $subject ), $message, $headers );
@@ -60,6 +61,7 @@ class BNFW_Engine {
 
 			if ( 'html' == $setting['email-formatting'] ) {
 				$headers[] = 'Content-type: text/html';
+				$message = apply_filters( 'bnfw_notification_message', $message, $setting );
 			} else {
 				$headers[] = 'Content-type: text/plain';
 			}
@@ -103,7 +105,7 @@ class BNFW_Engine {
 		$subject = str_replace( '[password_url]', $password_url, $subject );
 		$message = str_replace( '[password_url]', $password_url, $message );
 
-		$subject = str_replace( '[login_url]', wp_login_url() , $subject );
+		$subject = str_replace( '[login_url]', wp_login_url(), $subject );
 		$message = str_replace( '[login_url]', wp_login_url(), $message );
 
 		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
@@ -113,6 +115,7 @@ class BNFW_Engine {
 		$headers = array();
 		if ( 'html' == $setting['email-formatting'] ) {
 			$headers[] = 'Content-type: text/html';
+			$message = apply_filters( 'bnfw_registration_email_message', $message, $setting );
 		}
 
 		$subject = $this->handle_global_user_shortcodes( $subject, $user->user_email );
@@ -149,6 +152,7 @@ class BNFW_Engine {
 
 			if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
 				$message = wpautop( $message );
+				$message = apply_filters( 'bnfw_comment_reply_email_message', $message, $setting );
 			}
 
 			$subject = $this->handle_global_user_shortcodes( $subject, $parent_comment->comment_author_email );
@@ -175,12 +179,13 @@ class BNFW_Engine {
 		$message = $this->handle_user_role_shortcodes( $message, $old_role, $new_role );
 
 		$headers = array();
-		if ( 'html' == $setting['email-formatting'] ) {
-			$headers[] = 'Content-type: text/html';
-		}
-
 		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
 			$message = wpautop( $message );
+		}
+
+		if ( 'html' == $setting['email-formatting'] ) {
+			$headers[] = 'Content-type: text/html';
+			$message = apply_filters( 'bnfw_user_role_changed_email_message', $message, $setting );
 		}
 
 		$user = get_user_by( 'id', $user_id );
@@ -205,12 +210,12 @@ class BNFW_Engine {
 		$old_role_name = '';
 		$new_role_name = '';
 
-		if ( isset( $roles->role_names[$old_role] ) ) {
-			$old_role_name = $roles->role_names[$old_role];
+		if ( isset( $roles->role_names[ $old_role ] ) ) {
+			$old_role_name = $roles->role_names[ $old_role ];
 		}
 
-		if ( isset( $roles->role_names[$new_role] ) ) {
-			$new_role_name = $roles->role_names[$new_role];
+		if ( isset( $roles->role_names[ $new_role ] ) ) {
+			$new_role_name = $roles->role_names[ $new_role ];
 		}
 
 		$message = str_replace( '[user_role_old]', $old_role_name, $message );
@@ -308,7 +313,7 @@ class BNFW_Engine {
 			$message = $this->handle_shortcodes( $setting['message'], 'user-password', $user_data->ID );
 			$message = $this->handle_global_user_shortcodes( $message, $user_data->user_email );
 
-			$reset_link = wp_login_url() . "?action=rp&key=$key&login=$user_login";
+			$reset_link = network_site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user_login ), 'login' );
 			$message = str_replace( '[password_reset_link]', $reset_link, $message );
 		}
 
@@ -403,7 +408,7 @@ class BNFW_Engine {
 					// handle new terms
 					$message = $this->taxonomy_shortcodes( $message, $type[1], $extra_data );
 
-				} else if ( 'new' == $type[0] || 'update' == $type[0] || 'pending' == $type[0] || 'future' == $type[0] || 'private' == $type[0] ) {
+				} elseif ( 'new' == $type[0] || 'update' == $type[0] || 'pending' == $type[0] || 'future' == $type[0] || 'private' == $type[0] ) {
 					// handle new, update and pending posts
 					$post_types = get_post_types( array( 'public' => true ), 'names' );
 					$post_types = array_diff( $post_types, array( BNFW_Notification::POST_TYPE ) );
@@ -413,7 +418,7 @@ class BNFW_Engine {
 						$post = get_post( $extra_data );
 						$message = $this->user_shortcodes( $message, $post->post_author );
 					}
-				} else if ( 'comment' == $type[0] || 'commentreply' == $type[0] ) {
+				} elseif ( 'comment' == $type[0] || 'commentreply' == $type[0] ) {
 					$message = $this->comment_shortcodes( $message, $extra_data );
 					$comment = get_comment( $extra_data );
 					$message = $this->post_shortcodes( $message, $comment->comment_post_ID );
@@ -493,8 +498,8 @@ class BNFW_Engine {
 		$post_content = str_replace( ']]>', ']]&gt;', $post_content );
 
 		$message = str_replace( '[ID]', $post->ID, $message );
-		$message = str_replace( '[post_date]', $post->post_date, $message );
-		$message = str_replace( '[post_date_gmt]', $post->post_date_gmt, $message );
+		$message = str_replace( '[post_date]', bnfw_format_date( $post->post_date ), $message );
+		$message = str_replace( '[post_date_gmt]', bnfw_format_date( $post->post_date_gmt ), $message );
 		$message = str_replace( '[post_content]', $post_content, $message );
 		$message = str_replace( '[post_title]', $post->post_title, $message );
 		$message = str_replace( '[post_excerpt]', ( strip_shortcodes( $post->post_excerpt ? $post->post_excerpt : wp_trim_words( $post_content ) ) ), $message );
@@ -506,8 +511,8 @@ class BNFW_Engine {
 		$message = str_replace( '[post_slug]', $post->post_name, $message );
 		$message = str_replace( '[to_ping]', $post->to_ping, $message );
 		$message = str_replace( '[pinged]', $post->pinged, $message );
-		$message = str_replace( '[post_modified]', $post->post_modified, $message );
-		$message = str_replace( '[post_modified_gmt]', $post->post_modified_gmt, $message );
+		$message = str_replace( '[post_modified]', bnfw_format_date( $post->post_modified ), $message );
+		$message = str_replace( '[post_modified_gmt]', bnfw_format_date( $post->post_modified_gmt ), $message );
 		$message = str_replace( '[post_content_filtered]', $post->post_content_filtered, $message );
 		$message = str_replace( '[post_parent]', $post->post_parent, $message );
 		$message = str_replace( '[post_parent_permalink]', get_permalink( $post->post_parent ), $message );
@@ -529,8 +534,8 @@ class BNFW_Engine {
 		$message = str_replace( '[featured_image]', $featured_image, $message );
 
 		if ( 'future' == $post->post_status ) {
-			$message = str_replace( '[post_scheduled_date]', $post->post_date, $message );
-			$message = str_replace( '[post_scheduled_date_gmt]', $post->post_date_gmt, $message );
+			$message = str_replace( '[post_scheduled_date]', bnfw_format_date( $post->post_date ), $message );
+			$message = str_replace( '[post_scheduled_date_gmt]', bnfw_format_date( $post->post_date_gmt ), $message );
 		} else {
 			$message = str_replace( '[post_scheduled_date]', 'Published', $message );
 			$message = str_replace( '[post_scheduled_date_gmt]', 'Published', $message );
@@ -562,7 +567,7 @@ class BNFW_Engine {
 		preg_match( '/\[post_term taxonomy="([^"]*)"\]/i', $message, $taxonomy_matches );
 
 		if ( count( $taxonomy_matches ) > 0 ) {
-			$terms = wp_get_post_terms( $post_id, $taxonomy_matches[1], array( 'fields'   => 'names' ) );
+			$terms = wp_get_post_terms( $post_id, $taxonomy_matches[1], array( 'fields' => 'names' ) );
 
 			if ( ! is_wp_error( $terms ) ) {
 				$terms_list = implode( ', ', $terms );
@@ -594,8 +599,8 @@ class BNFW_Engine {
 		$message = str_replace( '[comment_author_email]', $comment->comment_author_email, $message );
 		$message = str_replace( '[comment_author_url]', $comment->comment_author_url, $message );
 		$message = str_replace( '[comment_author_IP]', $comment->comment_author_IP, $message );
-		$message = str_replace( '[comment_date]', $comment->comment_date, $message );
-		$message = str_replace( '[comment_date_gmt]', $comment->comment_date_gmt, $message );
+		$message = str_replace( '[comment_date]', bnfw_format_date( $comment->comment_date ), $message );
+		$message = str_replace( '[comment_date_gmt]', bnfw_format_date( $comment->comment_date_gmt ), $message );
 		$message = str_replace( '[comment_content]', get_comment_text( $comment->comment_ID ), $message );
 		$message = str_replace( '[comment_karma]', $comment->comment_karma, $message );
 		$message = str_replace( '[comment_approved]', str_replace( array( '0', '1', 'spam' ), array( 'awaiting moderation', 'approved', 'spam' ), $comment->comment_approved ), $message );
@@ -620,6 +625,10 @@ class BNFW_Engine {
 	 */
 	public function user_shortcodes( $message, $user_id ) {
 		$user_info = get_userdata( $user_id );
+
+		if ( ! $user_info instanceof WP_User ) {
+			return $message;
+		}
 
 		// deperecated
 		$message = str_replace( '[ID]', $user_info->ID, $message );
@@ -783,7 +792,7 @@ class BNFW_Engine {
 		foreach ( $users as $user ) {
 			if ( $this->starts_with( $user, 'role-' ) ) {
 				$user_roles[] = str_replace( 'role-', '', $user );
-			} else if (absint( $user ) > 0 ) {
+			} elseif ( absint( $user ) > 0 ) {
 				$user_ids[] = absint( $user );
 			} else {
 				$non_wp_users[] = $user;

@@ -3,9 +3,9 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 3.5
-Tested up to: 4.9.1
+Tested up to: 4.9.2
 Requires PHP: 5.6
-Stable tag: 1.6.9
+Stable tag: 1.6.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -152,19 +152,11 @@ Yes and no - some notifications work, others don't, and some are missing entirel
 
 It's not designed to send out newsletters. There is no send-this-out-on-this-date style functionality included. There are many other great plugins available that you could use for that instead. Additionally, users cannot currently unsubscribe automatically from notifications so you'll have to work out how you manage unsubscribers manually.
 
-= How do I set-up WordPress to work with this plugin correctly? =
-
-This will very much depend on what notifications you're using the plugin for. Out-of-the-box, this plugin works very well but there are a few tweaks that will ensure 100% compatibility. All the below points refer to this plugin: 
-
-* If you want to use the new comment notifications in BNFW, you need to un-tick 'Email me whenever anyone posts a comment' and 'A comment is held for moderation' under Settings > Discussion. It's OK if you don't do this but you might receive WordPress's own email notifications along with the ones you've configure using BNFW. It also goes without saying that you need to enable comments for your posts if you want the email notifications to come through. 
-
-* If you want to use the 'Comment Reply' transactional email, you need to ensure that comments are only set-up to be 2-levels deep. You can do this by going to Settings > Discussion and changing the option 'Enable threaded (nested) comments 'X' levels deep' to '2'. Please also ensure this option is ticked. 
-
 = Notifications aren't coming through! =
 
 First of all, follow [this article](https://betternotificationsforwp.com/how-can-i-receive-the-best-support/) about how to find out what might be causing the problem. Additionally, please take a look at [this help document](https://betternotificationsforwp.com/documentation/getting-started/how-to-improve-email-delivery/) to see how you might improve email delivery when using Better Notifications for WordPress.
 
-Many hosts place a limit on the number of emails that can be sent out within an hour so this may also cause some delay in emails arriving. MailPoet has a fairly extensive list of hosts and their corresponding email rate limits that's worth checking out [here](https://support.mailpoet.com/knowledgebase/lists-of-hosts-and-their-sending-limits/). Alternatively, please check with your host directly to find out what your limit is. 
+Many hosts place a limit on the number of emails that can be sent out within an hour so this may also cause some delay in emails arriving. [This article](https://support.mailpoet.com/knowledgebase/lists-of-hosts-and-their-sending-limits/) has a fairly extensive list of hosts and their corresponding email rate limits that's worth checking out. Alternatively, please check with your host directly to find out what your limit is.
 
 If you're still having problems, please drop me a line in the [Free Support Forums](https://wordpress.org/support/plugin/bnfw) and I'll do my best to help. 
 
@@ -206,12 +198,26 @@ An older version might work but this is untested. A lot of the newer features re
 
 == Changelog ==
 
-= 1.6.9 - 7th December 2017 = 
+= 1.6.10 - 31st January 2018 =
+* New: Faster customisation! You can now add the subject and message body from a default WordPress email to notifications. Just choose a default WordPress email and click the 'Insert Default Content' button next to the WYSIWYG editor when adding or editing a notification.
+* New: If you want to allow other user roles to create or edit notifications, you can now grant them the 'bnfw' capability using a role editor.
+* Added: A new notice will display at the top of all Notification screens explaining how you can improve email deliverability. You can dismiss this permanently at any time.
+* Added: Inline help tips are now available when creating or editing a notification. Handy if you want to remember how something works but don't want to sift through the documentation.
+* Added: Merged two pull request that came in via the GitHub clone of this plugin - ([#1](https://github.com/jackmcconnell/bnfw/pull/1) and [#2](https://github.com/jackmcconnell/bnfw/pull/2)).
+* Added: For faster support, there is now a Priority Support menu item in the BNFW Notifications menu. Priority Support is available to customers with an active subscription to an add-on.
+* Improved: All date related shortcodes now output in the date and time format set in Settings > General in the WordPress Admin.
+* Improved: The list of available notifications has been re-ordered to make more sense.
+* Improved: A warning will now show if the total user count in the Send To box is more than 200 users.
+* Improved: Usage tracking will now only load on single sites and not on sites that are part of a Multisite network.
+* Updated: Usage tracking SDK updated to the latest version.
+* Fixed: Warnings were showing when posting a new comment on the front-end.
+
+= 1.6.9 - 7th December 2017 =
 * Merry Christmas & Happy New Year!
 * New: Support for new [Profile Builder Add-on](https://betternotificationsforwp.com/downloads/profile-builder/).
 * Fixed: An issue where the YouTube video wasn't showing properly on the BNFW WP.org plugin page.
 
-= 1.6.8 - 23rd November 2017 = 
+= 1.6.8 - 23rd November 2017 =
 * New: All shortcodes that are correctly registered within WordPress will now be stripped from the `[post_excerpt]` and `[post_content]` shortcodes so as to not cause layout or styling issues within your notifications.
 * Added: A minimum PHP version of 5.6 is now required to run BNFW.
 * Fixed: Compatibility with the [Reminders](https://betternotificationsforwp.com/downloads/update-reminder/) and [Conditional Notifications](https://betternotificationsforwp.com/downloads/conditional-notifications/) add-ons.

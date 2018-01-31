@@ -31,6 +31,8 @@ class BNFW_Notification {
 
 		// Enqueue scripts/styles and disables autosave for this post type.
 		add_action( 'admin_enqueue_scripts', array( $this, 'is_assets_needed' ) );
+
+		add_action( 'admin_notices', array( $this, 'show_help_notice' ) );
 	}
 
 	/**
@@ -53,7 +55,7 @@ class BNFW_Notification {
 				'search_items'       => esc_html__( 'Search Notifications', 'bnfw' ),
 				'not_found'          => esc_html__( 'No Notifications found', 'bnfw' ),
 				'not_found_in_trash' => esc_html__( 'No Notifications found in trash', 'bnfw' ),
-				'all_items'          => esc_html__( 'All Notifications', 'bnfw' )
+				'all_items'          => esc_html__( 'All Notifications', 'bnfw' ),
 			),
 			'public'            => false,
 			'show_in_nav_menus' => true,
@@ -68,27 +70,27 @@ class BNFW_Notification {
 			'capabilities'      => array(
 
 				// meta caps (don't assign these to roles)
-				'edit_post'              => 'manage_options',
-				'read_post'              => 'manage_options',
-				'delete_post'            => 'manage_options',
+				'edit_post'              => 'bnfw',
+				'read_post'              => 'bnfw',
+				'delete_post'            => 'bnfw',
 
 				// primitive/meta caps
-				'create_posts'           => 'manage_options',
+				'create_posts'           => 'bnfw',
 
 				// primitive caps used outside of map_meta_cap()
-				'edit_posts'             => 'manage_options',
-				'edit_others_posts'      => 'manage_options',
-				'publish_posts'          => 'manage_options',
-				'read_private_posts'     => 'manage_options',
+				'edit_posts'             => 'bnfw',
+				'edit_others_posts'      => 'bnfw',
+				'publish_posts'          => 'bnfw',
+				'read_private_posts'     => 'bnfw',
 
 				// primitive caps used inside of map_meta_cap()
-				'read'                   => 'manage_options',
-				'delete_posts'           => 'manage_options',
-				'delete_private_posts'   => 'manage_options',
-				'delete_published_posts' => 'manage_options',
-				'delete_others_posts'    => 'manage_options',
-				'edit_private_posts'     => 'manage_options',
-				'edit_published_posts'   => 'manage_options',
+				'read'                   => 'bnfw',
+				'delete_posts'           => 'bnfw',
+				'delete_private_posts'   => 'bnfw',
+				'delete_published_posts' => 'bnfw',
+				'delete_others_posts'    => 'bnfw',
+				'edit_private_posts'     => 'bnfw',
+				'edit_published_posts'   => 'bnfw',
 			),
 
 			// What features the post type supports.
@@ -149,23 +151,18 @@ class BNFW_Notification {
 			<tr valign="top">
 				<th scope="row">
 					<label for="notification"><?php esc_html_e( 'Notification For', 'bnfw' ); ?></label>
+					<div class="bnfw-help-tip"><p><?php esc_html_e( 'E.g. If you select "New Post Published" from the list on the right, this notification will be sent when a new post is published.', 'bnfw' ); ?></p></div>
 				</th>
 				<td>
 					<select name="notification" id="notification" class="select2"
 					        data-placeholder="Select the notification type" style="width:75%">
-						<optgroup label="WordPress Defaults">
+						<optgroup label="<?php _e( 'Admin', 'bnfw' ); ?>">
 							<option
-								value="new-comment" <?php selected( 'new-comment', $setting['notification'] ); ?>><?php esc_html_e( 'New Comment / Awaiting Moderation', 'bnfw' ); ?></option>
-							<option
-								value="new-trackback" <?php selected( 'new-trackback', $setting['notification'] ); ?>><?php esc_html_e( 'New Trackback', 'bnfw' ); ?></option>
-							<option
-								value="new-pingback" <?php selected( 'new-pingback', $setting['notification'] ); ?>><?php esc_html_e( 'New Pingback', 'bnfw' ); ?></option>
+								value="admin-user" <?php selected( 'admin-user', $setting['notification'] ); ?>><?php esc_html_e( 'New User Registration - For Admin', 'bnfw' ); ?></option>
 							<option
 								value="admin-password" <?php selected( 'admin-password', $setting['notification'] ); ?>><?php esc_html_e( 'User Lost Password - For Admin', 'bnfw' ); ?></option>
 							<option
-								value="admin-user" <?php selected( 'admin-user', $setting['notification'] ); ?>><?php esc_html_e( 'New User Registration - For Admin', 'bnfw' ); ?></option>
-                            <option
-                                value="admin-password-changed" <?php selected( 'admin-password-changed', $setting['notification'] ); ?>><?php esc_html_e( 'Password Changed - For Admin', 'bnfw' ); ?></option>
+								value="admin-password-changed" <?php selected( 'admin-password-changed', $setting['notification'] ); ?>><?php esc_html_e( 'Password Changed - For Admin', 'bnfw' ); ?></option>
 							<option
 								value="admin-role" <?php selected( 'admin-role', $setting['notification'] ); ?>><?php esc_html_e( 'User Role Changed - For Admin', 'bnfw' ); ?></option>
 							<option
@@ -173,17 +170,19 @@ class BNFW_Notification {
 
 							<?php do_action( 'bnfw_after_default_notifications', $setting ); ?>
 						</optgroup>
+						<?php do_action( 'bnfw_after_default_notifications_optgroup', $setting ); ?>
+
 						<optgroup label="Transactional">
-							<option
-								value="user-password" <?php selected( 'user-password', $setting['notification'] ); ?>><?php esc_html_e( 'User Lost Password - For User', 'bnfw' ); ?></option>
-                            <option
-                                    value="password-changed" <?php selected( 'password-changed', $setting['notification'] ); ?>><?php esc_html_e( 'Password Changed - For User', 'bnfw' ); ?></option>
-                            <option
-                                    value="email-changed" <?php selected( 'email-changed', $setting['notification'] ); ?>><?php esc_html_e( 'User Email Changed - For User', 'bnfw' ); ?></option>
 							<option
 								value="new-user" <?php selected( 'new-user', $setting['notification'] ); ?>><?php esc_html_e( 'New User Registration - For User', 'bnfw' ); ?></option>
 							<option
 								value="welcome-email" <?php selected( 'welcome-email', $setting['notification'] ); ?>><?php esc_html_e( 'New User - Post-registration Email', 'bnfw' ); ?></option>
+							<option
+								value="user-password" <?php selected( 'user-password', $setting['notification'] ); ?>><?php esc_html_e( 'User Lost Password - For User', 'bnfw' ); ?></option>
+							<option
+								value="password-changed" <?php selected( 'password-changed', $setting['notification'] ); ?>><?php esc_html_e( 'Password Changed - For User', 'bnfw' ); ?></option>
+							<option
+								value="email-changed" <?php selected( 'email-changed', $setting['notification'] ); ?>><?php esc_html_e( 'User Email Changed - For User', 'bnfw' ); ?></option>
 							<option
 								value="user-role" <?php selected( 'user-role', $setting['notification'] ); ?>><?php esc_html_e( 'User Role Changed - For User', 'bnfw' ); ?></option>
 							<option
@@ -191,6 +190,8 @@ class BNFW_Notification {
 
 							<?php do_action( 'bnfw_after_transactional_notifications', $setting ); ?>
 						</optgroup>
+						<?php do_action( 'bnfw_after_transactional_notifications_optgroup', $setting ); ?>
+
 						<optgroup label="Posts">
 							<option
 								value="new-post" <?php selected( 'new-post', $setting['notification'] ); ?>><?php esc_html_e( 'New Post Published', 'bnfw' ); ?></option>
@@ -203,11 +204,19 @@ class BNFW_Notification {
 							<option
 								value="future-post" <?php selected( 'future-post', $setting['notification'] ); ?>><?php esc_html_e( 'Post Scheduled', 'bnfw' ); ?></option>
 							<option
+								value="new-comment" <?php selected( 'new-comment', $setting['notification'] ); ?>><?php esc_html_e( 'New Comment / Awaiting Moderation', 'bnfw' ); ?></option>
+							<option
 								value="newterm-category" <?php selected( 'newterm-category', $setting['notification'] ); ?>><?php esc_html_e( 'New Category', 'bnfw' ); ?></option>
 							<option
 								value="newterm-post_tag" <?php selected( 'newterm-post_tag', $setting['notification'] ); ?>><?php esc_html_e( 'New Tag', 'bnfw' ); ?></option>
+							<option
+								value="new-trackback" <?php selected( 'new-trackback', $setting['notification'] ); ?>><?php esc_html_e( 'New Trackback', 'bnfw' ); ?></option>
+							<option
+								value="new-pingback" <?php selected( 'new-pingback', $setting['notification'] ); ?>><?php esc_html_e( 'New Pingback', 'bnfw' ); ?></option>
 							<?php do_action( 'bnfw_after_notification_options', 'post', 'Post', $setting ); ?>
 						</optgroup>
+						<?php do_action( 'bnfw_after_notification_options_optgroup', 'post', 'Post', $setting ); ?>
+
 						<optgroup label="Page">
 							<option
 								value="new-page" <?php selected( 'new-page', $setting['notification'] ); ?>><?php esc_html_e( 'New Page Published', 'bnfw' ); ?></option>
@@ -225,12 +234,13 @@ class BNFW_Notification {
 								value="commentreply-page" <?php selected( 'commentreply-page', $setting['notification'] ); ?>><?php esc_html_e( 'Page - Comment Reply', 'bnfw' ); ?></option>
 							<?php do_action( 'bnfw_after_notification_options', 'page', 'Page', $setting ); ?>
 						</optgroup>
+						<?php do_action( 'bnfw_after_notification_options_optgroup', 'page', 'Page', $setting ); ?>
 						<?php
-						$types = get_post_types( array(
+						$types = apply_filters( 'bnfw_notification_dropdown_posttypes', get_post_types( array(
 							'public'   => true,
 							'_builtin' => false,
-						), 'names'
-						);
+							), 'names'
+						) );
 
 						foreach ( $types as $type ) {
 							if ( $type != self::POST_TYPE ) {
@@ -253,35 +263,38 @@ class BNFW_Notification {
 										value="comment-<?php echo esc_attr( $type ); ?>" <?php selected( 'comment-' . $type, $setting['notification'] ); ?>><?php echo "'$label' ", esc_html__( 'New Comment', 'bnfw' ); ?></option>
 									<option
 										value="commentreply-<?php echo esc_attr( $type ); ?>" <?php selected( 'commentreply-' . $type, $setting['notification'] ); ?>><?php echo "'$label' ", esc_html__( 'Comment Reply', 'bnfw' ); ?></option>
-									<?php do_action( 'bnfw_after_notification_options', $type, $label, $setting ); ?>
+									<?php do_action( 'bnfw_after_notification_options_option', $type, $label, $setting ); ?>
 								</optgroup>
+								<?php do_action( 'bnfw_after_notification_options_optgroup', $type, $label, $setting ); ?>
+
 								<?php
 							}
 						}
 
-						$taxs = get_taxonomies(
+						$taxs = apply_filters( 'bnfw_notification_dropdown_taxonomies', get_taxonomies(
 							array(
 								'public'   => true,
 								'_builtin' => false,
 							),
 							'objects'
-						);
+						) );
 
-						if ( count( $taxs ) > 0 ) {
-							?>
-							<optgroup label="<?php esc_html_e( 'Custom Taxonomy', 'bnfw' ); ?>">
-								<?php
-								foreach ( $taxs as $tax ) {
-									$tax_name = 'newterm-' . $tax->name;
-									?>
-									<option
-										value="<?php echo esc_attr( $tax_name ); ?>" <?php selected( $tax_name, $setting['notification'] ); ?>><?php printf( "%s '%s'", esc_html__( 'New', 'bnfw' ), $tax->labels->name ); ?></option>
-									<?php
-								}
-								?>
-							</optgroup>
-							<?php
-						}
+		if ( count( $taxs ) > 0 ) {
+			?>
+			<optgroup label="<?php esc_html_e( 'Custom Taxonomy', 'bnfw' ); ?>">
+<?php
+foreach ( $taxs as $tax ) {
+	$tax_name = 'newterm-' . $tax->name;
+	?>
+	<option
+		value="<?php echo esc_attr( $tax_name ); ?>" <?php selected( $tax_name, $setting['notification'] ); ?>><?php printf( "%s '%s'", esc_html__( 'New', 'bnfw' ), $tax->labels->name ); ?></option>
+					<?php
+}
+?>
+</optgroup>
+<?php
+		}
+						do_action( 'bnfw_after_notification_optgroups', $setting );
 						?>
 					</select>
 				</td>
@@ -301,6 +314,7 @@ class BNFW_Notification {
 			<tr valign="top" id="email-formatting">
 				<th>
 					<?php esc_html_e( 'Email Formatting', 'bnfw' ); ?>
+					<div class="bnfw-help-tip"><p><?php esc_html_e( 'How do you want to format the sent email? HTML is recommended as it\'ll show images and links correctly.', 'bnfw' ); ?></p></div>
 				</th>
 				<td>
 					<label style="margin-right: 20px;">
@@ -317,9 +331,12 @@ class BNFW_Notification {
 				</td>
 			</tr>
 
+			<?php do_action( 'bnfw_after_email_formatting', $setting ); ?>
+
 			<tr valign="top" id="toggle-fields">
 				<th>
 					<?php esc_html_e( 'Additional Email Fields', 'bnfw' ); ?>
+					<div class="bnfw-help-tip"><p><?php esc_html_e( 'This should be fairly self explanatory but if you\'re unsure, tick this checkbox and have a look at the available options. You can always untick it again should you decide you don\'t need to use it.', 'bnfw' ); ?></p></div>
 				</th>
 				<td>
 					<input type="checkbox" id="show-fields" name="show-fields"
@@ -328,21 +345,25 @@ class BNFW_Notification {
 				</td>
 			</tr>
 
+
 			<tr valign="top" id="email">
 				<th scope="row">
 					<?php esc_html_e( 'From Name and Email', 'bnfw' ); ?>
+					<div class="bnfw-help-tip"><p><?php esc_html_e( 'If you want to send the email from your site name and email address instead of the default "WordPress" from "wordpress@domain.com", this is where you can do it.', 'bnfw' ); ?></p></div>
 				</th>
 				<td>
 					<input type="text" name="from-name" value="<?php echo esc_attr( $setting['from-name'] ); ?>"
 					       placeholder="Site Name" style="width: 37.35%">
 					<input type="email" name="from-email" value="<?php echo esc_attr( $setting['from-email'] ); ?>"
-					       placeholder="Admin Email" style="width: 37.3%">
+					       placeholder="Site Email" style="width: 37.3%">
 				</td>
 			</tr>
+
 
 			<tr valign="top" id="reply">
 				<th scope="row">
 					<?php esc_html_e( 'Reply To', 'bnfw' ); ?>
+					<div class="bnfw-help-tip"><p><?php esc_html_e( 'If you want any replies to your email notification to go to another person, fill in this box with their name and email address.', 'bnfw' ); ?></p></div>
 				</th>
 				<td>
 					<input type="text" name="reply-name" value="<?php echo esc_attr( $setting['reply-name'] ); ?>"
@@ -355,6 +376,7 @@ class BNFW_Notification {
 			<tr valign="top" id="cc">
 				<th scope="row">
 					<?php esc_html_e( 'CC', 'bnfw' ); ?>
+					<div class="bnfw-help-tip"><p><?php esc_html_e( 'Publicly copy in any other users or user roles to this email.', 'bnfw' ); ?></p></div>
 				</th>
 
 				<td>
@@ -368,18 +390,25 @@ class BNFW_Notification {
 			<tr valign="top" id="bcc">
 				<th scope="row">
 					<?php esc_html_e( 'BCC', 'bnfw' ); ?>
+					<div class="bnfw-help-tip"><p><?php esc_html_e( 'Privately copy in any other users or user roles to this email.', 'bnfw' ); ?></p></div>
 				</th>
 
 				<td>
 					<select multiple name="bcc[]" class="<?php echo sanitize_html_class( bnfw_get_user_select_class() ); ?>"
-                            data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
+							data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
 						<?php bnfw_render_users_dropdown( $setting['bcc'] ); ?>
 					</select>
 				</td>
 			</tr>
 
+			<?php do_action( 'bnfw_after_additional_email_fields', $setting ); ?>
+
 			<tr valign="top" id="post-author">
-				<th></th>
+				<th>
+					<?php esc_html_e( 'Send to Author', 'bnfw' ); ?>
+					<div class="bnfw-help-tip"><p><?php esc_html_e( 'E.g. If you want a new comment notification to go to the author of the post that was commented on, tick this box. Doing so will hide the "Send To" box below.', 'bnfw' ); ?></p></div>
+				</th>
+
 				<td>
 					<label>
 						<input type="checkbox" id="only-post-author" name="only-post-author"
@@ -389,48 +418,84 @@ class BNFW_Notification {
 				</td>
 			</tr>
 
-            <tr valign="top" id="current-user">
-                <th></th>
-                <td>
-                    <label>
-                        <input type="checkbox" name="disable-current-user"
-                               value="true" <?php checked( 'true', $setting['disable-current-user'] ); ?>>
+			<?php do_action( 'bnfw_after_only_post_author', $setting ); ?>
+
+			<tr valign="top" id="current-user">
+				<th>
+					&nbsp;
+					<div class="bnfw-help-tip"><p><?php esc_html_e( 'E.g. If you\'re an editor and regularly update your posts, you might not want to be emailed about this all the time. Ticking this box will prevent you from receiving emails about your own changes.', 'bnfw' ); ?></p></div>
+				</th>
+				<td>
+					<label>
+						<input type="checkbox" name="disable-current-user"
+							   value="true" <?php checked( 'true', $setting['disable-current-user'] ); ?>>
 						<?php esc_html_e( 'Do not send this Notification to the User that triggered it', 'bnfw' ); ?>
-                    </label>
-                </td>
-            </tr>
+					</label>
+				</td>
+			</tr>
+
+			<?php do_action( 'bnfw_after_disable_current_user', $setting ); ?>
 
 			<tr valign="top" id="users">
 				<th scope="row">
 					<?php esc_html_e( 'Send To', 'bnfw' ); ?>
+					<div class="bnfw-help-tip"><p><?php esc_html_e( 'Choose the users and/or user roles to send this email notification to.', 'bnfw' ); ?></p></div>
 				</th>
 				<td>
 					<select multiple id="users-select" name="users[]"
 					        class="<?php echo sanitize_html_class( bnfw_get_user_select_class() ); ?>"
-                            data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
+							data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
 						<?php bnfw_render_users_dropdown( $setting['users'] ); ?>
 					</select>
 				</td>
 			</tr>
 
+			<?php
+			$display = 'none';
+
+			if ( $this->should_show_users_count_msg( $setting ) ) {
+				$display = 'table-row';
+			}
+			?>
+			<tr valign="top" id="users-count-msg" style="display: <?php echo esc_attr( $display ); ?>">
+				<th scope="row">&nbsp;</th>
+				<td>
+					<div>
+						<p>
+							<?php _e( 'You have chosen to send this notification to over 200 users. Please check the email sending rate limit at your host before sending.', 'bnfw' ); ?>
+						</p>
+					</div>
+				</td>
+			</tr>
+
+			<?php do_action( 'bnfw_after_send_to', $setting ); ?>
+
 			<tr valign="top">
 				<th scope="row">
 					<?php esc_html_e( 'Subject', 'bnfw' ); ?>
+					<div class="bnfw-help-tip"><p><?php esc_html_e( 'Notification subject. You can use ', 'bnfw' ); ?><a href="https://betternotificationsforwp.com/documentation/notifications/shortcodes/" target="_blank">shortcodes</a><?php esc_html_e(' here.', 'bnfw' ); ?></p></div>
 				</th>
 				<td>
-					<input type="text" name="subject" value="<?php echo esc_attr( $setting['subject'] ); ?>"
+					<input type="text" name="subject" id="subject" value="<?php echo esc_attr( $setting['subject'] ); ?>"
 					       style="width:75%;">
 				</td>
 			</tr>
 
+			<?php do_action( 'bnfw_after_user_dropdown', $setting ); ?>
+
+			<?php do_action( 'bnfw_before_message_body', $setting ); ?>
 			<tr valign="top">
 				<th scope="row">
 					<?php esc_html_e( 'Message Body', 'bnfw' ); ?>
+					<div class="bnfw-help-tip"><p><?php esc_html_e( 'Notification message. You can use ', 'bnfw' ); ?><a href="https://betternotificationsforwp.com/documentation/notifications/shortcodes/" target="_blank">shortcodes</a><?php esc_html_e(' here.', 'bnfw' ); ?></p></div>
+
 					<div class="wp-ui-text-highlight">
 						<p>
-							<br/>
-							<span
-								class="dashicons dashicons-editor-help"></span> <?php esc_html_e( 'Need some help?', 'bnfw' ); ?>
+							<br>
+							<br>
+							<br>
+							<br>
+							<?php esc_html_e( 'Need some more help?', 'bnfw' ); ?>
 						</p>
 						<?php
 						$doc_url = 'https://betternotificationsforwp.com/documentation/';
@@ -440,12 +505,15 @@ class BNFW_Notification {
 						}
 						?>
 						<p>
+							<a href="#" class="button-secondary" id="insert-default-msg"><?php esc_html_e( 'Insert Default Content', 'bnfw' ); ?></a>
+						</p>
+						<p>
 							<a href="<?php echo $doc_url; ?>"
-							   target="_blank" class="button-secondary"><?php esc_html_e( 'Documentation', 'bnfw' ); ?></a>
+							   target="_blank" class="button-secondary"><?php esc_html_e( 'Read Documentation', 'bnfw' ); ?></a>
 						</p>
 						<p>
 							<a href="" target="_blank" id="shortcode-help"
-							   class="button-secondary"><?php esc_html_e( 'Shortcode Help', 'bnfw' ); ?></a>
+							   class="button-secondary"><?php esc_html_e( 'Find Shortcodes', 'bnfw' ); ?></a>
 						</p>
 					</div>
 				</th>
@@ -471,13 +539,17 @@ class BNFW_Notification {
 	 * Should we enqueue assets?
 	 *
 	 * @since 1.0
+	 *
+	 * @param $hook_suffix
 	 */
-	public function is_assets_needed() {
-		if ( self::POST_TYPE === get_post_type() ) {
+	public function is_assets_needed( $hook_suffix ) {
+		if ( self::POST_TYPE === get_post_type() || 'bnfw_notification_page_bnfw-settings' === $hook_suffix ) {
 			// The enqueue assets function may be included from addons.
 			// We want to disable autosave only for notifications
 			wp_dequeue_script( 'autosave' );
+
 			$this->enqueue_assets();
+
 			do_action( 'bnfw_after_enqueue_scripts' );
 		}
 	}
@@ -506,8 +578,9 @@ class BNFW_Notification {
 		wp_enqueue_style( 'bnfw', plugins_url( '../assets/css/bnfw.css', dirname( __FILE__ ) ), array( 'dashicons', 'select2' ), '0.1' );
 
 		$strings = array(
+			'validation_element' => apply_filters( 'bnfw_validation_element', '#users-select' ),
 			'empty_user' => esc_html__( 'You must choose at least one User or User Role to send the notification to before you can save', 'bnfw' ),
-            'enableTags' => false,
+			'enableTags' => false,
 		);
 
 		/**
@@ -546,7 +619,7 @@ class BNFW_Notification {
 			return;
 		}
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'bnfw' ) ) {
 			return;
 		}
 
@@ -723,30 +796,38 @@ class BNFW_Notification {
 
 			<?php // Always publish. ?>
 			<div class="disable-notification-checkbox" style="padding: 5px 0 10px 0;">
-				<input type="hidden" name="post_status" id="hidden_post_status" value="publish">
+				<div class="bnfw-help-tip-container">
+					<input type="hidden" name="post_status" id="hidden_post_status" value="publish">
 
-				<?php
-				$setting = $this->read_settings( $post->ID );
-				?>
-				<label>
-					<input type="radio" name="disabled"
-					       value="false" <?php checked( $setting['disabled'], 'false', true ); ?>><?php esc_html_e( 'Notification Enabled', 'bnfw' ); ?>
-				</label>
+					<div class="bnfw-help-tip"><p><?php esc_html_e( 'Use this to enable or disable notifications. If you want to disable a default WordPress notification, just create it on the left, then disable it here.', 'bnfw' ); ?></p></div>
 
-				<br>
+					<?php
+					$setting = $this->read_settings( $post->ID );
+					?>
+					<label>
+						<input type="radio" name="disabled"
+						       value="false" <?php checked( $setting['disabled'], 'false', true ); ?>><?php esc_html_e( 'Notification Enabled', 'bnfw' ); ?>
+					</label>
 
-				<label>
-					<input type="radio" name="disabled"
-					       value="true" <?php checked( $setting['disabled'], 'true', true ); ?>><?php esc_html_e( 'Notification Disabled', 'bnfw' ); ?>
-				</label>
+					<br>
+
+					<label>
+						<input type="radio" name="disabled"
+						       value="true" <?php checked( $setting['disabled'], 'true', true ); ?>><?php esc_html_e( 'Notification Disabled', 'bnfw' ); ?>
+					</label>
+				</div>
 
 				<br>
 				<br>
 
 				<?php if ( 'publish' == $post->post_status ) { ?>
-					<input type="hidden" name="send-test-email" id="send-test-email" value="false">
-					<input name="test-email" type="submit" class="button button-secondary button-large" id="test-email"
-					       value="<?php esc_attr_e( 'Send Me a Test Email', 'bnfw' ); ?>">
+					<div class="bnfw-help-tip-container">
+						<input type="hidden" name="send-test-email" id="send-test-email" value="false">
+						<input name="test-email" type="submit" class="button button-secondary button-large" id="test-email"
+						       value="<?php esc_attr_e( 'Send Me a Test Email', 'bnfw' ); ?>">
+
+						<div class="bnfw-help-tip"><p><?php esc_html_e( 'This will send you (the currently logged in user) a notification so that you can check for any issues with formatting – it’s doesn\'t mean that a notification will send correctly in the future. You can read about how to improve email delivery', 'bnfw'); ?> <a href="https://betternotificationsforwp.com/documentation/getting-started/how-to-improve-email-delivery/" target="_blank"><?php esc_html_e( 'here', 'bnfw'); ?></a><?php esc_html_e( '. Shortcodes will not be replaced with content.', 'bnfw' ); ?></p></div>
+					</div>
 				<?php } ?>
 
 			</div>
@@ -923,11 +1004,11 @@ class BNFW_Notification {
 		foreach ( $users as $user ) {
 			if ( $this->starts_with( $user, 'role-' ) ) {
 				$user_roles[] = ucfirst( str_replace( 'role-', '', $user ) );
-			} else if ( absint( $user ) > 0 ) {
+			} elseif ( absint( $user ) > 0 ) {
 				$user_ids[] = absint( $user );
 			} else {
 				$emails[] = $user;
-            }
+			}
 		}
 
 		if ( ! empty( $user_ids ) ) {
@@ -1101,5 +1182,54 @@ class BNFW_Notification {
 	public function starts_with( $haystack, $needle ) {
 		// search backwards starting from haystack length characters from the end
 		return '' === $needle || strrpos( $haystack, $needle, - strlen( $haystack ) ) !== false;
+	}
+
+	/**
+	 * Display a help notice.
+	 *
+	 * @since 1.7
+	 */
+	public function show_help_notice() {
+		$screen = get_current_screen();
+		if ( ! in_array( $screen->post_type, array( self::POST_TYPE ) ) ) {
+			return;
+		}
+
+		if ( ! PAnD::is_admin_notice_active( 'disable-bnfw-help-notice-forever' ) ) {
+			return;
+		}
+
+		?>
+		<div data-dismissible="disable-bnfw-help-notice-forever" class="updated notice notice-success is-dismissible">
+			<p>
+				<?php _e( 'If you send out notifications with BNFW but don\'t receive them, you may need to install an SMTP plugin to <a href="https://betternotificationsforwp.com/documentation/getting-started/how-to-improve-email-delivery/" target="_blank">improve email deliverability</a>. I recommend using <a href="https://wordpress.org/plugins/post-smtp/" target="_blank">Post SMTP</a> as it\'s easy to set-up or <a href="https://wordpress.org/plugins/email-log/" target="_blank">Email Log</a> to just log and view emails that are sent.', 'bnfw' ); ?>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Should the users count message be shown?
+	 *
+	 * @since 1.7
+	 *
+	 * @param array $setting Notification Setting.
+	 *
+	 * @return bool True if message should be shown.
+	 */
+	protected function should_show_users_count_msg( $setting ) {
+		$users = $setting['users'];
+
+		if ( count( $users ) > 200 ) {
+			return true;
+		}
+
+		$emails = BNFW::factory()->engine->get_emails_from_users( $users );
+
+		if ( count( $emails ) > 200 ) {
+			return true;
+		}
+
+		return false;
 	}
 }
