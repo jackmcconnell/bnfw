@@ -263,7 +263,7 @@ class BNFW_Notification {
 										value="comment-<?php echo esc_attr( $type ); ?>" <?php selected( 'comment-' . $type, $setting['notification'] ); ?>><?php echo "'$label' ", esc_html__( 'New Comment', 'bnfw' ); ?></option>
 									<option
 										value="commentreply-<?php echo esc_attr( $type ); ?>" <?php selected( 'commentreply-' . $type, $setting['notification'] ); ?>><?php echo "'$label' ", esc_html__( 'Comment Reply', 'bnfw' ); ?></option>
-									<?php do_action( 'bnfw_after_notification_options_option', $type, $label, $setting ); ?>
+									<?php do_action( 'bnfw_after_notification_options', $type, $label, $setting ); ?>
 								</optgroup>
 								<?php do_action( 'bnfw_after_notification_options_optgroup', $type, $label, $setting ); ?>
 
