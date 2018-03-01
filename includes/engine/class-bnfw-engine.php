@@ -475,6 +475,8 @@ class BNFW_Engine {
 			$message = str_replace( '[global_user_firstname]', $user->first_name, $message );
 			$message = str_replace( '[global_user_lastname]', $user->last_name, $message );
 			$message = str_replace( '[global_user_username]', $user->user_login, $message );
+
+			$message = $this->user_shortcodes( $message, $user->ID, 'email_' );
 		}
 
 		$message = str_replace( '[global_user_email]', $email, $message );
@@ -623,7 +625,7 @@ class BNFW_Engine {
 	 *
 	 * @return string Processed string.
 	 */
-	public function user_shortcodes( $message, $user_id ) {
+	public function user_shortcodes( $message, $user_id, $prefix = '' ) {
 		$user_info = get_userdata( $user_id );
 
 		if ( ! $user_info instanceof WP_User ) {
@@ -632,28 +634,30 @@ class BNFW_Engine {
 
 		// deperecated
 		$message = str_replace( '[ID]', $user_info->ID, $message );
-
-		$message = str_replace( '[user_id]', $user_info->ID, $message );
-		$message = str_replace( '[user_login]', $user_info->user_login, $message );
-		$message = str_replace( '[user_nicename]', $user_info->user_nicename, $message );
-		$message = str_replace( '[user_email]', $user_info->user_email, $message );
-		$message = str_replace( '[user_url]', $user_info->user_url, $message );
-		$message = str_replace( '[user_registered]', $user_info->user_registered, $message );
 		$message = str_replace( '[display_name]', $user_info->display_name, $message );
-		$message = str_replace( '[user_firstname]', $user_info->user_firstname, $message );
-		$message = str_replace( '[user_lastname]', $user_info->user_lastname, $message );
 		$message = str_replace( '[nickname]', $user_info->nickname, $message );
-		$message = str_replace( '[user_description]', $user_info->user_description, $message );
-		$message = str_replace( '[user_avatar]', get_avatar_url( $user_id ), $message );
-		$message = str_replace( '[user_avatar]', get_avatar_url( $user_id ), $message );
 		$message = str_replace( '[commenter_avatar]', get_avatar_url( $user_id ), $message );
+
+		$message = str_replace( '[' . $prefix . 'user_id]', $user_info->ID, $message );
+		$message = str_replace( '[' . $prefix . 'user_login]', $user_info->user_login, $message );
+		$message = str_replace( '[' . $prefix . 'user_nicename]', $user_info->user_nicename, $message );
+		$message = str_replace( '[' . $prefix . 'user_email]', $user_info->user_email, $message );
+		$message = str_replace( '[' . $prefix . 'user_url]', $user_info->user_url, $message );
+		$message = str_replace( '[' . $prefix . 'user_registered]', $user_info->user_registered, $message );
+		$message = str_replace( '[' . $prefix . 'user_display_name]', $user_info->display_name, $message );
+		$message = str_replace( '[' . $prefix . 'user_firstname]', $user_info->user_firstname, $message );
+		$message = str_replace( '[' . $prefix . 'user_lastname]', $user_info->user_lastname, $message );
+		$message = str_replace( '[' . $prefix . 'user_nickname]', $user_info->nickname, $message );
+		$message = str_replace( '[' . $prefix . 'user_description]', $user_info->user_description, $message );
+		$message = str_replace( '[' . $prefix . 'user_avatar]', get_avatar_url( $user_id ), $message );
 
 		$user_capabilities = bnfw_format_user_capabilities( $user_info->wp_capabilities );
 		if ( ! empty( $user_capabilities ) ) {
 			$message = str_replace( '[wp_capabilities]', $user_capabilities, $message );
+			$message = str_replace( '[' . $prefix . 'user_wp_capabilities]', $user_capabilities, $message );
 		}
 
-		$message = apply_filters( 'bnfw_shortcodes_user', $message, $user_id );
+		$message = apply_filters( 'bnfw_shortcodes_user', $message, $user_id, $prefix );
 		return $message;
 	}
 

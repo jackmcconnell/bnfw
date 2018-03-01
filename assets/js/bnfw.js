@@ -57,7 +57,9 @@ jQuery(document).ready(function($) {
 
 		if ( 'reply-comment' === notification || notification.startsWith( 'commentreply-' ) ||
 				'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
-				'password-changed' === notification || 'email-changed' === notification || 'user-role' === notification ) {
+				'password-changed' === notification || 'email-changed' === notification || 'user-role' === notification ||
+				'multisite-new-user-invited' === notification || 'multisite-new-user-created' === notification || 'multisite-new-user-welcome' === notification ||
+				'multisite-site-registered' === notification || 'multisite-site-created' === notification || 'multisite-site-welcome' === notification || 'multisite-site-deleted' === notification ) {
 
 			$('#toggle-fields, #email, #cc, #bcc, #reply, #users, #current-user, #post-author').hide();
 			$('#user-password-msg, #disable-autop, #email-formatting').show();
@@ -103,7 +105,9 @@ jQuery(document).ready(function($) {
 
 		if ( 'reply-comment' === notification || notification.startsWith( 'commentreply-' ) ||
 			'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
-			'password-changed' === notification || 'email-changed' === notification || 'user-role' === notification ) {
+			'password-changed' === notification || 'email-changed' === notification || 'user-role' === notification ||
+			'multisite-new-user-invited' === notification || 'multisite-new-user-created' === notification || 'multisite-new-user-welcome' === notification ||
+			'multisite-site-registered' === notification || 'multisite-site-created' === notification || 'multisite-site-welcome' === notification || 'multisite-site-deleted' === notification ) {
 
 			$('#toggle-fields, #email, #cc, #bcc, #reply, #users, #current-user, #post-author').hide();
 			$('#user-password-msg, #disable-autop, #email-formatting').show();
@@ -305,6 +309,17 @@ jQuery(document).ready(function($) {
 					'To set your password, visit the following address: [password_url]';
 
 				break;
+
+			case 'multisite-new-user-invited':
+				subject = '[[network_name] Activate [user_login]';
+				body = 'To activate your user, please click the following link:' +
+					'<br>' +
+					'[activation_link]' +
+					'<br>' +
+					'After you activate, you will receive *another email* with your login.';
+
+				break;
+
 			default:
 				alert( "This is a new notification that is not available in WordPress by default and has been added by Better Notifications for WordPress. As such, it doesn't have any default content." );
 				break;

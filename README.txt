@@ -2,10 +2,10 @@
 Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
-Requires at least: 3.5
+Requires at least: 4.0
 Tested up to: 4.9.4
 Requires PHP: 5.6
-Stable tag: 1.6.11
+Stable tag: 1.6.12
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,29 +38,28 @@ Power-up your notifications using add-ons:
 
 [Profile Builder](https://betternotificationsforwp.com/downloads/profile-builder/) - Adds compatibility and new notifications and shortcodes for Profile Builder Free, Hobbyist, and Pro plugins to Better Notifications for WordPress.
 
+[Multisite](https://betternotificationsforwp.com/downloads/multisite/) - Adds compatibility and new notifications and shortcodes for WordPress Multisite to Better Notifications for WordPress (Coming Soon).
+
 ...and more coming soon!
 
 = Notifications =
 The notifications that are currently available to use are:
 
-**WordPress Defaults**
+**Admin**
 
-* New Comment / Comment Awaiting Moderation
-* New Trackback
-* New Pingback
-* User Lost Password - For Admin
 * New User Registration - For Admin
+* User Lost Password - For Admin
 * Password Changed - For Admin
 * User Role Changed - For Admin
 * WordPress Core Automatic Background Updates
 
 **Transactional**
 
+* New User Registration - For User
+* New User - Post-registration Email
 * User Lost Password - For User
 * Password Changed - For User
 * User Email Changed - For Admin
-* New User Registration - For User
-* New User - Post-registration Email
 * User Role Changed - For User
 * Comment Reply
 * Profile Builder – Approval Request for Admin ([Profile Builder Add-on](https://betternotificationsforwp.com/downloads/profile-builder/))
@@ -76,8 +75,11 @@ The notifications that are currently available to use are:
 * Post Pending Review
 * New Private Post
 * Post Scheduled
+* New Comment / Comment Awaiting Moderation
 * Post - Custom Field Updated ([Custom Fields Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
 * Post - Update Reminder ([Reminders Add-on](https://betternotificationsforwp.com/downloads/update-reminder/))
+* New Trackback
+* New Pingback
 
 **Pages**
 
@@ -144,7 +146,7 @@ The possibilities are endless!
 
 Yes! There is an option for suppressing comments marked as SPAM in the plugin settings.
 
-= Does this plugin work with Multisite? =
+= Does this plugin and the add-ons work with Multisite? =
 
 Yes and no - some notifications work, others don't, and some are missing entirely. I do plan on adding full Multisite support at a later date however, this will be in the form of an add-on.
 
@@ -197,6 +199,10 @@ An older version might work but this is untested. A lot of the newer features re
 
 
 == Changelog ==
+
+= 1.6.12 - 1st March 2018 =
+* New: Lots of new global user shortcodes! It's always been a bit difficult to explain how the user shortcodes changes between notifications - sometimes they're for the author of a post, sometimes they're the recipient user. Now, all user shortcodes are used solely for the author and a new set of global user shortcodes are available for the recipient. Full details are on the [Shortcodes](https://betternotificationsforwp.com/documentation/notifications/shortcodes/) documentation page.
+* Added: Preliminary changes for the upcoming [Multisite](https://betternotificationsforwp.com/downloads/multisite/) add-on.
 
 = 1.6.11 - 13th February 2018 =
 * Fixed: Update Reminder and Custom Field Updated notifications weren't showing for custom post types.
