@@ -3,9 +3,9 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 4.0
-Tested up to: 4.9.4
+Tested up to: 4.9.5
 Requires PHP: 5.6
-Stable tag: 1.6.12
+Stable tag: 1.6.13
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,6 +30,8 @@ Power-up your notifications using add-ons:
 
 [Custom Fields](https://betternotificationsforwp.com/downloads/custom-fields/) - Provides a number of new shortcodes allowing you to include data from custom fields and custom user fields created using [ACF](https://wordpress.org/plugins/advanced-custom-fields/).
 
+[Multisite](https://betternotificationsforwp.com/downloads/multisite/) - Adds new notifications and shortcodes for WordPress Multisite to Better Notifications for WordPress.
+
 [Send to Any Email](https://betternotificationsforwp.com/downloads/send-to-any-email/) - Send notifications to non-WordPress Users.
 
 [Global Override](https://betternotificationsforwp.com/downloads/per-post-override/) - Override some of the settings of notifications directly when editing a post, page, or custom post type.
@@ -37,8 +39,6 @@ Power-up your notifications using add-ons:
 [Reminders](https://betternotificationsforwp.com/downloads/update-reminder/) - Send a reminder to your users and/or user roles when a post, page, or custom post type hasn't been updated after a set amount of time. Also send a notification when a user hasn't logged in for a set amount of time.
 
 [Profile Builder](https://betternotificationsforwp.com/downloads/profile-builder/) - Adds compatibility and new notifications and shortcodes for Profile Builder Free, Hobbyist, and Pro plugins to Better Notifications for WordPress.
-
-[Multisite](https://betternotificationsforwp.com/downloads/multisite/) - Adds compatibility and new notifications and shortcodes for WordPress Multisite to Better Notifications for WordPress (Coming Soon).
 
 ...and more coming soon!
 
@@ -102,6 +102,19 @@ The notifications that are currently available to use are:
 
 * New Term
 
+**Multisite ([Multisite Add-on](https://betternotificationsforwp.com/downloads/multisite/))**
+* New Site Activated or Created - For Network Admin
+* New User Created - For Network Admin
+* Network Admin Email Change Attempted - For New Network Admin
+* Network Admin Email Changed - For Old Network Admin
+* New Site Activated or Created - For Site Admin
+* Site Deleted - For Site Admin
+* Site Admin Email Change Attempted - For New Site Admin
+* Site Admin Email Changed - For Old Site Admin
+* New Site Activated - For User
+* New User Created - For User
+* New User Invited to Site - For User
+
 If you'd like to see a notification in the list above, please drop me a line in the forum and I'll see what I can do to add it.
 
 > Like this plugin? Please leave it [a great review](https://wordpress.org/support/plugin/bnfw/reviews/?rate=5#new-post)! Don't think the plugin is worthy of 5 stars? Having problems? Let me know in the [forum](https://wordpress.org/support/plugin/bnfw/) and I'll do my best to help.
@@ -148,7 +161,7 @@ Yes! There is an option for suppressing comments marked as SPAM in the plugin se
 
 = Does this plugin and the add-ons work with Multisite? =
 
-Yes and no - some notifications work, others don't, and some are missing entirely. I do plan on adding full Multisite support at a later date however, this will be in the form of an add-on.
+Yes! Full support for WordPress Multisite was added in 1.6.13, alongside the release of the [Multisite Add-on](https://betternotificationsforwp.com/downloads/multisite/).
 
 = What isn't this plugin? =
 
@@ -194,11 +207,17 @@ An older version might work but this is untested. A lot of the newer features re
 
 2. Add New / Edit Notification
 
-3. Plugin Settings
-
 
 
 == Changelog ==
+
+= 1.6.13 - 5th April 2018 =
+* Added: Full support for the new [Multisite](https://betternotificationsforwp.com/downloads/multisite/) add-on.
+* Fixed: Multisite-only - the user_id was being used instead of the username in the login URL in the Lost Password - For User notification.
+* Fixed: Multisite-only - the New User Registration - For User notification wasn't working at all.
+* Fixed: Multisite-only - Permalink shortcodes weren't using the correct structure and instead were using the default `?p=123` structure when used on sub-sites.
+* Fixed: Some user shortcodes were only being outputted for the first user in a user role.
+* Fixed: An occasional issue where some notifications weren't appearing for custom post types.
 
 = 1.6.12 - 1st March 2018 =
 * New: Lots of new global user shortcodes! It's always been a bit difficult to explain how the user shortcodes changes between notifications - sometimes they're for the author of a post, sometimes they're the recipient user. Now, all user shortcodes are used solely for the author and a new set of global user shortcodes are available for the recipient. Full details are on the [Shortcodes](https://betternotificationsforwp.com/documentation/notifications/shortcodes/) documentation page.

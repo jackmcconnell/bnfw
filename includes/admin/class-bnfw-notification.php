@@ -470,7 +470,7 @@ foreach ( $taxs as $tax ) {
 
 			<?php do_action( 'bnfw_after_send_to', $setting ); ?>
 
-			<tr valign="top">
+			<tr valign="top" id="subject-wrapper">
 				<th scope="row">
 					<?php esc_html_e( 'Subject', 'bnfw' ); ?>
 					<div class="bnfw-help-tip"><p><?php esc_html_e( 'Notification subject. You can use ', 'bnfw' ); ?><a href="https://betternotificationsforwp.com/documentation/notifications/shortcodes/" target="_blank">shortcodes</a><?php esc_html_e(' here.', 'bnfw' ); ?></p></div>

@@ -92,6 +92,16 @@ class BNFW_License {
 	 * @return  array
 	 */
 	public function settings( $settings ) {
+		if ( 'Multisite Add-on' === $this->item_name && ! is_multisite() ) {
+			return $settings;
+		}
+
+		if ( 'Multisite Add-on' === $this->item_name && is_multisite() ) {
+			if ( ! is_main_site() ) {
+				return $settings;
+			}
+		}
+
 		$bnfw_license_settings = array(
 			array(
 				'id'      => $this->item_shortname . '_license_key',
@@ -131,8 +141,12 @@ class BNFW_License {
 		$api_params = array(
 			'edd_action' => 'activate_license',
 			'license'    => $license,
-			'item_name'  => urlencode( $this->item_name )
+			'item_name'  => urlencode( $this->item_name ),
 		);
+
+		if ( 'Multisite Add-on' === $this->item_name && is_multisite() ) {
+			$api_params['url'] = get_home_url( get_main_site_id() );
+		}
 
 		// Call the API
 		$response = wp_remote_get(
@@ -177,8 +191,12 @@ class BNFW_License {
 			$api_params = array(
 				'edd_action' => 'deactivate_license',
 				'license'    => $this->license,
-				'item_name'  => urlencode( $this->item_name )
+				'item_name'  => urlencode( $this->item_name ),
 			);
+
+			if ( 'Multisite Add-on' === $this->item_name && is_multisite() ) {
+				$api_params['url'] = get_home_url( get_main_site_id() );
+			}
 
 			// Call the API
 			$response = wp_remote_get(

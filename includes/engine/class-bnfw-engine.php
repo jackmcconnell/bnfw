@@ -382,9 +382,13 @@ class BNFW_Engine {
 			case 'user-role':
 			case 'admin-role':
 			case 'password-changed':
-			case 'email-changed':
 				// handle users (lost password and new user registration)
 				$message = $this->user_shortcodes( $message, $extra_data );
+				break;
+
+			case 'email-changed':
+				// handle users (lost password and new user registration)
+				$message = $this->user_shortcodes( $message, $extra_data, 'email_' );
 				break;
 
 			case 'new-category':

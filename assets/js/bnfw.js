@@ -7,6 +7,8 @@ jQuery(document).ready(function($) {
     	} else {
 			$('#email, #cc, #bcc, #reply').hide();
     	}
+
+	    $( '#subject-wrapper' ).show();
     }
 
     function toggle_users() {
@@ -59,10 +61,20 @@ jQuery(document).ready(function($) {
 				'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
 				'password-changed' === notification || 'email-changed' === notification || 'user-role' === notification ||
 				'multisite-new-user-invited' === notification || 'multisite-new-user-created' === notification || 'multisite-new-user-welcome' === notification ||
-				'multisite-site-registered' === notification || 'multisite-site-created' === notification || 'multisite-site-welcome' === notification || 'multisite-site-deleted' === notification ) {
+				'multisite-site-registered' === notification || 'multisite-site-welcome' === notification ||
+				'multisite-site-created' === notification || 'multisite-site-deleted' === notification ||
+				'multisite-site-admin-email-change-attempted' === notification || 'multisite-site-admin-email-changed' === notification ||
+				'multisite-network-admin-email-change-attempted' === notification || 'multisite-network-admin-email-changed' === notification) {
 
 			$('#toggle-fields, #email, #cc, #bcc, #reply, #users, #current-user, #post-author').hide();
 			$('#user-password-msg, #disable-autop, #email-formatting').show();
+
+			$( '#subject-wrapper' ).show();
+			if ( 'multisite-new-user-created' === notification || 'multisite-site-created' === notification || 'multisite-site-deleted' === notification ||
+					'multisite-site-admin-email-change-attempted' === notification  || 'multisite-network-admin-email-change-attempted' === notification ) {
+
+				$( '#subject-wrapper' ).hide();
+			}
 		} else if ( 'new-comment' === notification || 'new-trackback' === notification || 'new-pingback' === notification ||
 				'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
 
@@ -107,10 +119,20 @@ jQuery(document).ready(function($) {
 			'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
 			'password-changed' === notification || 'email-changed' === notification || 'user-role' === notification ||
 			'multisite-new-user-invited' === notification || 'multisite-new-user-created' === notification || 'multisite-new-user-welcome' === notification ||
-			'multisite-site-registered' === notification || 'multisite-site-created' === notification || 'multisite-site-welcome' === notification || 'multisite-site-deleted' === notification ) {
+			'multisite-site-registered' === notification || 'multisite-site-welcome' === notification ||
+			'multisite-site-created' === notification || 'multisite-site-deleted' === notification ||
+			'multisite-site-admin-email-change-attempted' === notification || 'multisite-site-admin-email-changed' === notification ||
+			'multisite-network-admin-email-change-attempted' === notification || 'multisite-network-admin-email-changed' === notification) {
 
 			$('#toggle-fields, #email, #cc, #bcc, #reply, #users, #current-user, #post-author').hide();
 			$('#user-password-msg, #disable-autop, #email-formatting').show();
+
+			$( '#subject-wrapper' ).show();
+			if ( 'multisite-new-user-created' === notification || 'multisite-site-created' === notification || 'multisite-site-deleted' === notification ||
+					'multisite-site-admin-email-change-attempted' === notification  || 'multisite-network-admin-email-change-attempted' === notification ) {
+
+				$( '#subject-wrapper' ).hide();
+			}
 		} else if ( 'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
 			$('#post-author').hide();
 			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user').show();
