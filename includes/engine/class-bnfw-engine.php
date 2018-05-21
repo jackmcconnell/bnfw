@@ -23,12 +23,12 @@ class BNFW_Engine {
 		}
 
 		$current_user = wp_get_current_user();
-		$email = $current_user->user_email;
+		$email        = $current_user->user_email;
 
 		$headers = array();
 		if ( 'html' == $setting['email-formatting'] ) {
 			$headers[] = 'Content-type: text/html';
-			$message = apply_filters( 'bnfw_test_email_message', $message, $setting );
+			$message   = apply_filters( 'bnfw_test_email_message', $message, $setting );
 		}
 
 		wp_mail( $email, stripslashes( $subject ), $message, $headers );
@@ -61,7 +61,7 @@ class BNFW_Engine {
 
 			if ( 'html' == $setting['email-formatting'] ) {
 				$headers[] = 'Content-type: text/html';
-				$message = apply_filters( 'bnfw_notification_message', $message, $setting );
+				$message   = apply_filters( 'bnfw_notification_message', $message, $setting );
 			} else {
 				$headers[] = 'Content-type: text/plain';
 			}
@@ -115,7 +115,7 @@ class BNFW_Engine {
 		$headers = array();
 		if ( 'html' == $setting['email-formatting'] ) {
 			$headers[] = 'Content-type: text/html';
-			$message = apply_filters( 'bnfw_registration_email_message', $message, $setting );
+			$message   = apply_filters( 'bnfw_registration_email_message', $message, $setting );
 		}
 
 		$subject = $this->handle_global_user_shortcodes( $subject, $user->user_email );
@@ -185,7 +185,7 @@ class BNFW_Engine {
 
 		if ( 'html' == $setting['email-formatting'] ) {
 			$headers[] = 'Content-type: text/html';
-			$message = apply_filters( 'bnfw_user_role_changed_email_message', $message, $setting );
+			$message   = apply_filters( 'bnfw_user_role_changed_email_message', $message, $setting );
 		}
 
 		$user = get_user_by( 'id', $user_id );
@@ -269,13 +269,13 @@ class BNFW_Engine {
 	 * @return array Modified email data.
 	 */
 	public function handle_core_updated_notification( $email_data, $setting, $type ) {
-		$email_data['body'] = $this->handle_shortcodes( $setting['message'], $setting['notification'], $type );
+		$email_data['body']    = $this->handle_shortcodes( $setting['message'], $setting['notification'], $type );
 		$email_data['subject'] = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $type );
 
 		$emails  = $this->get_emails( $setting, $type );
 		$headers = $this->get_headers( $emails );
 
-		$email_data['body'] = $this->handle_global_user_shortcodes( $email_data['body'], $emails['to'][0] );
+		$email_data['body']    = $this->handle_global_user_shortcodes( $email_data['body'], $emails['to'][0] );
 		$email_data['subject'] = $this->handle_global_user_shortcodes( $email_data['subject'], $emails['to'][0] );
 
 		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
@@ -314,7 +314,7 @@ class BNFW_Engine {
 			$message = $this->handle_global_user_shortcodes( $message, $user_data->user_email );
 
 			$reset_link = network_site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user_login ), 'login' );
-			$message = str_replace( '[password_reset_link]', $reset_link, $message );
+			$message    = str_replace( '[password_reset_link]', $reset_link, $message );
 		}
 
 		return $message;
@@ -419,7 +419,7 @@ class BNFW_Engine {
 
 					if ( in_array( $type[1], $post_types ) ) {
 						$message = $this->post_shortcodes( $message, $extra_data );
-						$post = get_post( $extra_data );
+						$post    = get_post( $extra_data );
 						$message = $this->user_shortcodes( $message, $post->post_author );
 					}
 				} elseif ( 'comment' == $type[0] || 'commentreply' == $type[0] ) {
@@ -548,13 +548,13 @@ class BNFW_Engine {
 		}
 
 		$category_list = implode( ', ', wp_get_post_categories( $post_id, array( 'fields' => 'names' ) ) );
-		$message = str_replace( '[post_category]', $category_list, $message );
+		$message       = str_replace( '[post_category]', $category_list, $message );
 
 		$tag_list = implode( ', ', wp_get_post_tags( $post_id, array( 'fields' => 'names' ) ) );
-		$message = str_replace( '[post_tag]', $tag_list, $message );
+		$message  = str_replace( '[post_tag]', $tag_list, $message );
 
 		$user_info = get_userdata( $post->post_author );
-		$message = str_replace( '[post_author]', $user_info->display_name, $message );
+		$message   = str_replace( '[post_author]', $user_info->display_name, $message );
 
 		$message = str_replace( '[author_link]', get_author_posts_url( $post->post_author ), $message );
 
@@ -568,7 +568,7 @@ class BNFW_Engine {
 			$message = str_replace( '[post_update_author]', $last_user_info->display_name, $message );
 		}
 
-		$terms_list = '';
+		$terms_list       = '';
 		$taxonomy_matches = array();
 		preg_match( '/\[post_term taxonomy="([^"]*)"\]/i', $message, $taxonomy_matches );
 
@@ -732,7 +732,7 @@ class BNFW_Engine {
 			}
 
 			$post_author = get_post_field( 'post_author', $post_id );
-			$author = get_user_by( 'id', $post_author );
+			$author      = get_user_by( 'id', $post_author );
 			if ( false !== $author && $post_author != $exclude ) {
 				$emails['to'] = array( $author->user_email );
 			}
@@ -751,9 +751,9 @@ class BNFW_Engine {
 
 		if ( 'true' == $setting['show-fields'] ) {
 			if ( ! empty( $setting['from-name'] ) && ! empty( $setting['from-email'] ) ) {
-				$emails['from'] = $setting['from-name'] . ' <' . $setting['from-email'] . '>' ;
+				$emails['from'] = $setting['from-name'] . ' <' . $setting['from-email'] . '>';
 			} else {
-				$emails['from'] = get_option( 'blogname' ) . ' <' . get_option( 'admin_email' ) . '>' ;
+				$emails['from'] = get_option( 'blogname' ) . ' <' . get_option( 'admin_email' ) . '>';
 			}
 
 			if ( ! empty( $setting['reply-name'] ) ) {
@@ -773,7 +773,7 @@ class BNFW_Engine {
 			}
 		}
 
-		return $emails;
+		return apply_filters( 'bnfw_email_headers', $emails, $setting, $id );
 	}
 
 	/**
@@ -789,8 +789,8 @@ class BNFW_Engine {
 	 * @return array
 	 */
 	public function get_emails_from_users( $users, $exclude = null, $post_id = 0, $setting = array() ) {
-		$user_ids = array();
-		$user_roles = array();
+		$user_ids     = array();
+		$user_roles   = array();
 		$non_wp_users = array();
 
 		if ( empty( $users ) ) {
@@ -862,9 +862,9 @@ class BNFW_Engine {
 		$email_list = array();
 		foreach ( $roles as $role ) {
 			$role_name = $this->get_role_name_by_label( $role );
-			$users = get_users(
+			$users     = get_users(
 				array(
-					'role' => $role_name,
+					'role'   => $role_name,
 					'fields' => array( 'user_email', 'ID' ),
 				)
 			);
