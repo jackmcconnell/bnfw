@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.6.9
+ * Version: 1.6.13
  * Author: Made with Fuel
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -14,7 +14,7 @@
  */
 
 /**
- * Copyright © 2017 Made with Fuel Ltd. (hello@betternotificationsforwp.com)
+ * Copyright © 2018 Made with Fuel Ltd. (hello@betternotificationsforwp.com)
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
  * published by the Free Software Foundation.
@@ -26,8 +26,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
-require_once 'includes/freemius.php';
 
 class BNFW {
 
@@ -93,6 +91,9 @@ class BNFW {
 		if ( ! class_exists( 'EDD_SL_Plugin_Updater' ) ) {
 			require_once 'includes/libraries/EDD_SL_Plugin_Updater.php';
 		}
+
+		require_once 'vendor/persist-admin-notices-dismissal/persist-admin-notices-dismissal.php';
+
 		require_once 'includes/license/class-bnfw-license.php';
 		require_once 'includes/license/class-bnfw-license-setting.php';
 
@@ -123,6 +124,9 @@ class BNFW {
 		global $wp_version;
 
 		register_activation_hook( __FILE__, array( $this, 'activate' ) );
+
+		add_action( 'admin_init', array( 'PAnD', 'init' ) );
+		add_action( 'admin_init', array( $this, 'add_capability_to_admin' ) );
 
 		add_action( 'draft_to_private'          , array( $this, 'private_post' ) );
 		add_action( 'future_to_private'         , array( $this, 'private_post' ) );
@@ -167,6 +171,17 @@ class BNFW {
 
 		add_filter( 'plugin_action_links'       , array( $this, 'plugin_action_links' ), 10, 4 );
 		add_action( 'shutdown'                  , array( $this, 'on_shutdown' ) );
+	}
+
+	/**
+	 * Add 'bnfw' capability to admin.
+	 */
+	public function add_capability_to_admin() {
+		$admins = get_role( 'administrator' );
+
+		if ( ! $admins->has_cap( 'bnfw' ) ) {
+			$admins->add_cap( 'bnfw' );
+		}
 	}
 
 	/**
@@ -749,6 +764,10 @@ class BNFW {
 			}
 		}
 	}
+}
+
+if ( ! is_multisite() ) {
+	require_once 'includes/freemius.php';
 }
 
 /* ------------------------------------------------------------------------ *

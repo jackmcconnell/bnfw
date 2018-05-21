@@ -105,7 +105,7 @@ class BNFW_Engine {
 		$subject = str_replace( '[password_url]', $password_url, $subject );
 		$message = str_replace( '[password_url]', $password_url, $message );
 
-		$subject = str_replace( '[login_url]', wp_login_url() , $subject );
+		$subject = str_replace( '[login_url]', wp_login_url(), $subject );
 		$message = str_replace( '[login_url]', wp_login_url(), $message );
 
 		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
@@ -313,7 +313,7 @@ class BNFW_Engine {
 			$message = $this->handle_shortcodes( $setting['message'], 'user-password', $user_data->ID );
 			$message = $this->handle_global_user_shortcodes( $message, $user_data->user_email );
 
-			$reset_link = wp_login_url() . "?action=rp&key=$key&login=$user_login";
+			$reset_link = network_site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user_login ), 'login' );
 			$message = str_replace( '[password_reset_link]', $reset_link, $message );
 		}
 
@@ -382,9 +382,13 @@ class BNFW_Engine {
 			case 'user-role':
 			case 'admin-role':
 			case 'password-changed':
-			case 'email-changed':
 				// handle users (lost password and new user registration)
 				$message = $this->user_shortcodes( $message, $extra_data );
+				break;
+
+			case 'email-changed':
+				// handle users (lost password and new user registration)
+				$message = $this->user_shortcodes( $message, $extra_data, 'email_' );
 				break;
 
 			case 'new-category':
@@ -475,6 +479,8 @@ class BNFW_Engine {
 			$message = str_replace( '[global_user_firstname]', $user->first_name, $message );
 			$message = str_replace( '[global_user_lastname]', $user->last_name, $message );
 			$message = str_replace( '[global_user_username]', $user->user_login, $message );
+
+			$message = $this->user_shortcodes( $message, $user->ID, 'email_' );
 		}
 
 		$message = str_replace( '[global_user_email]', $email, $message );
@@ -498,8 +504,8 @@ class BNFW_Engine {
 		$post_content = str_replace( ']]>', ']]&gt;', $post_content );
 
 		$message = str_replace( '[ID]', $post->ID, $message );
-		$message = str_replace( '[post_date]', $post->post_date, $message );
-		$message = str_replace( '[post_date_gmt]', $post->post_date_gmt, $message );
+		$message = str_replace( '[post_date]', bnfw_format_date( $post->post_date ), $message );
+		$message = str_replace( '[post_date_gmt]', bnfw_format_date( $post->post_date_gmt ), $message );
 		$message = str_replace( '[post_content]', $post_content, $message );
 		$message = str_replace( '[post_title]', $post->post_title, $message );
 		$message = str_replace( '[post_excerpt]', ( strip_shortcodes( $post->post_excerpt ? $post->post_excerpt : wp_trim_words( $post_content ) ) ), $message );
@@ -511,8 +517,8 @@ class BNFW_Engine {
 		$message = str_replace( '[post_slug]', $post->post_name, $message );
 		$message = str_replace( '[to_ping]', $post->to_ping, $message );
 		$message = str_replace( '[pinged]', $post->pinged, $message );
-		$message = str_replace( '[post_modified]', $post->post_modified, $message );
-		$message = str_replace( '[post_modified_gmt]', $post->post_modified_gmt, $message );
+		$message = str_replace( '[post_modified]', bnfw_format_date( $post->post_modified ), $message );
+		$message = str_replace( '[post_modified_gmt]', bnfw_format_date( $post->post_modified_gmt ), $message );
 		$message = str_replace( '[post_content_filtered]', $post->post_content_filtered, $message );
 		$message = str_replace( '[post_parent]', $post->post_parent, $message );
 		$message = str_replace( '[post_parent_permalink]', get_permalink( $post->post_parent ), $message );
@@ -534,8 +540,8 @@ class BNFW_Engine {
 		$message = str_replace( '[featured_image]', $featured_image, $message );
 
 		if ( 'future' == $post->post_status ) {
-			$message = str_replace( '[post_scheduled_date]', $post->post_date, $message );
-			$message = str_replace( '[post_scheduled_date_gmt]', $post->post_date_gmt, $message );
+			$message = str_replace( '[post_scheduled_date]', bnfw_format_date( $post->post_date ), $message );
+			$message = str_replace( '[post_scheduled_date_gmt]', bnfw_format_date( $post->post_date_gmt ), $message );
 		} else {
 			$message = str_replace( '[post_scheduled_date]', 'Published', $message );
 			$message = str_replace( '[post_scheduled_date_gmt]', 'Published', $message );
@@ -599,8 +605,8 @@ class BNFW_Engine {
 		$message = str_replace( '[comment_author_email]', $comment->comment_author_email, $message );
 		$message = str_replace( '[comment_author_url]', $comment->comment_author_url, $message );
 		$message = str_replace( '[comment_author_IP]', $comment->comment_author_IP, $message );
-		$message = str_replace( '[comment_date]', $comment->comment_date, $message );
-		$message = str_replace( '[comment_date_gmt]', $comment->comment_date_gmt, $message );
+		$message = str_replace( '[comment_date]', bnfw_format_date( $comment->comment_date ), $message );
+		$message = str_replace( '[comment_date_gmt]', bnfw_format_date( $comment->comment_date_gmt ), $message );
 		$message = str_replace( '[comment_content]', get_comment_text( $comment->comment_ID ), $message );
 		$message = str_replace( '[comment_karma]', $comment->comment_karma, $message );
 		$message = str_replace( '[comment_approved]', str_replace( array( '0', '1', 'spam' ), array( 'awaiting moderation', 'approved', 'spam' ), $comment->comment_approved ), $message );
@@ -623,33 +629,39 @@ class BNFW_Engine {
 	 *
 	 * @return string Processed string.
 	 */
-	public function user_shortcodes( $message, $user_id ) {
+	public function user_shortcodes( $message, $user_id, $prefix = '' ) {
 		$user_info = get_userdata( $user_id );
+
+		if ( ! $user_info instanceof WP_User ) {
+			return $message;
+		}
 
 		// deperecated
 		$message = str_replace( '[ID]', $user_info->ID, $message );
-
-		$message = str_replace( '[user_id]', $user_info->ID, $message );
-		$message = str_replace( '[user_login]', $user_info->user_login, $message );
-		$message = str_replace( '[user_nicename]', $user_info->user_nicename, $message );
-		$message = str_replace( '[user_email]', $user_info->user_email, $message );
-		$message = str_replace( '[user_url]', $user_info->user_url, $message );
-		$message = str_replace( '[user_registered]', $user_info->user_registered, $message );
 		$message = str_replace( '[display_name]', $user_info->display_name, $message );
-		$message = str_replace( '[user_firstname]', $user_info->user_firstname, $message );
-		$message = str_replace( '[user_lastname]', $user_info->user_lastname, $message );
 		$message = str_replace( '[nickname]', $user_info->nickname, $message );
-		$message = str_replace( '[user_description]', $user_info->user_description, $message );
-		$message = str_replace( '[user_avatar]', get_avatar_url( $user_id ), $message );
-		$message = str_replace( '[user_avatar]', get_avatar_url( $user_id ), $message );
 		$message = str_replace( '[commenter_avatar]', get_avatar_url( $user_id ), $message );
+
+		$message = str_replace( '[' . $prefix . 'user_id]', $user_info->ID, $message );
+		$message = str_replace( '[' . $prefix . 'user_login]', $user_info->user_login, $message );
+		$message = str_replace( '[' . $prefix . 'user_nicename]', $user_info->user_nicename, $message );
+		$message = str_replace( '[' . $prefix . 'user_email]', $user_info->user_email, $message );
+		$message = str_replace( '[' . $prefix . 'user_url]', $user_info->user_url, $message );
+		$message = str_replace( '[' . $prefix . 'user_registered]', $user_info->user_registered, $message );
+		$message = str_replace( '[' . $prefix . 'user_display_name]', $user_info->display_name, $message );
+		$message = str_replace( '[' . $prefix . 'user_firstname]', $user_info->user_firstname, $message );
+		$message = str_replace( '[' . $prefix . 'user_lastname]', $user_info->user_lastname, $message );
+		$message = str_replace( '[' . $prefix . 'user_nickname]', $user_info->nickname, $message );
+		$message = str_replace( '[' . $prefix . 'user_description]', $user_info->user_description, $message );
+		$message = str_replace( '[' . $prefix . 'user_avatar]', get_avatar_url( $user_id ), $message );
 
 		$user_capabilities = bnfw_format_user_capabilities( $user_info->wp_capabilities );
 		if ( ! empty( $user_capabilities ) ) {
 			$message = str_replace( '[wp_capabilities]', $user_capabilities, $message );
+			$message = str_replace( '[' . $prefix . 'user_wp_capabilities]', $user_capabilities, $message );
 		}
 
-		$message = apply_filters( 'bnfw_shortcodes_user', $message, $user_id );
+		$message = apply_filters( 'bnfw_shortcodes_user', $message, $user_id, $prefix );
 		return $message;
 	}
 

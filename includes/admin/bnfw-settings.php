@@ -13,7 +13,7 @@ function bnfw_admin_menu() {
 		'edit.php?post_type=bnfw_notification',
 		esc_html__( 'Notification Settings', 'bnfw' ),
 		esc_html__( 'Settings', 'bnfw' ),
-		'manage_options',
+		'bnfw',
 		'bnfw-settings',
 		'bnfw_settings_page'
 	);
@@ -57,27 +57,36 @@ function bnfw_settings_page() {
 function bnfw_menu_item_links() {
 	global $submenu;
 
-	if ( current_user_can( 'manage_options' ) ) {
+	if ( current_user_can( 'bnfw' ) ) {
 		$doc_url = 'https://betternotificationsforwp.com/documentation/';
 		$store_url = 'https://betternotificationsforwp.com/store/';
+		$support_url = 'https://betternotificationsforwp.com/priority-support/';
 
 		if ( bnfw_is_tracking_allowed() ) {
 			$doc_url .= '?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Documentation"&amp;utm_medium=referral';
 			$store_url .= '?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Add-on"&amp;utm_medium=referral';
+			$support_url .= '?utm_source=WP%20Admin%20Submenu%20Item%20-%20"Priority%20Support"&amp;utm_medium=referral';
 		}
 
 		// Documentation Link
 		$submenu['edit.php?post_type=bnfw_notification'][500] = array(
 			'<div id="bnfw-menu-item-documentation" style="color: #73daeb;">Documentation</div>',
-			'manage_options',
+			'bnfw',
 			$doc_url,
 		);
 
 		// Add-ons Link
 		$submenu['edit.php?post_type=bnfw_notification'][600] = array(
 			'<div id="bnfw-menu-item-addons" style="color: #ff6f59;">Premium Add-ons</div>',
-			'manage_options',
+			'bnfw',
 			$store_url,
+		);
+
+		// Add-ons Link
+		$submenu['edit.php?post_type=bnfw_notification'][700] = array(
+			'<div id="bnfw-menu-item-support" style="color: #f00001;">Priority Support</div>',
+			'bnfw',
+			$support_url,
 		);
 	}
 }
@@ -100,6 +109,14 @@ function bnfw_menu_item_link_targets() {
 				$( this ).css( 'color', '#ff9b8c' );
 			}, function () {
 				$( this ).css( 'color', '#ff6f59' );
+			} );
+
+			// Priority Support Link
+			$( '#bnfw-menu-item-support' ).parent().attr( 'target', '_blank' );
+			$( '#bnfw-menu-item-support' ).hover( function () {
+				$( this ).css( 'color', '#ff3536' );
+			}, function () {
+				$( this ).css( 'color', '#f00001' );
 			} );
 		} );
 	</script>
@@ -130,12 +147,12 @@ function bnfw_general_options() {
 	// Suppress notifications for SPAM comments
 	add_settings_field(
 		'bnfw_suppress_spam',           // Field ID
-		esc_html__( 'Suppress SPAM comment notification', 'bnfw' ),  // Label to the left
+		esc_html__( 'Suppress SPAM comment notification', 'bnfw' ) . '<div class="bnfw-help-tip"><p>' . esc_html__( 'Comments that are correctly marked as SPAM by a 3rd party plugin (such as Akismet) will not generate a notification if this is ticked.', 'bnfw' ) . '</p></div>',  // Label to the left
 		'bnfw_suppress_spam_checkbox',  // Name of function that renders options on the page
 		'bnfw-settings',                // Page to show on
 		'bnfw_general_options_section', // Associate with which settings section?
 		array(
-			esc_html__( "Don't send notifications for comments marked as SPAM by another plugin", 'bnfw' )
+			esc_html__( 'Don\'t send notifications for comments marked as SPAM', 'bnfw' )
 		)
 	);
 
@@ -147,13 +164,10 @@ function bnfw_general_options() {
 
 	add_settings_field(
 		'bnfw_email_format',           // Field ID
-		esc_html__( 'Default Email Format', 'bnfw' ),  // Label to the left
+		esc_html__( 'Default Email Format', 'bnfw' ) . '<div class="bnfw-help-tip"><p>' . esc_html__( 'This will apply to all emails sent out via WordPress, even those from other plugins. For more details, please see the ', 'bnfw' ) . '<a href="https://wordpress.org/plugins/bnfw/faq/" target="_blank">FAQ</a>.</p></div>',  // Label to the left
 		'bnfw_email_format_radio',  // Name of function that renders options on the page
 		'bnfw-settings',                // Page to show on
-		'bnfw_general_options_section', // Associate with which settings section?
-		array(
-			esc_html__( 'This will apply to all emails sent out via WordPress, even those from other plugins. For more details, please see the ', 'bnfw' ) . '<a href="https://wordpress.org/plugins/bnfw/faq/" target="_blank">FAQ</a>.'
-		)
+		'bnfw_general_options_section' // Associate with which settings section?
 	);
 
 	// Register - Allow tracking setting
@@ -224,7 +238,6 @@ function bnfw_email_format_radio( $args ) {
 		<input type="radio" value="text"
 		       name="bnfw_email_format" <?php checked( $email_format, 'text', true ); ?>><?php esc_html_e( 'Plain Text', 'bnfw' ); ?>
 	</label>
-	<p><i><?php echo $args[0]; ?></i></p>
 	<?php
 }
 
