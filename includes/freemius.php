@@ -8,6 +8,11 @@ function bnfw_fs() {
 	global $bnfw_fs;
 
 	if ( ! isset( $bnfw_fs ) ) {
+		// Activate multisite network integration.
+		if ( ! defined( 'WP_FS__PRODUCT_1196_MULTISITE' ) ) {
+			define( 'WP_FS__PRODUCT_1196_MULTISITE', true );
+		}
+
 		require_once dirname( __FILE__ ) . '/../freemius/start.php';
 
 		$bnfw_fs = fs_dynamic_init( array(
@@ -36,7 +41,7 @@ do_action( 'bnfw_fs_loaded' );
 function bnfw_fs_custom_connect_message_on_update( $message, $user_first_name, $plugin_title, $user_login, $site_link, $freemius_link ) {
 	return sprintf(
 		__fs( 'hey-x' ) . '<br>' .
-		__( 'Please help me improve %2$s! If you opt-in, some data about your usage of %2$s will be recorded and sent to me. If you skip this, that\'s okay! %2$s will still work just fine.', 'bnfw' ),
+		__( 'Please help me improve %2$s! If you opt-in, you\'ll be added to the mailing list and some data about your usage of %2$s will be recorded and sent to me. If you skip this, that\'s okay! %2$s will still work just fine.', 'bnfw' ),
 		$user_first_name,
 		'<b>' . $plugin_title . '</b>',
 		'<b>' . $user_login . '</b>',
@@ -50,7 +55,7 @@ bnfw_fs()->add_filter( 'connect_message_on_update', 'bnfw_fs_custom_connect_mess
 function bnfw_fs_custom_connect_message( $message, $user_first_name, $plugin_title, $user_login, $site_link, $freemius_link ) {
 	return sprintf(
 		__fs( 'hey-x' ) . '<br>' .
-		__( 'Never miss an important update for %2$s - opt-in to security and feature update notifications and help me improve the plugin by sending non-sensitive diagnostic tracking.', 'bnfw' ),
+		__( 'Please help me improve %2$s! If you opt-in, you\'ll be added to the mailing list and some data about your usage of %2$s will be recorded and sent to me. If you skip this, that\'s okay! %2$s will still work just fine.', 'bnfw' ),
 		$user_first_name,
 		'<b>' . $plugin_title . '</b>',
 		'<b>' . $user_login . '</b>',

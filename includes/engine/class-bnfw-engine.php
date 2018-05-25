@@ -454,7 +454,7 @@ class BNFW_Engine {
 		$message = str_replace( '[global_site_url]', get_bloginfo( 'url' ), $message );
 
 		$message = str_replace( '[current_time]', current_time( get_option( 'time_format' ) ), $message );
-		$message = str_replace( '[current_date]', current_time( get_option( 'date_format' ) ), $message );
+		$message = str_replace( '[current_date]', date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ), $message );
 		$message = str_replace( '[admin_email]', get_option( 'admin_email' ), $message );
 
 		return $message;
@@ -499,7 +499,7 @@ class BNFW_Engine {
 	public function post_shortcodes( $message, $post_id ) {
 		$post = get_post( $post_id );
 
-		$post_content = strip_shortcodes( $post->post_content );
+		$post_content = $this->may_be_strip_shortcode( $post->post_content );
 		$post_content = apply_filters( 'the_content', $post_content );
 		$post_content = str_replace( ']]>', ']]&gt;', $post_content );
 
@@ -508,7 +508,7 @@ class BNFW_Engine {
 		$message = str_replace( '[post_date_gmt]', bnfw_format_date( $post->post_date_gmt ), $message );
 		$message = str_replace( '[post_content]', $post_content, $message );
 		$message = str_replace( '[post_title]', $post->post_title, $message );
-		$message = str_replace( '[post_excerpt]', ( strip_shortcodes( $post->post_excerpt ? $post->post_excerpt : wp_trim_words( $post_content ) ) ), $message );
+		$message = str_replace( '[post_excerpt]', ( $this->may_be_strip_shortcode( $post->post_excerpt ? $post->post_excerpt : wp_trim_words( $post_content ) ) ), $message );
 		$message = str_replace( '[post_status]', $post->post_status, $message );
 		$message = str_replace( '[comment_status]', $post->comment_status, $message );
 		$message = str_replace( '[ping_status]', $post->ping_status, $message );
@@ -568,22 +568,51 @@ class BNFW_Engine {
 			$message = str_replace( '[post_update_author]', $last_user_info->display_name, $message );
 		}
 
-		$terms_list = '';
-		$taxonomy_matches = array();
-		preg_match( '/\[post_term taxonomy="([^"]*)"\]/i', $message, $taxonomy_matches );
-
-		if ( count( $taxonomy_matches ) > 0 ) {
-			$terms = wp_get_post_terms( $post_id, $taxonomy_matches[1], array( 'fields' => 'names' ) );
-
-			if ( ! is_wp_error( $terms ) ) {
-				$terms_list = implode( ', ', $terms );
-			}
-		}
-		$message = preg_replace( '/\[post_term taxonomy="([^"]*)"\]/i', $terms_list, $message );
-
+		$message = str_replace( '[post_term', '[post_term id="' . $post_id . '"', $message );
+		add_shortcode( 'post_term', array( $this, 'post_term_shortcode_handler' ) );
 		$message = do_shortcode( $message );
+		remove_shortcode( 'post_term', array( $this, 'post_term_shortcode_handler' ) );
 
 		return apply_filters( 'bnfw_shortcodes_post', $message, $post_id );
+	}
+
+	/**
+	 * Handle post term shortcode.
+	 *
+	 * @param array $atts Shortocde attributes.
+	 *
+	 * @return string Processed string.
+	 */
+	public function post_term_shortcode_handler( $atts ) {
+		$atts = shortcode_atts( array(
+			'taxonomy' => '',
+			'id'    => 0,
+		), $atts );
+
+		$terms = wp_get_post_terms( $atts['id'], $atts['taxonomy'], array( 'fields' => 'names' ) );
+
+		if ( ! is_wp_error( $terms ) ) {
+			return implode( ', ', $terms );
+		}
+
+		return '';
+	}
+
+	/**
+	 * Strip shortcodes, unless disabled.
+	 *
+	 * @param string $content Content who's shortcodes should be stripped.
+	 *
+	 * @return string Processed content.
+	 */
+	private function may_be_strip_shortcode( $content ) {
+		$enable_shortcode = get_option( 'bnfw_enable_shortcodes' );
+
+		if ( '1' == $enable_shortcode ) {
+			return $content;
+		}
+
+		return strip_shortcodes( $content );
 	}
 
 	/**
@@ -723,6 +752,17 @@ class BNFW_Engine {
 			}
 		}
 
+		$to_emails = array();
+
+		if ( ! empty( $setting['users'] ) ) {
+			$to_emails = $this->get_emails_from_users( $setting['users'], $exclude, $id, $setting );
+		}
+
+		/**
+		 * BNFW get to emails.
+		 */
+		$emails['to'] = apply_filters( 'bnfw_to_emails', $to_emails, $setting, $id );
+
 		if ( 'true' === $setting['only-post-author'] ) {
 
 			$post_id = $id;
@@ -732,21 +772,12 @@ class BNFW_Engine {
 			}
 
 			$post_author = get_post_field( 'post_author', $post_id );
-			$author = get_user_by( 'id', $post_author );
+			$author      = get_user_by( 'id', $post_author );
 			if ( false !== $author && $post_author != $exclude ) {
-				$emails['to'] = array( $author->user_email );
+				if ( ! in_array( $author->user_email, $emails['to'] ) ) {
+					$emails['to'][] = $author->user_email;
+				}
 			}
-		} else {
-			$to_emails = array();
-
-			if ( ! empty( $setting['users'] ) ) {
-				$to_emails = $this->get_emails_from_users( $setting['users'], $exclude, $id, $setting );
-			}
-
-			/**
-			 * BNFW get to emails.
-			 */
-			$emails['to'] = apply_filters( 'bnfw_to_emails', $to_emails, $setting, $id );
 		}
 
 		if ( 'true' == $setting['show-fields'] ) {
@@ -770,6 +801,24 @@ class BNFW_Engine {
 
 			if ( ! empty( $setting['bcc'] ) ) {
 				$emails['bcc'] = $this->get_emails_from_users( $setting['bcc'], $exclude, $id, $setting );
+			}
+		}
+
+		$excluded_emails = array();
+
+		if ( ! empty( $setting['exclude-users'] ) ) {
+			$excluded_emails = $this->get_emails_from_users( $setting['exclude-users'] );
+		}
+
+		if ( ! empty( $excluded_emails ) ) {
+			$emails['to'] = array_diff( $emails['to'], $excluded_emails );
+
+			if ( ! empty( $emails['cc'] ) ) {
+				$emails['cc'] = array_diff( $emails['cc'], $excluded_emails );
+			}
+
+			if ( ! empty( $emails['bcc'] ) ) {
+				$emails['bcc'] = array_diff( $emails['bcc'], $excluded_emails );
 			}
 		}
 

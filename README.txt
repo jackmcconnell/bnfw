@@ -3,9 +3,9 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 4.0
-Tested up to: 4.9.5
+Tested up to: 4.9.6
 Requires PHP: 5.6
-Stable tag: 1.6.13
+Stable tag: 1.6.14
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -163,10 +163,6 @@ Yes! There is an option for suppressing comments marked as SPAM in the plugin se
 
 Yes! Full support for WordPress Multisite was added in 1.6.13, alongside the release of the [Multisite Add-on](https://betternotificationsforwp.com/downloads/multisite/).
 
-= What isn't this plugin? =
-
-It's not designed to send out newsletters. There is no send-this-out-on-this-date style functionality included. There are many other great plugins available that you could use for that instead. Additionally, users cannot currently unsubscribe automatically from notifications so you'll have to work out how you manage unsubscribers manually.
-
 = Notifications aren't coming through! =
 
 First of all, follow [this article](https://betternotificationsforwp.com/how-can-i-receive-the-best-support/) about how to find out what might be causing the problem. Additionally, please take a look at [this help document](https://betternotificationsforwp.com/documentation/getting-started/how-to-improve-email-delivery/) to see how you might improve email delivery when using Better Notifications for WordPress.
@@ -178,10 +174,6 @@ If you're still having problems, please drop me a line in the [Free Support Foru
 = Some of my shortcodes aren't working! =
 
 It's possible you're inserting a shortcode into a notification that cannot use it. For example: the 'New Category' email notification cannot use any of the author or time shortcodes as WordPress only stores the category name, category slug and category description in the database by default. It's also worth checking the spelling and underscores in any shortcodes as well as if they are wrapped in square brackets `[]`.
-
-= I press the 'Send Me a Test Email' button but nothing happens! =
-
-Check that you've saved your notification first, then try again. It may take a second for the email to come through. Please also check your email SPAM filter.
 
 = Other emails from WordPress / other plugins are being messed up! =
 
@@ -195,10 +187,6 @@ This is most likely because it's `public` setting is set to `false`. Try changin
 
 Yes, of course! The plugin is completely translation-friendly and if you send me your .po file, I'll make sure to include it in the plugin and credit you in the changelog.
 
-= Will this plugin work with versions of WordPress less than 3.5? =
-
-An older version might work but this is untested. A lot of the newer features require WordPress 4.0 and above.
-
 
 
 == Screenshots ==
@@ -210,6 +198,16 @@ An older version might work but this is untested. A lot of the newer features re
 
 
 == Changelog ==
+
+= 1.6.14 - 25th May 2018 =
+* New: As part of my plans for implementing GDPR compliancy within BNFW, you can now exclude users and/or roles from your notifications in the new 'Except For' box.
+* New: You can now include the post/page author in addition to the list of users and user roles in your notifications (not either/or).
+* New: You can now enable the output of shortcodes again when using the `[post_content]` shortcode in your notifications via a new checkbox in the Settings screen.
+* New: A list of available actions and filters in BNFW is now available in the [website documentation](https://betternotificationsforwp.com/documentation/actions-and-filters/).
+* Updated: The user tracking SDK I use (Freemius) has been updated to allow Multisite network admins to opt-in an entire multisite or delegate opt-in to site-level admins.
+* Fixed: Media inserted via the WYSIWYG editor wasn't showing. This should now be fixed.
+* Fixed: An issue where the `[post_term taxonomy="X"]` shortcode could only be used once in a notification.
+* Fixed: All date shortcodes are now translatable.
 
 = 1.6.13 - 5th April 2018 =
 * Added: Full support for the new [Multisite](https://betternotificationsforwp.com/downloads/multisite/) add-on.

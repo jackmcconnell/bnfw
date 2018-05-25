@@ -170,11 +170,28 @@ function bnfw_general_options() {
 		'bnfw_general_options_section' // Associate with which settings section?
 	);
 
-	// Register - Allow tracking setting
+	// Register - Email Format setting
 	register_setting(
 		'bnfw-settings',
-		'bnfw_allow_tracking'
+		'bnfw_enable_shortcodes'
 	);
+
+	add_settings_field(
+		'bnfw_enable_shortcodes',           // Field ID
+		esc_html__( 'Enable Content Shortcodes?', 'bnfw' ) . '<div class="bnfw-help-tip"><p>' . esc_html__( 'Shortcodes in the post/page content are disabled by default.', 'bnfw' ) . '</p></div>',  // Label to the left
+		'bnfw_enable_shortcodes_checkbox',  // Name of function that renders options on the page
+		'bnfw-settings',                // Page to show on
+		'bnfw_general_options_section', // Associate with which settings section?
+		array(
+			esc_html__( 'Enable shortcode output in the page/post content', 'bnfw' ),
+		)
+	);
+
+	// Register - Allow tracking setting
+//	register_setting(
+//		'bnfw-settings',
+//		'bnfw_allow_tracking'
+//	);
 
 //	add_settings_field(
 //		'bnfw_allow_tracking',           // Field ID
@@ -253,5 +270,18 @@ function bnfw_render_allow_tracking( $args ) {
 	<input type="checkbox" id="bnfw_allow_tracking" name="bnfw_allow_tracking"
 	       value="on" <?php checked( 'on', get_option( 'bnfw_allow_tracking' ), true ); ?>>
 	<label for="bnfw_allow_tracking"><?php echo esc_html( $args[0] ); ?></label>
+	<?php
+}
+
+/**
+ * Render Enable shortcode checkbox.
+ *
+ * @param array $args
+ */
+function bnfw_enable_shortcodes_checkbox( $args ) {
+	?>
+	<input type="checkbox" id="bnfw_enable_shortcodes" name="bnfw_enable_shortcodes"
+	       value="1" <?php checked( 1, get_option( 'bnfw_enable_shortcodes' ), true ); ?>>
+	<label for="bnfw_enable_shortcodes"><?php echo esc_html( $args[0] ); ?></label>
 	<?php
 }

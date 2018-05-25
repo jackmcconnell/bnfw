@@ -413,7 +413,7 @@ foreach ( $taxs as $tax ) {
 					<label>
 						<input type="checkbox" id="only-post-author" name="only-post-author"
 						       value="true" <?php checked( 'true', $setting['only-post-author'] ); ?>>
-						<?php esc_html_e( 'Send this notification to the Author only', 'bnfw' ); ?>
+						<?php esc_html_e( 'Send this notification to the Author', 'bnfw' ); ?>
 					</label>
 				</td>
 			</tr>
@@ -444,8 +444,26 @@ foreach ( $taxs as $tax ) {
 				<td>
 					<select multiple id="users-select" name="users[]"
 					        class="<?php echo sanitize_html_class( bnfw_get_user_select_class() ); ?>"
-							data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
+					        data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
 						<?php bnfw_render_users_dropdown( $setting['users'] ); ?>
+					</select>
+				</td>
+			</tr>
+
+			<tr valign="top" id="exclude-users">
+				<th scope="row">
+					<?php esc_html_e( 'Except For', 'bnfw' ); ?>
+					<div class="bnfw-help-tip">
+						<p>
+							<?php esc_html_e( 'Choose the users and/or user roles that this notification should not be sent to.', 'bnfw' ); ?>
+						</p>
+					</div>
+				</th>
+				<td>
+					<select multiple id="exclude-users-select" name="exclude-users[]"
+					        class="<?php echo sanitize_html_class( bnfw_get_user_select_class() ); ?>"
+					        data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
+						<?php bnfw_render_users_dropdown( $setting['exclude-users'] ); ?>
 					</select>
 				</td>
 			</tr>
@@ -633,10 +651,15 @@ foreach ( $taxs as $tax ) {
 			'disable-autop'        => isset( $_POST['disable-autop'] ) ? sanitize_text_field( $_POST['disable-autop'] ) : 'false',
 			'only-post-author'     => isset( $_POST['only-post-author'] ) ? sanitize_text_field( $_POST['only-post-author'] ) : 'false',
 			'users'                => array(),
+			'exclude-users'        => array(),
 		);
 
 		if ( isset( $_POST['users'] ) ) {
 			$setting['users'] = array_map( 'sanitize_text_field', $_POST['users'] );
+		}
+
+		if ( isset( $_POST['exclude-users'] ) ) {
+			$setting['exclude-users'] = array_map( 'sanitize_text_field', $_POST['exclude-users'] );
 		}
 
 		if ( isset( $_POST['show-fields'] ) && 'true' == $_POST['show-fields'] ) {
@@ -725,6 +748,7 @@ foreach ( $taxs as $tax ) {
 			'cc'                   => array(),
 			'bcc'                  => array(),
 			'users'                => array(),
+			'exclude-users'        => array(),
 			'subject'              => '',
 			'email-formatting'     => get_option( 'bnfw_email_format', 'html' ),
 			'message'              => '',
@@ -970,12 +994,13 @@ foreach ( $taxs as $tax ) {
 				echo ! empty( $setting['subject'] ) ? $setting['subject'] : '';
 				break;
 			case 'users':
+				$users = $this->get_names_from_users( $setting['users'] );
+				echo implode( ', ', $users );
+
 				if ( 'true' === $setting['only-post-author'] ) {
-					echo esc_html__( 'Author only', 'bnfw' );
-				} else {
-					$users = $this->get_names_from_users( $setting['users'] );
-					echo implode( ', ', $users );
+					echo esc_html__( ', Post Author', 'bnfw' );
 				}
+
 				break;
 		}
 

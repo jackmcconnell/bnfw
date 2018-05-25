@@ -13,9 +13,9 @@ jQuery(document).ready(function($) {
 
     function toggle_users() {
     	if ( $( '#only-post-author' ).is( ':checked' ) ) {
-    		$( '#users, #current-user' ).hide();
+    		$( '#current-user' ).hide();
     	} else {
-    		$( '#users, #current-user' ).show();
+    		$( '#current-user' ).show();
     	}
 
 	    if ( 'new-comment' === $( '#notification' ).val() ) {
@@ -66,7 +66,7 @@ jQuery(document).ready(function($) {
 				'multisite-site-admin-email-change-attempted' === notification || 'multisite-site-admin-email-changed' === notification ||
 				'multisite-network-admin-email-change-attempted' === notification || 'multisite-network-admin-email-changed' === notification) {
 
-			$('#toggle-fields, #email, #cc, #bcc, #reply, #users, #current-user, #post-author').hide();
+			$('#toggle-fields, #email, #cc, #bcc, #reply, #users, #exclude-users, #current-user, #post-author').hide();
 			$('#user-password-msg, #disable-autop, #email-formatting').show();
 
 			$( '#subject-wrapper' ).show();
@@ -78,17 +78,17 @@ jQuery(document).ready(function($) {
 		} else if ( 'new-comment' === notification || 'new-trackback' === notification || 'new-pingback' === notification ||
 				'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
 
-			$( '#toggle-fields, #users, #email-formatting, #disable-autop, #current-user, #post-author' ).show();
+			$( '#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user, #post-author' ).show();
 			toggle_fields();
 			toggle_users();
 			$( '#user-password-msg' ).hide();
 		} else if ( 'admin-password-changed' === notification || 'core-updated' === notification ) {
-			$( '#toggle-fields, #users, #email-formatting, #disable-autop' ).show();
+			$( '#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop' ).show();
 			toggle_fields();
 			toggle_users();
 			$( '#user-password-msg, #current-user, #post-author' ).hide();
 		} else {
-			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user, #post-author').show();
+			$('#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user, #post-author').show();
 			toggle_fields();
 			toggle_users();
 			$('#user-password-msg').hide();
@@ -124,7 +124,7 @@ jQuery(document).ready(function($) {
 			'multisite-site-admin-email-change-attempted' === notification || 'multisite-site-admin-email-changed' === notification ||
 			'multisite-network-admin-email-change-attempted' === notification || 'multisite-network-admin-email-changed' === notification) {
 
-			$('#toggle-fields, #email, #cc, #bcc, #reply, #users, #current-user, #post-author').hide();
+			$('#toggle-fields, #email, #cc, #bcc, #reply, #users, #exclude-users, #current-user, #post-author').hide();
 			$('#user-password-msg, #disable-autop, #email-formatting').show();
 
 			$( '#subject-wrapper' ).show();
@@ -135,17 +135,17 @@ jQuery(document).ready(function($) {
 			}
 		} else if ( 'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
 			$('#post-author').hide();
-			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user').show();
+			$('#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user').show();
 			$('#user-password-msg').hide();
 			toggle_fields();
 			toggle_users();
 		} else if ( 'admin-password-changed' === notification || 'core-updated' === notification ) {
-			$( '#toggle-fields, #users, #email-formatting, #disable-autop' ).show();
+			$( '#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop' ).show();
 			toggle_fields();
 			toggle_users();
 			$( '#user-password-msg, #current-user, #post-author' ).hide();
 		} else {
-			$('#toggle-fields, #users, #email-formatting, #disable-autop, #current-user, #post-author').show();
+			$('#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user, #post-author').show();
 			$('#user-password-msg').hide();
 			toggle_fields();
 			toggle_users();
