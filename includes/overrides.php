@@ -17,7 +17,7 @@
  */
 if ( ! function_exists( 'wp_new_user_notification' ) ) {
 	function wp_new_user_notification( $user_id, $deprecated = null, $notify = '' ) {
-		global $wp_version, $wp_hasher;;
+		global $wp_version, $wp_hasher;
 
 		$bnfw = BNFW::factory();
 		$user = get_userdata( $user_id );
@@ -38,12 +38,44 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 			// we want to reverse this for the plain text arena of emails.
 			$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
 
-			if ( ! $bnfw->notifier->notification_exists( 'admin-user', false ) ) {
+			if ( $bnfw->notifier->notification_exists( 'admin-user', true ) ) {
 				$message = sprintf( esc_html__( 'New user registration on your site %s:' ), $blogname ) . "\r\n\r\n";
 				$message .= sprintf( esc_html__( 'Username: %s' ), $user->user_login ) . "\r\n\r\n";
 				$message .= sprintf( esc_html__( 'E-mail: %s' ), $user->user_email ) . "\r\n";
 
-				@wp_mail( get_option( 'admin_email' ), sprintf( esc_html__( '[%s] New User Registration' ), $blogname ), $message );
+				$wp_new_user_notification_email_admin = array(
+					'to'      => get_option( 'admin_email' ),
+					/* translators: Password change notification email subject. %s: Site title */
+					'subject' => __( '[%s] New User Registration' ),
+					'message' => $message,
+					'headers' => '',
+				);
+
+				/**
+				 * Filters the contents of the new user notification email sent to the site admin.
+				 *
+				 * @since 4.9.0
+				 *
+				 * @param array   $wp_new_user_notification_email {
+				 *                                                Used to build wp_mail().
+				 *
+				 * @type string   $to                             The intended recipient - site admin email address.
+				 * @type string   $subject                        The subject of the email.
+				 * @type string   $message                        The body of the email.
+				 * @type string   $headers                        The headers of the email.
+				 * }
+				 *
+				 * @param WP_User $user                           User object for new user.
+				 * @param string  $blogname                       The site title.
+				 */
+				$wp_new_user_notification_email_admin = apply_filters( 'wp_new_user_notification_email_admin', $wp_new_user_notification_email_admin, $user, $blogname );
+
+				@wp_mail(
+					$wp_new_user_notification_email_admin['to'],
+					wp_specialchars_decode( sprintf( $wp_new_user_notification_email_admin['subject'], $blogname ) ),
+					$wp_new_user_notification_email_admin['message'],
+					$wp_new_user_notification_email_admin['headers']
+				);
 			}
 
 			if ( 'admin' === $notify || empty( $notify ) ) {

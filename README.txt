@@ -3,9 +3,9 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 4.0
-Tested up to: 4.9.6
+Tested up to: 4.9.8
 Requires PHP: 5.6
-Stable tag: 1.6.14
+Stable tag: 1.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. 
 
 == Description ==
 
-Better Notifications for WordPress is a simple but powerful plugin for beginners to advanced users that allows you to customise the email notifications that WordPress sends using the WYSIWYG editor and shortcodes. All of the default WordPress email notifications are available to customise as well as lots of new ones. You can choose to send notifications to individual users, multiple users, all users in a user role, multiple roles - you name it! You can also power-up your notifications with [Premium Add-ons](https://betternotificationsforwp.com/store/). Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using an appropriate 3rd party plugin should you wish.
+Better Notifications for WordPress is a simple but powerful plugin for beginners to advanced users that allows you to customise the email notifications that WordPress sends using the WYSIWYG editor and shortcodes. All of the default WordPress email notifications are available to customise as well as lots of new ones. You can choose to send notifications to individual users, multiple users, all users in a user role, multiple roles - you name it! You can also power-up your notifications with [Premium Add-ons](https://betternotificationsforwp.com/downloads/). Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using an appropriate 3rd party plugin should you wish.
 
 Here's a quick walkthrough of the plugin in action:
 [youtube https://www.youtube.com/watch?v=MxPUyRZPJ1Q]
@@ -199,6 +199,27 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 == Changelog ==
 
+= 1.7 - 5th September 2018 =
+* A huge update packed full of new features and bug fixes, especially for those that like privacy and comment notifications!
+* New: Six GDPR / Privacy Notifications. These allow you to override all the new notifications that WordPress 4.9.6 introduced relating to exporting and erasing user data. These are: Privacy – Confirm Action: Export Data Request – For User, Privacy – Confirm Action: Erase Data Request – For User, Privacy – Data Export – For User, Privacy – Data Erased – For User, Privacy – Confirm Action: Export Data Request – For Admin, Privacy – Confirm Action: Erase Data Request – For Admin.
+* New: The 'New Comment / Awaiting Moderation' notification has now been split into two so you can have a notification for just New Comments, or just Comments Awaiting Moderation, or both! Can be used on Posts, Pages, and Custom Post Types.
+* New: Shortcode - `[user_role]`. This outputs the user's role (or roles if assigned to more than one).
+* New: Shortcode - `[first_image]`. Outputs the URL of the first image in a post/page/custom post.
+* New: Shortcode - `[post_type_archive]`. Outputs the link for the post type / custom post type archive page.
+* New: Shortcode - `[post_category_slug]`. Outputs the category slug of a post or the first category slug if the post is assigned to multiple categories.
+* New: Shortcode - `[comment_moderation_link]`. This outputs the link to the WP Admin where you can moderate a new comment.
+* New: Shortcode - `[comment_parent_content]`. This outputs the content of the parent comment when used in a Comment Reply notification.
+* New: Three Comment Moderation Shortcodes - `[comment_moderation_approve]`, `[comment_moderation_spam]`, `[comment_moderation_delete]`. All for new comments. All should be self-explanatory.
+* New: A new column is available in the 'All Notifications' screen that shows which users are excluded from a notification.
+* Added: Dutch translation (props Piet).
+* Changed: The 'New User Registration - For Admin' notification can now override/be overridden by notifications that use the `wp_new_user_notification_email_admin` filter, introduced in WordPress 4.9.
+* Updated: Some of the default content that can be quickly added to a default notification was out-of-date.
+* Changed: Freemius has now been removed in favour for the previous iteration of user tracking. This is now an opt-in checkbox on the Notifications > Settings page. Please consider checking this box to help make BNFW even better.
+* Fixed: The 'Send this notification to the Author' checkbox still required a user or role to be entered into the 'Send To' box as well.
+* Fixed: The `[edit_post]` shortcode wasn't outputting anything when a non-Editor role could post on the front-end.
+* Fixed: Email addresses beginning with numbers weren't being saved when used in conjunction with the Send to Any Email add-on.
+* Fixed: The SVG icon on WordPress.org wasn't exported correctly.
+
 = 1.6.14 - 25th May 2018 =
 * New: As part of my plans for implementing GDPR compliancy within BNFW, you can now exclude users and/or roles from your notifications in the new 'Except For' box.
 * New: You can now include the post/page author in addition to the list of users and user roles in your notifications (not either/or).
@@ -381,7 +402,7 @@ Fixed: When a 'Lost Password – For User' notification had been set-up but disa
 * Added: New Post Published notifications now trigger on `auto_draft_to_publish`. This may or may not effect you if you publish through a front-end form or from an app.
 
 = 1.3.9.2 - 29th January 2016 =
-* The [Add-on Store](https://betternotificationsforwp.com/store/) is now live! Looking for some extra, premium functionality in your notifications? You might find an add-on for it!
+* The [Add-on Store](https://betternotificationsforwp.com/downloads/) is now live! Looking for some extra, premium functionality in your notifications? You might find an add-on for it!
 * New: A filter is now available for adding compatibility to themes for creating posts using `wp_insert_post`. Please see the bottom of the [FAQ](https://wordpress.org/plugins/bnfw/faq/) for details.
 * Fixed: 'User Role Changed' notifications were being triggered for new users.
 * Fixed: The label for custom taxonomies was showing in the Notification select box even if you didn't have any.

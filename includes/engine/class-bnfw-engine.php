@@ -406,6 +406,16 @@ class BNFW_Engine {
 				$message = $this->core_updated_shortcodes( $message, $extra_data );
 				break;
 
+			case 'data-export':
+				// handle data export email
+				$message = $this->data_export_shortcodes( $message, $extra_data );
+				break;
+
+			case 'data-erased':
+				// handle data export email
+				$message = $this->data_erased_shortcodes( $message, $extra_data );
+				break;
+
 			default:
 				$type = explode( '-', $notification, 2 );
 				if ( 'newterm' == $type[0] ) {
@@ -422,13 +432,19 @@ class BNFW_Engine {
 						$post = get_post( $extra_data );
 						$message = $this->user_shortcodes( $message, $post->post_author );
 					}
-				} elseif ( 'comment' == $type[0] || 'commentreply' == $type[0] ) {
+				} elseif ( 'comment' == $type[0] || 'moderate' == $type[0] || 'commentreply' == $type[0] ) {
 					$message = $this->comment_shortcodes( $message, $extra_data );
 					$comment = get_comment( $extra_data );
 					$message = $this->post_shortcodes( $message, $comment->comment_post_ID );
 					if ( 0 != $comment->user_id ) {
 						$message = $this->user_shortcodes( $message, $comment->user_id );
 					}
+				} elseif ( 'ca' === $type[0] ) {
+					$message = $this->confirm_action_shortcodes( $message, $extra_data );
+					$message = $this->handle_global_user_shortcodes( $message, $extra_data['email'] );
+				} elseif ( 'uc' === $type[0] ) {
+					$message = $this->confirmed_action_shortcodes( $message, $extra_data );
+					$message = $this->handle_global_user_shortcodes( $message, $extra_data['admin_email'] );
 				}
 				break;
 		}
@@ -528,7 +544,9 @@ class BNFW_Engine {
 		$message = str_replace( '[post_mime_type]', $post->post_mime_type, $message );
 		$message = str_replace( '[comment_count]', $post->comment_count, $message );
 		$message = str_replace( '[permalink]', get_permalink( $post->ID ), $message );
-		$message = str_replace( '[edit_post]', get_edit_post_link( $post->ID ), $message );
+		$message = str_replace( '[post_type_archive]', get_post_type_archive_link($post->post_type), $message );
+
+		$message = str_replace( '[edit_post]', $this->get_edit_post_link( $post->ID ), $message );
 
 		$featured_image = '';
 		if ( has_post_thumbnail( $post->ID ) ) {
@@ -538,6 +556,8 @@ class BNFW_Engine {
 			}
 		}
 		$message = str_replace( '[featured_image]', $featured_image, $message );
+
+		$message = str_replace( '[first_image]', $this->get_first_image($post->post_content), $message );
 
 		if ( 'future' == $post->post_status ) {
 			$message = str_replace( '[post_scheduled_date]', bnfw_format_date( $post->post_date ), $message );
@@ -549,6 +569,13 @@ class BNFW_Engine {
 
 		$category_list = implode( ', ', wp_get_post_categories( $post_id, array( 'fields' => 'names' ) ) );
 		$message = str_replace( '[post_category]', $category_list, $message );
+
+		$category_slugs = wp_get_post_categories( $post_id, array( 'fields' => 'id=>slug' ) );
+		$category_slugs = array_values( $category_slugs );
+
+		if ( count( $category_slugs ) > 0 ) {
+			$message = str_replace( '[post_category_slug]', $category_slugs[0], $message );
+		}
 
 		$tag_list = implode( ', ', wp_get_post_tags( $post_id, array( 'fields' => 'names' ) ) );
 		$message = str_replace( '[post_tag]', $tag_list, $message );
@@ -574,6 +601,53 @@ class BNFW_Engine {
 		remove_shortcode( 'post_term', array( $this, 'post_term_shortcode_handler' ) );
 
 		return apply_filters( 'bnfw_shortcodes_post', $message, $post_id );
+	}
+
+	/**
+	 * Retrieves the edit post link for post.
+	 *
+	 * This is a copy of the built-in function without the user check.
+	 *
+	 * Can be used within the WordPress loop or outside of it. Can be used with
+	 * pages, posts, attachments, and revisions.
+	 *
+	 * @param int|WP_Post $id      Optional. Post ID or post object. Default is the global `$post`.
+	 * @param string      $context Optional. How to output the '&' character. Default '&amp;'.
+	 * @return string|null The edit post link for the given post. null if the post type is invalid or does
+	 *                     not allow an editing UI.
+	 */
+	public function get_edit_post_link( $id = 0, $context = 'display' ) {
+		if ( ! $post = get_post( $id ) )
+			return;
+
+		if ( 'revision' === $post->post_type )
+			$action = '';
+		elseif ( 'display' == $context )
+			$action = '&amp;action=edit';
+		else
+			$action = '&action=edit';
+
+		$post_type_object = get_post_type_object( $post->post_type );
+		if ( !$post_type_object )
+			return;
+
+		if ( $post_type_object->_edit_link ) {
+			$link = admin_url( sprintf( $post_type_object->_edit_link . $action, $post->ID ) );
+		} else {
+			$link = '';
+		}
+
+		/**
+		 * Filters the post edit link.
+		 *
+		 * @since 2.3.0
+		 *
+		 * @param string $link    The edit link.
+		 * @param int    $post_id Post ID.
+		 * @param string $context The link context. If set to 'display' then ampersands
+		 *                        are encoded.
+		 */
+		return apply_filters( 'get_edit_post_link', $link, $post->ID, $context );
 	}
 
 	/**
@@ -638,12 +712,21 @@ class BNFW_Engine {
 		$message = str_replace( '[comment_date_gmt]', bnfw_format_date( $comment->comment_date_gmt ), $message );
 		$message = str_replace( '[comment_content]', get_comment_text( $comment->comment_ID ), $message );
 		$message = str_replace( '[comment_karma]', $comment->comment_karma, $message );
-		$message = str_replace( '[comment_approved]', str_replace( array( '0', '1', 'spam' ), array( 'awaiting moderation', 'approved', 'spam' ), $comment->comment_approved ), $message );
+		$message = str_replace( '[comment_approved]', str_replace( array( '0', '1', 'spam' ), array( 'Awaiting Moderation', 'Approved', 'Spam' ), $comment->comment_approved ), $message );
 		$message = str_replace( '[comment_agent]', $comment->comment_agent, $message );
 		$message = str_replace( '[comment_type]', $comment->comment_type, $message );
 		$message = str_replace( '[comment_parent]', $comment->comment_parent, $message );
 		$message = str_replace( '[user_id]', $comment->user_id, $message );
 		$message = str_replace( '[permalink]', get_comment_link( $comment->comment_ID ), $message );
+		$message = str_replace( '[comment_moderation_link]', str_replace( "&amp;", "&", get_edit_comment_link( $comment->comment_ID ) ), $message );
+		$message = str_replace( '[comment_moderation_approve]', '<a href="' . wp_nonce_url(admin_url("comment.php?action=approve&c={$comment->comment_ID}#wpbody-content")) . '">Approve</a>', $message );
+		$message = str_replace( '[comment_moderation_spam]', '<a href="' . wp_nonce_url(admin_url("comment.php?action=spam&c={$comment->comment_ID}#wpbody-content")) . '">Spam</a>', $message );
+		$message = str_replace( '[comment_moderation_delete]', '<a href="' . wp_nonce_url(admin_url("comment.php?action=trash&c={$comment->comment_ID}#wpbody-content")) . '">Delete</a>', $message );
+
+		$parent_comment = get_comment( $comment->comment_parent );
+		if ( $parent_comment instanceof WP_Comment) {
+			$message = str_replace( '[comment_parent_content]', $parent_comment->comment_content, $message );
+		}
 
 		return $message;
 	}
@@ -659,13 +742,15 @@ class BNFW_Engine {
 	 * @return string Processed string.
 	 */
 	public function user_shortcodes( $message, $user_id, $prefix = '' ) {
+		global $wp_roles;
+
 		$user_info = get_userdata( $user_id );
 
 		if ( ! $user_info instanceof WP_User ) {
 			return $message;
 		}
 
-		// deperecated
+		// deprecated
 		$message = str_replace( '[ID]', $user_info->ID, $message );
 		$message = str_replace( '[display_name]', $user_info->display_name, $message );
 		$message = str_replace( '[nickname]', $user_info->nickname, $message );
@@ -683,6 +768,9 @@ class BNFW_Engine {
 		$message = str_replace( '[' . $prefix . 'user_nickname]', $user_info->nickname, $message );
 		$message = str_replace( '[' . $prefix . 'user_description]', $user_info->user_description, $message );
 		$message = str_replace( '[' . $prefix . 'user_avatar]', get_avatar_url( $user_id ), $message );
+
+		$roles = array_map( array( $this, 'get_role_label_by_name' ), $user_info->roles );
+		$message = str_replace( '[' . $prefix . 'user_role]', implode( ', ', $roles ), $message );
 
 		$user_capabilities = bnfw_format_user_capabilities( $user_info->wp_capabilities );
 		if ( ! empty( $user_capabilities ) ) {
@@ -849,6 +937,9 @@ class BNFW_Engine {
 		foreach ( $users as $user ) {
 			if ( $this->starts_with( $user, 'role-' ) ) {
 				$user_roles[] = str_replace( 'role-', '', $user );
+			} elseif ( strpos( $user, '@' ) !== false ) {
+				$non_wp_users[] = $user;
+				continue;
 			} elseif ( absint( $user ) > 0 ) {
 				$user_ids[] = absint( $user );
 			} else {
@@ -969,6 +1060,36 @@ class BNFW_Engine {
 	}
 
 	/**
+	 * Get the lable for a user role from name.
+	 *
+	 * @param string $role_name Role name
+	 *
+	 * @return string Role Label.
+	 */
+	public function get_role_label_by_name( $role_name ) {
+		global $wp_roles;
+
+		if ( ! isset( $wp_roles->roles[ $role_name ] ) ) {
+			return '';
+		}
+
+		return translate_user_role( $wp_roles->roles[ $role_name ]['name'] );
+	}
+
+	/**
+	 * Get first image in post.
+	 *
+	 * @param mixed $post_content
+	 *
+	 * @return string
+	 */
+	protected function get_first_image($post_content) {
+		if (preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $post_content, $matches)) {
+			return $matches[1][0];
+		}
+	}
+
+	/**
 	 * Generate email headers based on the emails.
 	 *
 	 * @since 1.0
@@ -994,5 +1115,69 @@ class BNFW_Engine {
 		}
 
 		return $headers;
+	}
+
+	public function handle_user_request_email_shortcodes( $message, $setting, $email_data ) {
+		$message = $this->handle_shortcodes( $message, $setting['notification'], $email_data );
+
+		return $message;
+	}
+
+	public function handle_user_confirmed_action_email_shortcodes( $message, $setting, $email_data ) {
+		$message = $this->handle_shortcodes( $message, $setting['notification'], $email_data );
+
+		return $message;
+	}
+
+	public function handle_data_export_email_shortcodes( $message, $setting, $request_id ) {
+		$message = $this->handle_shortcodes( $message, $setting['notification'], $request_id );
+
+		return $message;
+	}
+
+	protected function confirm_action_shortcodes( $message, $extra_data ) {
+		$message = $this->data_request_shortcodes( $message, $extra_data );
+		$message = str_replace( '[request_confirmation_link]', $extra_data['confirm_url'], $message );
+		if ( isset( $extra_data['email'] ) ) {
+			$message = str_replace( '[request_email]', $extra_data['email'], $message );
+		}
+
+		if ( isset( $extra_data['user_email'] ) ) {
+			$message = str_replace( '[request_email]', $extra_data['user_email'], $message );
+		}
+
+		return $message;
+	}
+
+	protected function confirmed_action_shortcodes( $message, $extra_data ) {
+		$message = $this->data_request_shortcodes( $message, $extra_data );
+		$message = str_replace( '[data_privacy_requests_url]', $extra_data['manage_url'], $message );
+		$message = str_replace( '[request_email]', $extra_data['user_email'], $message );
+
+		return $message;
+	}
+
+	protected function data_request_shortcodes( $message, $extra_data ) {
+		$message = str_replace( '[data_request_type]', $extra_data['description'], $message );
+
+		return $message;
+	}
+
+	protected function data_export_shortcodes( $message, $request_id ) {
+		$export_file_url = get_post_meta( $request_id, '_export_file_url', true );
+		$message = str_replace( '[data_privacy_download_url]', $export_file_url, $message );
+
+		$expiration      = apply_filters( 'wp_privacy_export_expiration', 3 * DAY_IN_SECONDS );
+		$expiration_date = date_i18n( get_option( 'date_format' ), time() + $expiration );
+		$message = str_replace( '[data_privacy_download_expiry]', $expiration_date, $message );
+
+		return $message;
+	}
+
+	protected function data_erased_shortcodes( $message, $extra_data ) {
+		$message = str_replace( '[privacy_policy_url]', $extra_data['privacy_policy_url'], $message );
+		$message = str_replace( '[sitename]', $extra_data['sitename'], $message );
+
+		return $message;
 	}
 }

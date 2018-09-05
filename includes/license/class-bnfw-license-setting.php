@@ -46,7 +46,13 @@ function bnfw_render_license_page() {
 			if ( ! empty( $settings ) ) {
 				submit_button( esc_html__( 'Save License', 'bnfw' ) );
 			} else {
-				_e( '<br>You have no BNFW Premium Add-ons installed yet.<br>You can buy add-ons from the <a href="https://betternotificationsforwp.com/store/?utm_source=WP%20Admin%20Submenu%20Item%20-%20Add-on%20Licenses&amp;utm_medium=referral" target="_blank">Store</a>.<br>Once purchased, install and activate the add-on(s) like you would any other WordPress plugin. Then return here and enter your license key.', 'bnfw' );
+				$store_url = 'https://betternotificationsforwp.com/downloads/';
+
+				if ( bnfw_is_tracking_allowed() ) {
+					$store_url .= "?utm_source=WP%20Admin%20Submenu%20Item%20-%20Add-on%20Licenses&amp;utm_medium=referral";
+				}
+
+				_e( '<br>You have no BNFW Premium Add-ons installed yet.<br>You can buy add-ons from the <a href="' . $store_url . '" target="_blank">Store</a>.<br>Once purchased, install and activate the add-on(s) like you would any other WordPress plugin. Then return here and enter your license key.', 'bnfw' );
 			}
 			?>
 		</form>

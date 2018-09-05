@@ -165,11 +165,6 @@ function bnfw_format_user_capabilities( $wp_capabilities ) {
  * @return bool True if tracking is allowed, False otherwise.
  */
 function bnfw_is_tracking_allowed() {
-	if ( function_exists( 'bnfw_fs' ) ) {
-		// Since we are using Freemius this is temporarily disabled.
-		return bnfw_fs()->is_registered();
-	}
-
 	$tracking_allowed = false;
 
 	if ( get_option( 'bnfw_allow_tracking' ) == 'on' ) {

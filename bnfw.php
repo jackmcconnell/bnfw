@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.6.14
+ * Version: 1.7
  * Author: Made with Fuel
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -151,7 +151,8 @@ class BNFW {
 		add_action( 'trackback_post'            , array( $this, 'trackback_post' ) );
 		add_action( 'pingback_post'             , array( $this, 'pingback_post' ) );
 
-		add_action( 'user_register'             , array( $this, 'user_register' ) );
+		add_filter( 'wp_new_user_notification_email_admin', array( $this, 'handle_user_registered_admin_email' ), 10, 3 );
+
 		add_action( 'user_register'             , array( $this, 'welcome_email' ) );
 		add_action( 'set_user_role'             , array( $this, 'user_role_changed' ), 10, 3 );
 
@@ -168,6 +169,16 @@ class BNFW {
 		add_filter( 'email_change_email'        , array( $this, 'on_email_changed' ), 10, 2 );
 
 		add_filter( 'auto_core_update_email'    , array( $this, 'on_core_updated' ), 10, 4 );
+
+		add_filter( 'user_request_action_email_content', array( $this, 'handle_user_request_email_content' ), 10, 2 );
+		add_filter( 'user_request_action_email_subject', array( $this, 'handle_user_request_email_subject' ), 10, 3 );
+
+		add_filter( 'user_confirmed_action_email_content', array( $this, 'handle_user_confirmed_action_email_content' ), 10, 2 );
+
+		add_filter( 'wp_privacy_personal_data_email_content', array( $this, 'handle_data_export_email_content' ), 10, 2 );
+
+		add_filter( 'user_erasure_complete_email_subject', array( $this, 'handle_erasure_complete_email_subject' ), 10, 3 );
+		add_filter( 'user_confirmed_action_email_content', array( $this, 'handle_erasure_complete_email_content' ), 10, 2 );
 
 		add_filter( 'plugin_action_links'       , array( $this, 'plugin_action_links' ), 10, 4 );
 		add_action( 'shutdown'                  , array( $this, 'on_shutdown' ) );
@@ -385,17 +396,23 @@ class BNFW {
 	 * @since 1.0
 	 * @param int $comment_id
 	 */
-	function comment_post( $comment_id ) {
+	public function comment_post( $comment_id ) {
 		$the_comment = get_comment( $comment_id );
-		if ( $this->can_send_comment_notification( $the_comment ) ) {
-			$post = get_post( $the_comment->comment_post_ID );
+		$post = get_post( $the_comment->comment_post_ID );
+
+		if ( '1' !== $the_comment->comment_approved ) {
+			$notification_type = 'moderate-' . $post->post_type . '-comment';
+		} else {
 			$notification_type = 'new-comment'; // old notification name
 			if ( 'post' != $post->post_type ) {
 				$notification_type = 'comment-' . $post->post_type;
 			}
-			$this->send_notification( $notification_type, $comment_id );
+		}
 
-			// comment reply notification.
+		$this->send_notification( $notification_type, $comment_id );
+
+		// comment reply notification.
+		if ( $this->can_send_comment_notification( $the_comment ) ) {
 			if ( $the_comment->comment_parent > 0 ) {
 				$notification_type = 'reply-comment'; // old notification name
 				if ( 'post' != $post->post_type ) {
@@ -632,8 +649,23 @@ class BNFW {
 	 * @since 1.0
 	 * @param int $user_id
 	 */
-	function user_register( $user_id ) {
+	public function user_register( $user_id ) {
 		$this->send_notification( 'admin-user', $user_id );
+	}
+
+	/**
+	 * Send notification about new users to site admin.
+	 *
+	 * @since 1.7.1
+	 *
+	 * @param array   $email_data Email details.
+	 * @param WP_User $user       User object.
+	 * @param string  $blogname   Blog name.
+	 *
+	 * @return array Modified email details.
+	 */
+	public function handle_user_registered_admin_email( $email_data, $user, $blogname ) {
+		return $this->handle_filtered_data_notification( 'admin-user', $email_data, $user->ID );
 	}
 
 	/**
@@ -749,6 +781,133 @@ class BNFW {
 	}
 
 	/**
+	 * Handle user request email content.
+	 *
+	 * @param string $content Content.
+	 * @param array $email_data Email data.
+	 *
+	 * @return string Modified content.
+	 */
+	public function handle_user_request_email_content( $content, $email_data ) {
+		$field = 'message';
+
+		switch ( $email_data['description'] ) {
+			case 'Export Personal Data':
+				$notification_name = 'ca-export-data';
+				$content           = $this->handle_user_request_notification( $notification_name, $field, $email_data );
+				break;
+			case 'Erase Personal Data':
+				$notification_name = 'ca-erase-data';
+				$content           = $this->handle_user_request_notification( $notification_name, $field, $email_data );
+				break;
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Handle user request email subject.
+	 *
+	 * @param string $subject    Subject
+	 * @param string $blogname   Blog name
+	 * @param array  $email_data Email data.
+	 *
+	 * @return string Modified subject.
+	 */
+	public function handle_user_request_email_subject( $subject, $blogname, $email_data ) {
+		$field = 'subject';
+
+		switch ( $email_data['description'] ) {
+			case 'Export Personal Data':
+				$notification_name           = 'ca-export-data';
+				$subject = $this->handle_user_request_notification( $notification_name, $field, $email_data );
+				break;
+			case 'Erase Personal Data':
+				$notification_name = 'ca-erase-data';
+				$content           = $this->handle_user_request_notification( $notification_name, $field, $email_data );
+				break;
+		}
+
+		return $subject;
+	}
+
+	/**
+	 * Handle user confirmed action email content.
+	 *
+	 * @param string $content    Content.
+	 * @param array  $email_data Email data.
+	 *
+	 * @return string Modified content.
+	 */
+	public function handle_user_confirmed_action_email_content( $content, $email_data ) {
+		$field = 'message';
+
+		switch ( $email_data['description'] ) {
+			case 'Export Personal Data':
+				$notification_name = 'uc-export-data';
+				$content           = $this->handle_user_confirmed_action_notification( $notification_name, $field, $email_data );
+				break;
+			case 'Erase Personal Data':
+				$notification_name = 'uc-erase-data';
+				$content           = $this->handle_user_confirmed_action_notification( $notification_name, $field, $email_data );
+				break;
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Handle data exported email content.
+	 *
+	 * @param string $content Content.
+	 * @param int    $request_id
+	 *
+	 * @return string Modified content.
+	 */
+	public function handle_data_export_email_content( $content, $request_id ) {
+		$field = 'message';
+		$notification_name = 'data-export';
+
+		$notifications = $this->notifier->get_notifications( $notification_name );
+		if ( count( $notifications ) > 0 ) {
+			// Ideally there should be only one notification for this type.
+			// If there are multiple notification then we will read data about only the last one
+			$setting = $this->notifier->read_settings( end( $notifications )->ID );
+
+			return $this->engine->handle_data_export_email_shortcodes( $setting[ $field ], $setting, $request_id );
+		}
+
+		return $content;
+	}
+
+	public function handle_erasure_complete_email_subject( $subject, $sitename, $email_data ) {
+		return $this->handle_erasure_complete_email_notification( 'subject', $subject, $email_data );
+	}
+
+	public function handle_erasure_complete_email_content( $content, $email_data ) {
+		if ( isset( $email_data['privacy_policy_url'] ) ) {
+			return $this->handle_erasure_complete_email_notification( 'message', $content, $email_data );
+		}
+
+		return $content;
+	}
+
+	protected function handle_erasure_complete_email_notification( $field, $content, $email_data ) {
+		$notification_name = 'data-erased';
+
+		$notifications = $this->notifier->get_notifications( $notification_name );
+		if ( count( $notifications ) > 0 ) {
+			// Ideally there should be only one notification for this type.
+			// If there are multiple notification then we will read data about only the last one
+			$setting = $this->notifier->read_settings( end( $notifications )->ID );
+
+			return $this->engine->handle_shortcodes( $setting[ $field ], $notification_name, $email_data );
+		}
+
+		return $content;
+	}
+
+	/**
 	 * Send notification emails on shutdown.
 	 */
 	public function on_shutdown() {
@@ -764,10 +923,50 @@ class BNFW {
 			}
 		}
 	}
-}
 
-if ( ! is_multisite() ) {
-	require_once 'includes/freemius.php';
+	/**
+	 * Handle user request notification.
+	 *
+	 * @param string $notification_name Notification name.
+	 * @param string $field             Field name.
+	 * @param array  $email_data        Email data.
+	 *
+	 * @return string Content.
+	 */
+	protected function handle_user_request_notification( $notification_name, $field, $email_data ) {
+		$notifications = $this->notifier->get_notifications( $notification_name );
+		if ( count( $notifications ) > 0 ) {
+			// Ideally there should be only one notification for this type.
+			// If there are multiple notification then we will read data about only the last one
+			$setting = $this->notifier->read_settings( end( $notifications )->ID );
+
+			return $this->engine->handle_user_request_email_shortcodes( $setting[ $field ], $setting, $email_data );
+		}
+
+		return '';
+	}
+
+	/**
+	 * Handle user confirmed action notification.
+	 *
+	 * @param string $notification_name Notification name.
+	 * @param string $field             Field name.
+	 * @param array  $email_data        Email data.
+	 *
+	 * @return string Content.
+	 */
+	protected function handle_user_confirmed_action_notification( $notification_name, $field, $email_data ) {
+		$notifications = $this->notifier->get_notifications( $notification_name );
+		if ( count( $notifications ) > 0 ) {
+			// Ideally there should be only one notification for this type.
+			// If there are multiple notification then we will read data about only the last one
+			$setting = $this->notifier->read_settings( end( $notifications )->ID );
+
+			return $this->engine->handle_user_confirmed_action_email_shortcodes( $setting[ $field ], $setting, $email_data );
+		}
+
+		return '';
+	}
 }
 
 /* ------------------------------------------------------------------------ *

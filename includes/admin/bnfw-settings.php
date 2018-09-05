@@ -59,7 +59,7 @@ function bnfw_menu_item_links() {
 
 	if ( current_user_can( 'bnfw' ) ) {
 		$doc_url = 'https://betternotificationsforwp.com/documentation/';
-		$store_url = 'https://betternotificationsforwp.com/store/';
+		$store_url = 'https://betternotificationsforwp.com/downloads/';
 		$support_url = 'https://betternotificationsforwp.com/priority-support/';
 
 		if ( bnfw_is_tracking_allowed() ) {
@@ -188,21 +188,21 @@ function bnfw_general_options() {
 	);
 
 	// Register - Allow tracking setting
-//	register_setting(
-//		'bnfw-settings',
-//		'bnfw_allow_tracking'
-//	);
+	register_setting(
+		'bnfw-settings',
+		'bnfw_allow_tracking'
+	);
 
-//	add_settings_field(
-//		'bnfw_allow_tracking',           // Field ID
-//		esc_html__( 'Allow Usage Tracking?', 'bnfw' ),  // Label to the left
-//		'bnfw_render_allow_tracking',  // Name of function that renders options on the page
-//		'bnfw-settings',                // Page to show on
-//		'bnfw_general_options_section', // Associate with which settings section?
-//		array(
-//			esc_html__( 'Allow Better Notifications for WordPress to anonymously track how this plugin is used and help make the plugin better. Opt-in to tracking and the mailing list and instantly receive a coupon code worth 10% off any BNFW add-on via email. You can opt-out and unsubscribe at any time.', 'bnfw' )
-//		)
-//	);
+	add_settings_field(
+		'bnfw_allow_tracking',           // Field ID
+		esc_html__( 'Allow Usage Tracking?', 'bnfw' ),  // Label to the left
+		'bnfw_render_allow_tracking',  // Name of function that renders options on the page
+		'bnfw-settings',                // Page to show on
+		'bnfw_general_options_section', // Associate with which settings section?
+		array(
+			esc_html__( 'Allow Better Notifications for WordPress to anonymously track how this plugin is used and help make the plugin better.', 'bnfw' )
+		)
+	);
 }
 
 add_action( 'admin_init', 'bnfw_general_options', 10 );

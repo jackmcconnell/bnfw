@@ -142,6 +142,8 @@ class BNFW_Notification {
 	 * @param WP_Post $post
 	 */
 	public function render_settings_meta_box( $post ) {
+		global $wp_version;
+
 		wp_nonce_field( self::POST_TYPE, self::POST_TYPE . '_nonce' );
 
 		$setting = $this->read_settings( $post->ID );
@@ -168,6 +170,16 @@ class BNFW_Notification {
 							<option
 								value="core-updated" <?php selected( 'core-updated', $setting['notification'] ); ?>><?php esc_html_e( 'WordPress Core Automatic Background Updates', 'bnfw' ); ?></option>
 
+							<?php if ( version_compare( $wp_version, '4.9.6' ) >= 0 ) : ?>
+								<option value="uc-export-data" <?php selected( 'uc-export-data', $setting['notification'] ); ?>>
+									<?php esc_html_e( 'Privacy - Confirm Action: Export Data Request - For Admin', 'bnfw' ); ?>
+								</option>
+
+								<option value="uc-erase-data" <?php selected( 'uc-erase-data', $setting['notification'] ); ?>>
+									<?php esc_html_e( 'Privacy - Confirm Action: Erase Data Request - For Admin', 'bnfw' ); ?>
+								</option>
+							<?php endif; ?>
+
 							<?php do_action( 'bnfw_after_default_notifications', $setting ); ?>
 						</optgroup>
 						<?php do_action( 'bnfw_after_default_notifications_optgroup', $setting ); ?>
@@ -188,6 +200,24 @@ class BNFW_Notification {
 							<option
 								value="reply-comment" <?php selected( 'reply-comment', $setting['notification'] ); ?>><?php esc_html_e( 'Comment Reply', 'bnfw' ); ?></option>
 
+							<?php if ( version_compare( $wp_version, '4.9.6' ) >= 0 ) : ?>
+								<option value="ca-export-data" <?php selected( 'ca-export-data', $setting['notification'] ); ?>>
+									<?php esc_html_e( 'Privacy - Confirm Action: Export Data Request - For User', 'bnfw' ); ?>
+								</option>
+
+								<option value="ca-erase-data" <?php selected( 'ca-erase-data', $setting['notification'] ); ?>>
+									<?php esc_html_e( 'Privacy - Confirm Action: Erase Data Request - For User', 'bnfw' ); ?>
+								</option>
+
+								<option value="data-export" <?php selected( 'data-export', $setting['notification'] ); ?>>
+									<?php esc_html_e( 'Privacy - Data Export - For User', 'bnfw' ); ?>
+								</option>
+
+								<option value="data-erased" <?php selected( 'data-erased', $setting['notification'] ); ?>>
+									<?php esc_html_e( 'Privacy - Data Erased - For User', 'bnfw' ); ?>
+								</option>
+							<?php endif; ?>
+
 							<?php do_action( 'bnfw_after_transactional_notifications', $setting ); ?>
 						</optgroup>
 						<?php do_action( 'bnfw_after_transactional_notifications_optgroup', $setting ); ?>
@@ -203,8 +233,12 @@ class BNFW_Notification {
 								value="private-post" <?php selected( 'private-post', $setting['notification'] ); ?>><?php esc_html_e( 'New Private Post', 'bnfw' ); ?></option>
 							<option
 								value="future-post" <?php selected( 'future-post', $setting['notification'] ); ?>><?php esc_html_e( 'Post Scheduled', 'bnfw' ); ?></option>
-							<option
-								value="new-comment" <?php selected( 'new-comment', $setting['notification'] ); ?>><?php esc_html_e( 'New Comment / Awaiting Moderation', 'bnfw' ); ?></option>
+							<option value="new-comment" <?php selected( 'new-comment', $setting['notification'] ); ?>>
+								<?php esc_html_e( 'New Comment', 'bnfw' ); ?>
+							</option>
+							<option value="moderate-post-comment" <?php selected( 'moderate-post-comment', $setting['notification'] ); ?>>
+								<?php esc_html_e( 'New Comment Awaiting Moderation', 'bnfw' ); ?>
+							</option>
 							<option
 								value="newterm-category" <?php selected( 'newterm-category', $setting['notification'] ); ?>><?php esc_html_e( 'New Category', 'bnfw' ); ?></option>
 							<option
@@ -230,6 +264,9 @@ class BNFW_Notification {
 								value="future-page" <?php selected( 'future-page', $setting['notification'] ); ?>><?php esc_html_e( 'Page Scheduled', 'bnfw' ); ?></option>
 							<option
 								value="comment-page" <?php selected( 'comment-page', $setting['notification'] ); ?>><?php esc_html_e( 'Page - New Comment', 'bnfw' ); ?></option>
+							<option value="moderate-page-comment" <?php selected( 'moderate-page-comment', $setting['notification'] ); ?>>
+								<?php esc_html_e( 'Page - New Comment Awaiting Moderation', 'bnfw' ); ?>
+							</option>
 							<option
 								value="commentreply-page" <?php selected( 'commentreply-page', $setting['notification'] ); ?>><?php esc_html_e( 'Page - Comment Reply', 'bnfw' ); ?></option>
 							<?php do_action( 'bnfw_after_notification_options', 'page', 'Page', $setting ); ?>
@@ -261,6 +298,9 @@ class BNFW_Notification {
 										value="future-<?php echo esc_attr( $type ); ?>" <?php selected( 'future-' . $type, $setting['notification'] ); ?>><?php echo "'$label' ", esc_html__( 'Scheduled', 'bnfw' ); ?></option>
 									<option
 										value="comment-<?php echo esc_attr( $type ); ?>" <?php selected( 'comment-' . $type, $setting['notification'] ); ?>><?php echo "'$label' ", esc_html__( 'New Comment', 'bnfw' ); ?></option>
+									<option value="moderate-<?php echo esc_attr( $type ); ?>-comment" <?php selected( 'moderate-' . $type . '-comment', $setting['notification'] ); ?>>
+										<?php echo "'$label' - ", esc_html__( 'New Comment Awaiting Moderation', 'bnfw' ); ?>
+									</option>
 									<option
 										value="commentreply-<?php echo esc_attr( $type ); ?>" <?php selected( 'commentreply-' . $type, $setting['notification'] ); ?>><?php echo "'$label' ", esc_html__( 'Comment Reply', 'bnfw' ); ?></option>
 									<?php do_action( 'bnfw_after_notification_options', $type, $label, $setting ); ?>
@@ -966,6 +1006,7 @@ foreach ( $taxs as $tax ) {
 		$columns['disabled'] = esc_html__( 'Enabled?', 'bnfw' );
 		$columns['subject']  = esc_html__( 'Subject', 'bnfw' );
 		$columns['users']    = esc_html__( 'User Roles / Users', 'bnfw' );
+		$columns['excluded'] = esc_html__( 'Excluded User Roles / Users', 'bnfw' );
 
 		return $columns;
 	}
@@ -1002,6 +1043,11 @@ foreach ( $taxs as $tax ) {
 				}
 
 				break;
+			case 'excluded':
+				$excluded_users = $this->get_names_from_users( $setting['exclude-users'] );
+				echo implode( ', ', $excluded_users );
+
+				break;
 		}
 
 		/**
@@ -1029,6 +1075,8 @@ foreach ( $taxs as $tax ) {
 		foreach ( $users as $user ) {
 			if ( $this->starts_with( $user, 'role-' ) ) {
 				$user_roles[] = ucfirst( str_replace( 'role-', '', $user ) );
+			} elseif ( strpos( $user, '@' ) !== false ) {
+				$emails[] = $user;
 			} elseif ( absint( $user ) > 0 ) {
 				$user_ids[] = absint( $user );
 			} else {
@@ -1058,6 +1106,9 @@ foreach ( $taxs as $tax ) {
 		switch ( $slug ) {
 			case 'new-comment':
 				$name = esc_html__( 'New Comment', 'bnfw' );
+				break;
+			case 'moderate-comment':
+				$name = esc_html__( 'New Comment Awaiting Moderation', 'bnfw' );
 				break;
 			case 'new-trackback':
 				$name = esc_html__( 'New Trackback', 'bnfw' );
@@ -1125,6 +1176,24 @@ foreach ( $taxs as $tax ) {
 			case 'newterm-post_tag':
 				$name = esc_html__( 'New Tag', 'bnfw' );
 				break;
+			case 'ca-export-data':
+				$name = esc_html__( 'Privacy – Confirm Action: Export Data Request – For User', 'bnfw' );
+				break;
+			case 'ca-erase-data':
+				$name = esc_html__( 'Privacy – Confirm Action: Erase Data Request – For User', 'bnfw' );
+				break;
+			case 'uc-export-data':
+				$name = esc_html__( 'Privacy - Confirm Action: Export Data Request - For Admin', 'bnfw' );
+				break;
+			case 'uc-erase-data':
+				$name = esc_html__( 'Privacy - Confirm Action: Erase Data Request - For Admin', 'bnfw' );
+				break;
+			case 'data-export':
+				$name = esc_html__( 'Privacy - Data Export - For User', 'bnfw' );
+				break;
+			case 'data-erased':
+				$name = esc_html__( 'Privacy - Data Erased - For User', 'bnfw' );
+				break;
 			default:
 				$splited  = explode( '-', $slug );
 				$label    = $splited[1];
@@ -1152,6 +1221,9 @@ foreach ( $taxs as $tax ) {
 						break;
 					case 'comment':
 						$name = $label . esc_html__( ' Comment', 'bnfw' );
+						break;
+					case 'moderate':
+						$name = $label . ' - ' . esc_html__( 'New Comment Awaiting Moderation', 'bnfw' );
 						break;
 					case 'commentreply':
 						$name = $label . esc_html__( ' Comment Reply', 'bnfw' );

@@ -18,7 +18,7 @@ jQuery(document).ready(function($) {
     		$( '#current-user' ).show();
     	}
 
-	    if ( 'new-comment' === $( '#notification' ).val() ) {
+	    if ( 'new-comment' === $( '#notification' ).val() || 'moderate-comment' === $( '#notification' ).val() ) {
 		    $( '#current-user' ).show();
 	    }
     }
@@ -60,6 +60,9 @@ jQuery(document).ready(function($) {
 		if ( 'reply-comment' === notification || notification.startsWith( 'commentreply-' ) ||
 				'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
 				'password-changed' === notification || 'email-changed' === notification || 'user-role' === notification ||
+				'ca-export-data' === notification || 'ca-erase-data' === notification ||
+				'uc-export-data' === notification || 'uc-erase-data' === notification ||
+				'data-export' === notification || 'data-erased' === notification ||
 				'multisite-new-user-invited' === notification || 'multisite-new-user-created' === notification || 'multisite-new-user-welcome' === notification ||
 				'multisite-site-registered' === notification || 'multisite-site-welcome' === notification ||
 				'multisite-site-created' === notification || 'multisite-site-deleted' === notification ||
@@ -71,14 +74,17 @@ jQuery(document).ready(function($) {
 
 			$( '#subject-wrapper' ).show();
 			if ( 'multisite-new-user-created' === notification || 'multisite-site-created' === notification || 'multisite-site-deleted' === notification ||
-					'multisite-site-admin-email-change-attempted' === notification  || 'multisite-network-admin-email-change-attempted' === notification ) {
+					'multisite-site-admin-email-change-attempted' === notification  || 'multisite-network-admin-email-change-attempted' === notification ||
+					'uc-export-data' === notification || 'uc-erase-data' === notification || 'data-export' === notification ||
+					'ca-export-data' === notification || 'ca-erase-data' === notification ) {
 
 				$( '#subject-wrapper' ).hide();
 			}
-		} else if ( 'new-comment' === notification || 'new-trackback' === notification || 'new-pingback' === notification ||
+		} else if ( 'new-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ||
 				'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
 
-			$( '#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user, #post-author' ).show();
+			$('#post-author').hide();
+			$('#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user').show();
 			toggle_fields();
 			toggle_users();
 			$( '#user-password-msg' ).hide();
@@ -118,6 +124,9 @@ jQuery(document).ready(function($) {
 		if ( 'reply-comment' === notification || notification.startsWith( 'commentreply-' ) ||
 			'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
 			'password-changed' === notification || 'email-changed' === notification || 'user-role' === notification ||
+			'ca-export-data' === notification || 'ca-erase-data' === notification ||
+			'uc-export-data' === notification || 'uc-erase-data' === notification ||
+			'data-export' === notification || 'data-erased' === notification ||
 			'multisite-new-user-invited' === notification || 'multisite-new-user-created' === notification || 'multisite-new-user-welcome' === notification ||
 			'multisite-site-registered' === notification || 'multisite-site-welcome' === notification ||
 			'multisite-site-created' === notification || 'multisite-site-deleted' === notification ||
@@ -129,11 +138,14 @@ jQuery(document).ready(function($) {
 
 			$( '#subject-wrapper' ).show();
 			if ( 'multisite-new-user-created' === notification || 'multisite-site-created' === notification || 'multisite-site-deleted' === notification ||
-					'multisite-site-admin-email-change-attempted' === notification  || 'multisite-network-admin-email-change-attempted' === notification ) {
+					'multisite-site-admin-email-change-attempted' === notification  || 'multisite-network-admin-email-change-attempted' === notification ||
+					'uc-export-data' === notification || 'uc-erase-data' === notification || 'data-export' === notification ||
+					'ca-export-data' === notification || 'ca-erase-data' === notification ) {
 
 				$( '#subject-wrapper' ).hide();
 			}
-		} else if ( 'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
+		} else if ( 'new-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ||
+				 'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
 			$('#post-author').hide();
 			$('#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user').show();
 			$('#user-password-msg').hide();
@@ -168,7 +180,7 @@ jQuery(document).ready(function($) {
 	// Validate before saving notification
 	$( '#publish' ).click(function() {
 		if ( $('#users').is(':visible') ) {
-			if ( null === $(BNFW.validation_element).val() ) {
+			if ( null === $(BNFW.validation_element).val() && $('#only-post-author:checked').length <= 0 ) {
 				$('#bnfw_error').remove();
 				$('.wrap h1').after('<div class="error" id="bnfw_error"><p>' + BNFW.empty_user + '</p></div>');
 				return false;
@@ -218,7 +230,10 @@ jQuery(document).ready(function($) {
 					case 'private':
 					case 'future':
 					case 'comment':
-						notification_slug = splited[0] + '-post';
+						notification_slug = splited[0] + '-comment';
+						break;
+					case 'moderate':
+						notification_slug = splited[0] + 'moderate-comment';
 						break;
 					case 'commentreply':
 						notification_slug = splited[0] + '-post';
@@ -255,6 +270,7 @@ jQuery(document).ready(function($) {
 
 		switch ( notification ) {
 			case 'new-comment':
+			case 'moderate-comment':
 			case 'new-trackback':
 			case 'new-pingback':
 			case 'reply-comment':
@@ -281,7 +297,7 @@ jQuery(document).ready(function($) {
 
 			case 'admin-password-changed':
 				subject = '[[global_site_title]] Password Changed';
-				body = 'Password changed for user: [user_login]: <br>';
+				body = 'Password changed for user: [user_login] <br>';
 
 				break;
 
@@ -297,10 +313,10 @@ jQuery(document).ready(function($) {
 
 			case 'password-changed':
 				subject = '[[global_site_title]] Notice of Password Change';
-				body = 'Hi [user_nicename], <br>' +
+				body = 'Hi [email_user_login], <br>' +
 					'<br>' +
 					'This notice confirms that your password was changed on [global_site_title].' +
-					'<br>' +
+					'<br><br>' +
 					'If you did not change your password, please contact the Site Administrator at [admin_email] <br>' +
 					'<br>' +
 					'This email has been sent to [global_user_email]' +
@@ -314,7 +330,7 @@ jQuery(document).ready(function($) {
 				subject = '[[global_site_title]] Notice of Email Change';
 				body = 'Hi [user_nicename], <br>' +
 					'<br>' +
-					'This notice confirms that your email address was changed to [user_email].' +
+					'This notice confirms that your email address on [global_site_title] was changed to [user_email].' +
 					'<br>' +
 					'If you did not change your email, please contact the Site Administrator at [admin_email] <br>' +
 					'<br>' +
@@ -342,6 +358,171 @@ jQuery(document).ready(function($) {
 
 				break;
 
+			case 'ca-export-data':
+				subject = '[[global_site_title]] Confirm Action: Export Personal Data';
+				body = 'Howdy,' +
+					'<br>' +
+					'<br>' +
+				'A request has been made to perform the following action on your account:' +
+					'<br>' +
+					'<br>' +
+				'[data_request_type]' +
+					'<br>' +
+					'<br>' +
+				'To confirm this, please click on the following link:' +
+					'<br>' +
+					'<br>' +
+				'[request_confirmation_link]' +
+					'<br>' +
+					'<br>' +
+				'You can safely ignore and delete this email if you do not want to' +
+					'<br>' +
+				'take this action.' +
+					'<br>' +
+					'<br>' +
+				'This email has been sent to [global_user_email].' +
+					'<br>' +
+					'<br>' +
+				'Regards,' +
+					'<br>' +
+					'All at [global_site_title]' +
+					'<br>' +
+				'[global_site_url]';
+
+				break;
+
+			case 'ca-erase-data':
+				subject = '[[global_site_title]] Confirm Action: Erase Personal Data';
+				body = 'Howdy,' +
+					'<br>' +
+					'<br>' +
+					'A request has been made to perform the following action on your account:' +
+					'<br>' +
+					'<br>' +
+					'[data_request_type]' +
+					'<br>' +
+					'<br>' +
+					'To confirm this, please click on the following link:' +
+					'<br>' +
+					'<br>' +
+					'[request_confirmation_link]' +
+					'<br>' +
+					'<br>' +
+					'You can safely ignore and delete this email if you do not want to' +
+					'<br>' +
+					'take this action.' +
+					'<br>' +
+					'<br>' +
+					'This email has been sent to [global_user_email].' +
+					'<br>' +
+					'<br>' +
+					'Regards,' +
+					'<br>' +
+					'All at [global_site_title]' +
+					'<br>' +
+					'[global_site_url]';
+
+				break;
+
+			case 'uc-export-data':
+				subject = 'Action Confirmed';
+
+				body = 'Howdy,' +
+					'<br>' +
+					'<br>' +
+					'A user data privacy request has been confirmed on [global_site_title]:' +
+					'<br>' +
+					'<br>' +
+					'User: [email_user_email]' +
+					'<br>' +
+					'Request: [data_request_type]' +
+					'<br>' +
+					'<br>' +
+					'You can view and manage these data privacy requests here:' +
+					'<br>' +
+					'<br>' +
+					'[data_privacy_requests_url]' +
+					'<br>' +
+					'<br>' +
+					'Regards,' +
+					'<br>' +
+					'All at [global_site_title]' +
+					'<br>' +
+					'[global_site_url]';
+				break;
+
+			case 'uc-erase-data':
+				subject = 'Action Confirmed';
+
+				body = 'Howdy,' +
+					'<br>' +
+					'<br>' +
+					'A user data privacy request has been confirmed on [global_site_title]:' +
+					'<br>' +
+					'<br>' +
+					'User: [email_user_email]' +
+					'<br>' +
+					'Request: [data_request_type]' +
+					'<br>' +
+					'<br>' +
+					'You can view and manage these data privacy requests here:' +
+					'<br>' +
+					'<br>' +
+					'[data_privacy_requests_url]' +
+					'<br>' +
+					'<br>' +
+					'Regards,' +
+					'<br>' +
+					'All at [global_site_title]' +
+					'<br>' +
+					'[global_site_title]';
+				break;
+
+			case 'data-export':
+				subject = 'Personal Data Export';
+
+				body = 'Howdy,' +
+					'<br>' +
+					'<br>' +
+					'Your request for an export of personal data has been completed. You may' +
+					'<br>' +
+					'download your personal data by clicking on the link below. For privacy' +
+					'<br>' +
+					'and security, we will automatically delete the file on [data_privacy_download_expiry],' +
+					'<br>' +
+					'so please download it before then.' +
+					'<br>' +
+					'<br>' +
+					'[data_privacy_download_url]' +
+					'<br>' +
+					'<br>' +
+					'This email has been sent to [global_user_email].' +
+					'<br>' +
+					'<br>' +
+					'Regards,' +
+					'<br>' +
+					'All at [global_site_title]' +
+					'<br>' +
+					'[global_site_url]';
+				break;
+
+			case 'data-erased':
+				subject = '[sitename] Erasure Request Fulfilled';
+
+				body = 'Howdy,' +
+					'<br>' +
+					'<br>' +
+					'Your request to erase your personal data on [sitename] has been completed.' +
+					'<br>' +
+					'If you have any follow-up questions or concerns, please contact the site administrator.' +
+					'<br>' +
+					'<br>' +
+					'Regards,' +
+					'<br>' +
+					'All at [global_site_title]' +
+					'<br>' +
+					'[global_site_url]';
+				break;
 			default:
 				alert( "This is a new notification that is not available in WordPress by default and has been added by Better Notifications for WordPress. As such, it doesn't have any default content." );
 				break;
