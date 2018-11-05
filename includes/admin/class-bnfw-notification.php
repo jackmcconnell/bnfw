@@ -938,28 +938,35 @@ foreach ( $taxs as $tax ) {
 	 *
 	 * @return array WP_Post objects
 	 */
-	public function get_notifications( $types, $exclude_disabled = true ) {
+	public function get_notifications( $types = array(), $exclude_disabled = true ) {
 		if ( ! is_array( $types ) ) {
 			$types = array( $types );
 		}
 
 		$args = array(
-			'post_type'  => self::POST_TYPE,
-			'meta_query' => array(
-				array(
-					'key'     => self::META_KEY_PREFIX . 'notification',
-					'value'   => $types,
-					'compare' => 'IN',
-				),
-			),
+			'post_type' => self::POST_TYPE,
 		);
 
+		$meta_query = array();
+
+		if ( ! empty( $types ) ) {
+			$meta_query[] = array(
+				'key'     => self::META_KEY_PREFIX . 'notification',
+				'value'   => $types,
+				'compare' => 'IN',
+			);
+		}
+
 		if ( $exclude_disabled ) {
-			$args['meta_query'][] = array(
+			$meta_query[] = array(
 				'key'     => self::META_KEY_PREFIX . 'disabled',
 				'value'   => 'true',
 				'compare' => '!=',
 			);
+		}
+
+		if ( ! empty( $meta_query ) ) {
+			$args['meta_query'] = $meta_query;
 		}
 
 		$args['posts_per_page'] = -1;

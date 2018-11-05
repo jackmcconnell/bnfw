@@ -66,6 +66,8 @@ class BNFW_Engine {
 				$headers[] = 'Content-type: text/plain';
 			}
 
+			$emails = apply_filters( 'bnfw_emails', $emails, $setting );
+
 			if ( isset( $emails['to'] ) && is_array( $emails['to'] ) ) {
 				foreach ( $emails['to'] as $email ) {
 					wp_mail( $email, stripslashes( $this->handle_global_user_shortcodes( $subject, $email ) ), $this->handle_global_user_shortcodes( $message, $email ), $headers );
@@ -824,11 +826,14 @@ class BNFW_Engine {
 	 * Get the list of emails from the notification settings.
 	 *
 	 * @since 1.0
+	 *
 	 * @param array $setting Notification settings
-	 * @param int $id
+	 * @param int   $id
+	 * @param bool  $process_post_authors
+	 *
 	 * @return array Emails
 	 */
-	public function get_emails( $setting, $id ) {
+	public function get_emails( $setting, $id, $process_post_authors = true ) {
 		global $current_user;
 
 		$emails = array();
@@ -851,9 +856,9 @@ class BNFW_Engine {
 		 */
 		$emails['to'] = apply_filters( 'bnfw_to_emails', $to_emails, $setting, $id );
 
-		if ( 'true' === $setting['only-post-author'] ) {
-
+		if ( $process_post_authors && 'true' === $setting['only-post-author'] ) {
 			$post_id = $id;
+
 			if ( bnfw_is_comment_notification( $setting['notification'] ) ) {
 				$comment = get_comment( $id );
 				$post_id = $comment->comment_post_ID;
@@ -955,7 +960,7 @@ class BNFW_Engine {
 		$emails_from_user_roles = $this->get_emails_from_role( $user_roles, $exclude );
 
 		if ( ! empty( $setting ) ) {
-			if ( $this->starts_with( $setting['notification'], 'comment-' ) ) {
+			if ( $this->starts_with( $setting['notification'], 'comment-' ) || $this->starts_with( $setting['notification'], 'moderate-' ) ) {
 				// for new comment notifications, we need to use post id instead of comment id.
 				$post_id = bnfw_get_post_id_from_comment( $post_id );
 			}

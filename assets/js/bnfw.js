@@ -197,6 +197,8 @@ jQuery(document).ready(function($) {
 
 		switch( notification ) {
 			case 'new-comment':
+			case 'moderate-comment':
+			case 'moderate-post-comment':
 			case 'new-trackback':
 			case 'new-pingback':
 			case 'reply-comment':
@@ -225,15 +227,25 @@ jQuery(document).ready(function($) {
 				splited = notification.split( '-' );
 				switch( splited[0] ) {
 					case 'new':
+						notification_slug = 'new-post';
+						break;
 					case 'update':
+						notification_slug = 'update-post';
+						break;
 					case 'pending':
+						notification_slug = 'pending-post';
+						break;
 					case 'private':
+						notification_slug = 'private-post';
+						break;
 					case 'future':
+						notification_slug = 'future-post';
+						break;
 					case 'comment':
-						notification_slug = splited[0] + '-comment';
+						notification_slug = 'new-comment';
 						break;
 					case 'moderate':
-						notification_slug = splited[0] + 'moderate-comment';
+						notification_slug = 'moderate-comment';
 						break;
 					case 'commentreply':
 						notification_slug = splited[0] + '-post';

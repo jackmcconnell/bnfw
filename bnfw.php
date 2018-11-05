@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.7
+ * Version: 1.7.1
  * Author: Made with Fuel
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -401,15 +401,19 @@ class BNFW {
 		$post = get_post( $the_comment->comment_post_ID );
 
 		if ( '1' !== $the_comment->comment_approved ) {
-			$notification_type = 'moderate-' . $post->post_type . '-comment';
+			if ( $this->can_send_comment_notification( $the_comment ) ) {
+				$notification_type = 'moderate-' . $post->post_type . '-comment';
+				$this->send_notification( $notification_type, $comment_id );
+			}
 		} else {
 			$notification_type = 'new-comment'; // old notification name
+
 			if ( 'post' != $post->post_type ) {
 				$notification_type = 'comment-' . $post->post_type;
 			}
-		}
 
-		$this->send_notification( $notification_type, $comment_id );
+			$this->send_notification( $notification_type, $comment_id );
+		}
 
 		// comment reply notification.
 		if ( $this->can_send_comment_notification( $the_comment ) ) {

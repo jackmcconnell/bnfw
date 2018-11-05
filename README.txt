@@ -5,7 +5,7 @@ Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC,
 Requires at least: 4.0
 Tested up to: 4.9.8
 Requires PHP: 5.6
-Stable tag: 1.7
+Stable tag: 1.7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,6 +25,8 @@ You want all the users in the Editor role to be notified via email when a new po
 
 = Premium Add-ons =
 Power-up your notifications using add-ons:
+
+[Subscriptions (GDPR Compliancy)](https://betternotificationsforwp.com/downloads/subscriptions-gdpr/) - Allow users to manage their subscriptions for BNFW notifications.
 
 [Conditional Notifications](https://betternotificationsforwp.com/downloads/conditional-notifications/) - Limit certain notifications depending on which categories, tags, post formats, or terms you choose.
 
@@ -52,6 +54,8 @@ The notifications that are currently available to use are:
 * Password Changed - For Admin
 * User Role Changed - For Admin
 * WordPress Core Automatic Background Updates
+* Privacy – Confirm Action: Export Data Request – For Admin
+* Privacy – Confirm Action: Erase Data Request – For Admin
 
 **Transactional**
 
@@ -59,9 +63,13 @@ The notifications that are currently available to use are:
 * New User - Post-registration Email
 * User Lost Password - For User
 * Password Changed - For User
-* User Email Changed - For Admin
+* User Email Changed - For User
 * User Role Changed - For User
 * Comment Reply
+* Privacy – Confirm Action: Export Data Request – For User
+* Privacy – Confirm Action: Erase Data Request – For User
+* Privacy – Data Export – For User
+* Privacy – Data Erased – For User
 * Profile Builder – Approval Request for Admin ([Profile Builder Add-on](https://betternotificationsforwp.com/downloads/profile-builder/))
 * Profile Builder – Email Confirmation ([Profile Builder Add-on](https://betternotificationsforwp.com/downloads/profile-builder/))
 * Profile Builder – Account Approved ([Profile Builder Add-on](https://betternotificationsforwp.com/downloads/profile-builder/))
@@ -75,7 +83,8 @@ The notifications that are currently available to use are:
 * Post Pending Review
 * New Private Post
 * Post Scheduled
-* New Comment / Comment Awaiting Moderation
+* New Comment
+* New Comment Awaiting Moderation
 * Post - Custom Field Updated ([Custom Fields Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
 * Post - Update Reminder ([Reminders Add-on](https://betternotificationsforwp.com/downloads/update-reminder/))
 * New Trackback
@@ -89,6 +98,7 @@ The notifications that are currently available to use are:
 * New Private Page
 * Page Scheduled
 * Page - New Comment
+* Page - New Comment Awaiting Moderation
 * Page - Comment Reply
 * Page - Custom Field Updated ([Custom Fields Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
 * Page - Update Reminder ([Reminders Add-on](https://betternotificationsforwp.com/downloads/update-reminder/))
@@ -198,6 +208,12 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 
 == Changelog ==
+
+= 1.7.1 - 5th November 2018 =
+* New: Full support for the new [Subscriptions (GDPR Compliancy)](https://betternotificationsforwp.com/downloads/subscriptions-gdpr/) add-on.
+* Fixed: Comments marked as SPAM were triggering the 'New Comment Awaiting Moderation' notification.
+* Fixed: An issue relating to the 'New Comment Awaiting Moderation' notification not saving when used in conjunction with the Send To Any Email and Custom Fields add-ons.
+* Fixed: A couple of minor javascript errors relating to BNFW add-ons.
 
 = 1.7 - 5th September 2018 =
 * A huge update packed full of new features and bug fixes, especially for those that like privacy and comment notifications!
@@ -332,7 +348,7 @@ Fixed: When a 'Lost Password – For User' notification had been set-up but disa
 * New: Notifications for privately published posts / pages / custom post types.
 * New: Notification and accompanying shortcode for customising WordPress Core Automatic Background Updates (Success / Fail / Critical).
 * New: Notification for User Password Changed.
-* New: Notification for User Email Changed - For Admin.
+* New: Notification for User Email Changed - For User.
 * New: Shortcodes for showing the old and new user role when used in conjunction with the User Role Changed notifications.
 * New: You can now add a 'Reply To' name and email address in the Additional Email Fields for all notifications that support it.
 * New: You can now prevent yourself from receiving notifications of comments or replies to comments on one of your posts by combining the two checkboxes 'Send this notification to the Author only' and 'Do not send this Notification to the User that triggered it'.
