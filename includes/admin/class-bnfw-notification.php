@@ -22,6 +22,8 @@ class BNFW_Notification {
 		add_action( 'edit_form_top', array( $this, 'admin_notices' ) );
 		add_filter( 'post_updated_messages', array( $this, 'post_updated_messages' ) );
 
+		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_gutenberg_for_notification' ), 10, 2 );
+
 		// Custom row actions.
 		add_filter( 'post_row_actions', array( $this, 'custom_row_actions' ), 10, 2 );
 
@@ -117,11 +119,13 @@ class BNFW_Notification {
 	 */
 	public function add_meta_boxes() {
 		add_meta_box(
-			'bnfw-post-notification',                     // Unique ID
+			'bnfw-post-notification',                      // Unique ID
 			esc_html__( 'Notification Settings', 'bnfw' ), // Title
 			array( $this, 'render_settings_meta_box' ),   // Callback function
 			self::POST_TYPE,                              // Admin page (or post type)
-			'normal'                                      // Context
+			'normal',                                     // Context
+			'default',
+			array( '__block_editor_compatible_meta_box' => false )
 		);
 
 		add_meta_box(
@@ -130,8 +134,25 @@ class BNFW_Notification {
 			array( $this, 'render_submitdiv' ),
 			self::POST_TYPE,
 			'side',
-			'core'
+			'core',
+			array( '__block_editor_compatible_meta_box' => false )
 		);
+	}
+
+	/**
+	 * Disable Gutenberg for notifications.
+	 *
+	 * @param bool $is_enabled Is Gutenberg enabled?
+	 * @param string $post_type Post Type.
+	 *
+	 * @return bool Should Gutenberg be enabled?
+	 */
+	public function disable_gutenberg_for_notification( $is_enabled, $post_type ) {
+		if ( self::POST_TYPE === $post_type ) {
+			return false;
+		}
+
+		return $is_enabled;
 	}
 
 	/**

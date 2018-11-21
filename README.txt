@@ -3,9 +3,9 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 4.0
-Tested up to: 4.9.8
+Tested up to: 5.0
 Requires PHP: 5.6
-Stable tag: 1.7.1
+Stable tag: 1.7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -208,6 +208,10 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 
 == Changelog ==
+
+= 1.7.2 - 21st November 2018 =
+* Fixed: WYSIWYG editor and meta box compatibility for Gutenberg. After the public release of WordPress 5.0 BNFW will continue to use the Classic Editor, as opposed to the new block editor.
+* Fixed: New Comment Awaiting Moderation notifications weren't being sent to the Post Author, where selected.
 
 = 1.7.1 - 5th November 2018 =
 * New: Full support for the new [Subscriptions (GDPR Compliancy)](https://betternotificationsforwp.com/downloads/subscriptions-gdpr/) add-on.

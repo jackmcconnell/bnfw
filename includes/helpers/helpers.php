@@ -129,7 +129,7 @@ function bnfw_is_comment_notification( $notification_name ) {
 
 		default:
 			$type = explode( '-', $notification_name, 2 );
-			if ( 'comment' == $type[0] ) {
+			if ( 'comment' == $type[0] || 'moderate' === $type[0] ) {
 				$is_comment_notification = true;
 			}
 			break;

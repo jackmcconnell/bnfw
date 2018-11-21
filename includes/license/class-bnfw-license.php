@@ -60,6 +60,38 @@ class BNFW_License {
 
 		// Deactivate license key
 		add_action( 'admin_init', array( $this, 'deactivate_license' ) );
+
+		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'update_plugins_transient_unserialize_icons' ), 99 );
+	}
+
+	/**
+	 * Filter the transient data for our plugin's icons.
+	 * Since icons are passed back as serialized arrays, we need to unserialize them.
+	 * This has to be run from within your plugin.
+	 *
+	 * Based on code from https://renventura.com/adding-update-icons-for-commercial-plugins/
+	 *
+	 * @param  (object) $transient - Full transient data
+	 *
+	 * @return mixed (object) $transient
+	 */
+	public function update_plugins_transient_unserialize_icons( $transient ) {
+
+		if ( is_object( $transient ) && isset( $transient->response ) && is_array( $transient->response ) ) {
+
+			$basename = plugin_basename( __FILE__ );
+
+			// Received a response for our plugin
+			$plugin = isset( $transient->response[ $basename ] ) ? $transient->response[ $basename ] : new stdClass;
+
+			// Are there any icons set for the plugin?
+			if ( isset( $plugin->icons ) ) {
+				$icons = is_string( $plugin->icons ) ? unserialize( $plugin->icons ) : $plugin->icons;
+				$transient->response[ $basename ]->icons = $icons;
+			}
+		}
+
+		return $transient;
 	}
 
 	/**
