@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WordPress
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.7.2
+ * Version: 1.7.3
  * Author: Made with Fuel
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -14,7 +14,7 @@
  */
 
 /**
- * Copyright © 2018 Made with Fuel Ltd. (hello@betternotificationsforwp.com)
+ * Copyright © 2019 Made with Fuel Ltd. (hello@betternotificationsforwp.com)
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
  * published by the Free Software Foundation.
@@ -139,7 +139,7 @@ class BNFW {
 		add_action( 'future_to_publish'         , array( $this, 'publish_post' ) );
 		add_action( 'pending_to_publish'        , array( $this, 'publish_post' ) );
 		add_action( 'private_to_publish'        , array( $this, 'publish_post' ) );
-		add_action( 'acf/submit_form'           , array( $this, 'acf_submit_form' ), 10, 2 );
+//		add_action( 'acf/submit_form'           , array( $this, 'acf_submit_form' ), 10, 2 );
 
 		add_action( 'publish_to_publish'        , array( $this, 'update_post' ) );
 		add_action( 'private_to_private'        , array( $this, 'update_post' ) );
@@ -151,7 +151,7 @@ class BNFW {
 		add_action( 'trackback_post'            , array( $this, 'trackback_post' ) );
 		add_action( 'pingback_post'             , array( $this, 'pingback_post' ) );
 
-		add_filter( 'wp_new_user_notification_email_admin', array( $this, 'handle_user_registered_admin_email' ), 10, 3 );
+		add_action( 'user_register', array( $this, 'user_register' ) );
 
 		add_action( 'user_register'             , array( $this, 'welcome_email' ) );
 		add_action( 'set_user_role'             , array( $this, 'user_role_changed' ), 10, 3 );
@@ -165,8 +165,13 @@ class BNFW {
 		add_filter( 'retrieve_password_message' , array( $this, 'change_password_email_message' ), 10, 4 );
 
 		add_action( 'after_password_reset'      , array( $this, 'on_password_reset' ) );
+
+		add_filter( 'send_password_change_email', array( $this, 'should_password_changed_email_be_sent' ), 10, 3 );
 		add_filter( 'password_change_email'     , array( $this, 'on_password_changed' ), 10, 2 );
+
+		add_filter( 'send_email_change_email', array( $this, 'should_email_changed_email_be_sent' ), 10, 3 );
 		add_filter( 'email_change_email'        , array( $this, 'on_email_changed' ), 10, 2 );
+		add_filter( 'new_user_email_content', array( $this, 'on_email_changing' ), 10, 2 );
 
 		add_filter( 'auto_core_update_email'    , array( $this, 'on_core_updated' ), 10, 4 );
 
@@ -352,6 +357,11 @@ class BNFW {
 	 * @param unknown $post
 	 */
 	function update_post( $post ) {
+		// Block editor sends duplicate requests on post update.
+		if ( ( isset( $_GET['meta-box-loader'] ) || isset( $_GET['meta_box'] ) ) ) {
+			return;
+		}
+
 		$post_id   = $post->ID;
 		$post_type = $post->post_type;
 
@@ -552,6 +562,25 @@ class BNFW {
 	}
 
 	/**
+	 * Should the password changed email be sent?
+	 *
+	 * @param $send
+	 * @param $user
+	 * @param $userdata
+	 *
+	 * @return bool
+	 */
+	public function should_password_changed_email_be_sent( $send, $user, $userdata ) {
+		$bnfw = BNFW::factory();
+
+		if ( ! $send ) {
+			return $send;
+		}
+
+		return ! $bnfw->notifier->is_notification_disabled( 'password-changed' );
+	}
+
+	/**
 	 * On Password Changed.
 	 *
 	 * @since 1.6
@@ -566,6 +595,35 @@ class BNFW {
 	}
 
 	/**
+	 * Should the email changed email be sent?
+	 *
+	 * @param $send
+	 * @param $user
+	 * @param $userdata
+	 *
+	 * @return bool
+	 */
+	public function should_email_changed_email_be_sent( $send, $user, $userdata ) {
+		$bnfw = BNFW::factory();
+
+		if ( $bnfw->notifier->notification_exists( 'admin-email-changed', false ) ) {
+			$notifications = $bnfw->notifier->get_notifications( 'admin-email-changed' );
+
+			if ( count( $notifications ) > 0 ) {
+				// Ideally there should be only one notification for this type.
+				// If there are multiple notification then we will read data about only the last one
+				$bnfw->engine->send_notification( $bnfw->notifier->read_settings( end( $notifications )->ID ), $user['ID'] );
+			}
+		}
+
+		if ( ! $send ) {
+			return $send;
+		}
+
+		return ! $bnfw->notifier->is_notification_disabled( 'email-changed' );
+	}
+
+	/**
 	 * On Email Changed.
 	 *
 	 * @since 1.6
@@ -577,6 +635,24 @@ class BNFW {
 	 */
 	public function on_email_changed( $email_data, $user ) {
 		return $this->handle_filtered_data_notification( 'email-changed', $email_data, $user['ID'] );
+	}
+
+	public function on_email_changing( $email_text, $new_user_details ) {
+		$notification_name = 'email-changing';
+
+		$notifications = $this->notifier->get_notifications( $notification_name );
+		if ( count( $notifications ) > 0 ) {
+			// Ideally there should be only one notification for this type.
+			// If there are multiple notification then we will read data about only the last one
+			$setting = $this->notifier->read_settings( end( $notifications )->ID );
+
+			$email_text = $this->engine->handle_shortcodes( $setting['message'], $setting['notification'], $new_user_details['newemail'] );
+			$email_text = $this->engine->handle_global_user_shortcodes( $email_text, $new_user_details['newemail'] );
+			$email_text = str_replace( '[email_change_confirmation_link]', esc_url( admin_url( 'profile.php?newuseremail=' . $new_user_details['hash'] ) ), $email_text );
+
+		}
+
+		return $email_text;
 	}
 
 	/**

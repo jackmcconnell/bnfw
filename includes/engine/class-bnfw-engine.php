@@ -377,6 +377,7 @@ class BNFW_Engine {
 
 			case 'admin-password':
 			case 'admin-password-changed':
+			case 'admin-email-changed':
 			case 'user-password':
 			case 'admin-user':
 			case 'welcome-email':
@@ -432,7 +433,9 @@ class BNFW_Engine {
 					if ( in_array( $type[1], $post_types ) ) {
 						$message = $this->post_shortcodes( $message, $extra_data );
 						$post = get_post( $extra_data );
-						$message = $this->user_shortcodes( $message, $post->post_author );
+						if ( $post instanceof WP_Post ) {
+							$message = $this->user_shortcodes( $message, $post->post_author );
+						}
 					}
 				} elseif ( 'comment' == $type[0] || 'moderate' == $type[0] || 'commentreply' == $type[0] ) {
 					$message = $this->comment_shortcodes( $message, $extra_data );
@@ -517,6 +520,10 @@ class BNFW_Engine {
 	public function post_shortcodes( $message, $post_id ) {
 		$post = get_post( $post_id );
 
+		if ( ! $post instanceof WP_Post ) {
+			return $message;
+		}
+
 		$post_content = $this->may_be_strip_shortcode( $post->post_content );
 		$post_content = apply_filters( 'the_content', $post_content );
 		$post_content = str_replace( ']]>', ']]&gt;', $post_content );
@@ -548,7 +555,7 @@ class BNFW_Engine {
 		$message = str_replace( '[permalink]', get_permalink( $post->ID ), $message );
 		$message = str_replace( '[post_type_archive]', get_post_type_archive_link($post->post_type), $message );
 
-		$message = str_replace( '[edit_post]', $this->get_edit_post_link( $post->ID ), $message );
+		$message = str_replace( '[edit_post]', $this->get_edit_post_link( $post->ID, 'return' ), $message );
 
 		$featured_image = '';
 		if ( has_post_thumbnail( $post->ID ) ) {
@@ -720,7 +727,7 @@ class BNFW_Engine {
 		$message = str_replace( '[comment_parent]', $comment->comment_parent, $message );
 		$message = str_replace( '[user_id]', $comment->user_id, $message );
 		$message = str_replace( '[permalink]', get_comment_link( $comment->comment_ID ), $message );
-		$message = str_replace( '[comment_moderation_link]', str_replace( "&amp;", "&", get_edit_comment_link( $comment->comment_ID ) ), $message );
+		$message = str_replace( '[comment_moderation_link]', admin_url( 'comment.php?action=editcomment&c=' ) . $comment->comment_ID, $message );
 		$message = str_replace( '[comment_moderation_approve]', '<a href="' . wp_nonce_url(admin_url("comment.php?action=approve&c={$comment->comment_ID}#wpbody-content")) . '">Approve</a>', $message );
 		$message = str_replace( '[comment_moderation_spam]', '<a href="' . wp_nonce_url(admin_url("comment.php?action=spam&c={$comment->comment_ID}#wpbody-content")) . '">Spam</a>', $message );
 		$message = str_replace( '[comment_moderation_delete]', '<a href="' . wp_nonce_url(admin_url("comment.php?action=trash&c={$comment->comment_ID}#wpbody-content")) . '">Delete</a>', $message );
@@ -830,16 +837,17 @@ class BNFW_Engine {
 	 * @param array $setting Notification settings
 	 * @param int   $id
 	 * @param bool  $process_post_authors
+	 * @param bool  $process_exclude_current_user
 	 *
 	 * @return array Emails
 	 */
-	public function get_emails( $setting, $id, $process_post_authors = true ) {
+	public function get_emails( $setting, $id, $process_post_authors = true, $process_exclude_current_user = true ) {
 		global $current_user;
 
 		$emails = array();
 
 		$exclude = null;
-		if ( 'true' == $setting['disable-current-user'] ) {
+		if ( $process_exclude_current_user && 'true' == $setting['disable-current-user'] ) {
 			if ( isset( $current_user->ID ) ) {
 				$exclude = $current_user->ID;
 			}
@@ -875,17 +883,31 @@ class BNFW_Engine {
 
 		if ( 'true' == $setting['show-fields'] ) {
 			if ( ! empty( $setting['from-name'] ) && ! empty( $setting['from-email'] ) ) {
-				$emails['from'] = $setting['from-name'] . ' <' . $setting['from-email'] . '>' ;
+				$from_email = $setting['from-email'];
+				if ( ! is_email( $from_email ) ) {
+					$from_email = $this->process_shortcodes_in_email( $from_email, $id, $setting, $emails['to'] );
+				}
+
+				$from_name = $this->handle_shortcodes( $setting['from-name'], $setting['notification'], $id );
+
+				if ( is_email( $from_email ) ) {
+					$emails['from'] = $from_name . ' <' . $from_email . '>';
+				}
 			} else {
-				$emails['from'] = get_option( 'blogname' ) . ' <' . get_option( 'admin_email' ) . '>' ;
+				$emails['from'] = get_option( 'blogname' ) . ' <' . get_option( 'admin_email' ) . '>';
 			}
 
 			if ( ! empty( $setting['reply-name'] ) ) {
-				$emails['reply-name'] = $setting['reply-name'];
+				$emails['reply-name'] = $this->handle_shortcodes( $setting['reply-name'], $setting['notification'], $id );
 			}
 
 			if ( ! empty( $setting['reply-email'] ) ) {
-				$emails['reply-email'] = $setting['reply-email'];
+				$reply_to_email = $setting['reply-email'];
+				if ( ! is_email( $setting['reply-email'] ) ) {
+					$reply_to_email = $this->process_shortcodes_in_email( $reply_to_email, $id, $setting, $emails['to'] );
+				}
+
+				$emails['reply-email'] = $reply_to_email;
 			}
 
 			if ( ! empty( $setting['cc'] ) ) {
@@ -1184,5 +1206,44 @@ class BNFW_Engine {
 		$message = str_replace( '[sitename]', $extra_data['sitename'], $message );
 
 		return $message;
+	}
+
+	/**
+	 * Process shortcodes in email.
+	 *
+	 * @param $email
+	 * @param $post_id
+	 * @param $setting
+	 *
+	 * @return string
+	 */
+	protected function process_shortcodes_in_email( $email, $post_id, $setting, $to_emails ) {
+		if ( ! empty( $setting ) ) {
+			if ( $this->starts_with( $setting['notification'], 'comment-' ) || $this->starts_with( $setting['notification'], 'moderate-' ) ) {
+				// for new comment notifications, we need to use post id instead of comment id.
+				$post_id = bnfw_get_post_id_from_comment( $post_id );
+			}
+		}
+
+		$email = $this->handle_shortcodes( $email, $setting['notification'], $post_id );
+
+		if ( is_array( $to_emails ) && ! empty( $to_emails ) ) {
+			$to_email = $to_emails[0];
+
+			$email = $this->handle_global_user_shortcodes( $email, $to_email );
+		}
+
+		$processed_emails  = array();
+		if ( is_email( $email ) ) {
+			$processed_emails[] = $email;
+		}
+
+		$emails = apply_filters( 'bnfw_non_wp_emails', $processed_emails, array( $email ), $post_id );
+
+		if ( empty( $emails ) ) {
+			return '';
+		}
+
+		return $emails[0];
 	}
 }

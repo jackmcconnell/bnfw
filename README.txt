@@ -3,9 +3,9 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 4.0
-Tested up to: 5.0
+Tested up to: 5.1
 Requires PHP: 5.6
-Stable tag: 1.7.2
+Stable tag: 1.7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,6 +52,7 @@ The notifications that are currently available to use are:
 * New User Registration - For Admin
 * User Lost Password - For Admin
 * Password Changed - For Admin
+* User Email Changed - For Admin
 * User Role Changed - For Admin
 * WordPress Core Automatic Background Updates
 * Privacy – Confirm Action: Export Data Request – For Admin
@@ -63,6 +64,7 @@ The notifications that are currently available to use are:
 * New User - Post-registration Email
 * User Lost Password - For User
 * Password Changed - For User
+* User Email Changed Confirmation - For User
 * User Email Changed - For User
 * User Role Changed - For User
 * Comment Reply
@@ -113,6 +115,7 @@ The notifications that are currently available to use are:
 * New Term
 
 **Multisite ([Multisite Add-on](https://betternotificationsforwp.com/downloads/multisite/))**
+
 * New Site Activated or Created - For Network Admin
 * New User Created - For Network Admin
 * Network Admin Email Change Attempted - For New Network Admin
@@ -147,6 +150,10 @@ If you'd like to see a notification in the list above, please drop me a line in 
 == Frequently Asked Questions ==
 
 > Full Documentation for BNFW can be found [here](https://betternotificationsforwp.com/documentation/ "Documentation for Better Notifications for WordPress").
+
+= Is this plugin compatible with the new Block Editor (Gutenberg) in WordPress 5? =
+
+Yes and no. Most notifications work but full support can't be guaranteed for all notifications at the moment. Full support is on the roadmap but for the time being, I'd recommend using the [Classic Editor plugin](https://wordpress.org/plugins/classic-editor/) with BNFW.
 
 = What are shortcodes? Where can I use them in this plugin? =
 
@@ -208,6 +215,17 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 
 == Changelog ==
+
+= 1.7.3 - 10th April 2019 =
+* Added: New Notification - 'User Email Changed - For Admin'. This is sent to an admin after a user has successfully changed and confirmed a new email address.
+* Added: New Notification - 'User Email Changed Confirmation - For User'. This is sent to a user in order for them to confirm a change to their email address.
+* Added: You can now Enable or Disable a notification by hovering over it on the 'All Notifications' screen as well as enabling or disabling notifications in bulk from the Bulk Actions dropdown menu.
+* Fixed: The 'User Email Changed - For User' and 'User Password Changed' notifications were no longer being disabled when attempting to override it since WordPress 5.0.
+* Fixed: An issue where the new Block Editor (Gutenberg) caused double notifications upon publishing a post. Better support for Gutenberg will be coming this year. For now, it is recommended to use the [Classic Editor](https://wordpress.org/plugins/classic-editor/) plugin.
+* Fixed: The 'New User Registration - For Admin' and 'New User Registration - For User' notifications should work better now after the changes that were made in 1.7.
+* Fixed: The 'Send this Notification to the Author' checkbox was missing from the 'New Comment' notification.
+* Fixed: The `[comment_moderation_link]` shortcode was outputting blank when used on the 'Post – New Comment Awaiting Moderation' notification and sent to non-Administrator user roles.
+* Fixed: The `[edit_post]` shortcode was escaping ampersands in the URL.
 
 = 1.7.2 - 21st November 2018 =
 * Fixed: WYSIWYG editor and meta box compatibility for Gutenberg. After the public release of WordPress 5.0 BNFW will continue to use the Classic Editor, as opposed to the new block editor.

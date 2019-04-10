@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit; // Exit if accessed directly
 function bnfw_get_user_select_class() {
 	$user_count = count_users();
 
-	if ( $user_count['total_users'] > 100 ) {
+	if ( $user_count['total_users'] > 200 ) {
 		return 'user-ajax-select2';
 	} else {
 		return 'user-select2';

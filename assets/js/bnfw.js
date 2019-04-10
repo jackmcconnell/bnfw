@@ -59,7 +59,7 @@ jQuery(document).ready(function($) {
 
 		if ( 'reply-comment' === notification || notification.startsWith( 'commentreply-' ) ||
 				'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
-				'password-changed' === notification || 'email-changed' === notification || 'user-role' === notification ||
+				'password-changed' === notification || 'email-changed' === notification || 'email-changing' === notification || 'user-role' === notification ||
 				'ca-export-data' === notification || 'ca-erase-data' === notification ||
 				'uc-export-data' === notification || 'uc-erase-data' === notification ||
 				'data-export' === notification || 'data-erased' === notification ||
@@ -76,19 +76,24 @@ jQuery(document).ready(function($) {
 			if ( 'multisite-new-user-created' === notification || 'multisite-site-created' === notification || 'multisite-site-deleted' === notification ||
 					'multisite-site-admin-email-change-attempted' === notification  || 'multisite-network-admin-email-change-attempted' === notification ||
 					'uc-export-data' === notification || 'uc-erase-data' === notification || 'data-export' === notification ||
-					'ca-export-data' === notification || 'ca-erase-data' === notification ) {
+					'ca-export-data' === notification || 'ca-erase-data' === notification || 'email-changing' === notification ) {
 
 				$( '#subject-wrapper' ).hide();
 			}
 		} else if ( 'new-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ||
 				'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
 
-			$('#post-author').hide();
+			if ( 'new-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ) {
+				$('#post-author').show();
+			} else {
+				$('#post-author').hide();
+			}
+
 			$('#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user').show();
 			toggle_fields();
 			toggle_users();
 			$( '#user-password-msg' ).hide();
-		} else if ( 'admin-password-changed' === notification || 'core-updated' === notification ) {
+		} else if ( 'admin-password-changed' === notification || 'admin-email-changed' === notification || 'core-updated' === notification ) {
 			$( '#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop' ).show();
 			toggle_fields();
 			toggle_users();
@@ -123,7 +128,7 @@ jQuery(document).ready(function($) {
 
 		if ( 'reply-comment' === notification || notification.startsWith( 'commentreply-' ) ||
 			'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
-			'password-changed' === notification || 'email-changed' === notification || 'user-role' === notification ||
+			'password-changed' === notification || 'email-changed' === notification || 'email-changing' === notification || 'user-role' === notification ||
 			'ca-export-data' === notification || 'ca-erase-data' === notification ||
 			'uc-export-data' === notification || 'uc-erase-data' === notification ||
 			'data-export' === notification || 'data-erased' === notification ||
@@ -140,18 +145,24 @@ jQuery(document).ready(function($) {
 			if ( 'multisite-new-user-created' === notification || 'multisite-site-created' === notification || 'multisite-site-deleted' === notification ||
 					'multisite-site-admin-email-change-attempted' === notification  || 'multisite-network-admin-email-change-attempted' === notification ||
 					'uc-export-data' === notification || 'uc-erase-data' === notification || 'data-export' === notification ||
-					'ca-export-data' === notification || 'ca-erase-data' === notification ) {
+					'ca-export-data' === notification || 'ca-erase-data' === notification || 'email-changing' === notification ) {
 
 				$( '#subject-wrapper' ).hide();
 			}
 		} else if ( 'new-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ||
 				 'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
-			$('#post-author').hide();
+
+			if ( 'new-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ) {
+				$('#post-author').show();
+			} else {
+				$('#post-author').hide();
+			}
+
 			$('#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user').show();
 			$('#user-password-msg').hide();
 			toggle_fields();
 			toggle_users();
-		} else if ( 'admin-password-changed' === notification || 'core-updated' === notification ) {
+		} else if ( 'admin-password-changed' === notification || 'admin-email-changed' === notification || 'core-updated' === notification ) {
 			$( '#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop' ).show();
 			toggle_fields();
 			toggle_users();
@@ -197,8 +208,6 @@ jQuery(document).ready(function($) {
 
 		switch( notification ) {
 			case 'new-comment':
-			case 'moderate-comment':
-			case 'moderate-post-comment':
 			case 'new-trackback':
 			case 'new-pingback':
 			case 'reply-comment':
@@ -206,8 +215,10 @@ jQuery(document).ready(function($) {
 			case 'user-password':
 			case 'admin-password':
 			case 'admin-password-changed':
+			case 'admin-email-changed':
 			case 'password-changed':
 			case 'email-changed':
+			case 'email-changing':
 			case 'new-user':
 			case 'welcome-email':
 			case 'user-role':
@@ -248,7 +259,7 @@ jQuery(document).ready(function($) {
 						notification_slug = 'moderate-comment';
 						break;
 					case 'commentreply':
-						notification_slug = splited[0] + '-post';
+						notification_slug = 'reply-comment';
 						break;
 					case 'newterm':
 						notification_slug = 'newterm-category';
@@ -330,6 +341,25 @@ jQuery(document).ready(function($) {
 					'This notice confirms that your password was changed on [global_site_title].' +
 					'<br><br>' +
 					'If you did not change your password, please contact the Site Administrator at [admin_email] <br>' +
+					'<br>' +
+					'This email has been sent to [global_user_email]' +
+					'<br>' +
+					'Regards, <br>' +
+					'All at [global_site_title] <br>' +
+					'[global_site_url]';
+				break;
+
+			case 'email-changing':
+				subject = '[[global_site_title]] New Email Address';
+				body = 'Hi [user_nicename], <br>' +
+					'<br>' +
+					'You recently requested to have the email address on your account changed.' +
+					'<br>' +
+					'If this is correct, please click on the following link to change it:' +
+					'<br>' +
+					'[global_site_url]/wp-admin/profile.php' +
+					'<br>' +
+					'You can safely ignore and delete this email if you do not want to take this action.' +
 					'<br>' +
 					'This email has been sent to [global_user_email]' +
 					'<br>' +
