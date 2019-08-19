@@ -68,6 +68,12 @@ class BNFW_Engine {
 
 			$emails = apply_filters( 'bnfw_emails', $emails, $setting );
 
+			$send = apply_filters( 'bnfw_can_send_email', true, $setting, $emails, $subject, $message, $headers );
+
+			if ( ! $send ) {
+				return;
+			}
+
 			if ( isset( $emails['to'] ) && is_array( $emails['to'] ) ) {
 				foreach ( $emails['to'] as $email ) {
 					wp_mail( $email, stripslashes( $this->handle_global_user_shortcodes( $subject, $email ) ), $this->handle_global_user_shortcodes( $message, $email ), $headers );
@@ -882,33 +888,26 @@ class BNFW_Engine {
 		}
 
 		if ( 'true' == $setting['show-fields'] ) {
-			if ( ! empty( $setting['from-name'] ) && ! empty( $setting['from-email'] ) ) {
-				$from_email = $setting['from-email'];
-				if ( ! is_email( $from_email ) ) {
-					$from_email = $this->process_shortcodes_in_email( $from_email, $id, $setting, $emails['to'] );
-				}
+			$default_from_field = get_option( 'blogname' ) . ' <' . get_option( 'admin_email' ) . '>';
 
-				$from_name = $this->handle_shortcodes( $setting['from-name'], $setting['notification'], $id );
-
-				if ( is_email( $from_email ) ) {
-					$emails['from'] = $from_name . ' <' . $from_email . '>';
-				}
-			} else {
-				$emails['from'] = get_option( 'blogname' ) . ' <' . get_option( 'admin_email' ) . '>';
+			if ( ! empty( $setting['from-name'] ) && ! empty( $setting['from-email'] ) && is_email( $setting['from-email'] ) ) {
+				$default_from_field = $setting['from-name'] . ' <' . $setting['from-email'] . '>';
 			}
 
-			if ( ! empty( $setting['reply-name'] ) ) {
-				$emails['reply-name'] = $this->handle_shortcodes( $setting['reply-name'], $setting['notification'], $id );
-			}
+			/**
+			 * Filter Email From Field.
+			 */
+			$emails['from'] = apply_filters( 'bnfw_from_field', $default_from_field, $setting, $id, $emails['to'] );
 
-			if ( ! empty( $setting['reply-email'] ) ) {
-				$reply_to_email = $setting['reply-email'];
-				if ( ! is_email( $setting['reply-email'] ) ) {
-					$reply_to_email = $this->process_shortcodes_in_email( $reply_to_email, $id, $setting, $emails['to'] );
-				}
+			/**
+			 * Filter Reply Name Field.
+			 */
+			$emails['reply-name'] = apply_filters( 'bnfw_reply_name_field', $setting['reply-name'], $setting, $id, $emails['to'] );
 
-				$emails['reply-email'] = $reply_to_email;
-			}
+			/**
+			 * Filter Reply Email Field.
+			 */
+			$emails['reply-email'] = apply_filters( 'bnfw_reply_email_field', $setting['reply-email'], $setting, $id, $emails['to'] );
 
 			if ( ! empty( $setting['cc'] ) ) {
 				$emails['cc'] = $this->get_emails_from_users( $setting['cc'], $exclude, $id, $setting );
@@ -1130,7 +1129,7 @@ class BNFW_Engine {
 			$headers[] = 'From:' . $emails['from'];
 		}
 
-		if ( ! empty( $emails['reply-email'] ) ) {
+		if ( ! empty( $emails['reply-email'] ) && is_email( $emails['reply-email'] ) ) {
 			$headers[] = 'Reply-To:' . $emails['reply-name'] . '<' . $emails['reply-email'] . '>';
 		}
 
@@ -1141,7 +1140,13 @@ class BNFW_Engine {
 			$headers[] = 'Bcc:' . implode( ',', $emails['bcc'] );
 		}
 
-		return $headers;
+		/**
+		 * Filter out mail headers.
+		 *
+		 * @param array $headers Headers.
+		 * @param array $emails Emails.
+		 */
+		return apply_filters( 'bnfw_mail_headers', $headers, $emails );
 	}
 
 	public function handle_user_request_email_shortcodes( $message, $setting, $email_data ) {
@@ -1217,7 +1222,7 @@ class BNFW_Engine {
 	 *
 	 * @return string
 	 */
-	protected function process_shortcodes_in_email( $email, $post_id, $setting, $to_emails ) {
+	public function process_shortcodes_in_email( $email, $post_id, $setting, $to_emails ) {
 		if ( ! empty( $setting ) ) {
 			if ( $this->starts_with( $setting['notification'], 'comment-' ) || $this->starts_with( $setting['notification'], 'moderate-' ) ) {
 				// for new comment notifications, we need to use post id instead of comment id.

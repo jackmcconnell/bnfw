@@ -1,11 +1,11 @@
-=== Better Notifications for WordPress ===
+=== Better Notifications for WP ===
 Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 4.0
-Tested up to: 5.1
+Tested up to: 5.2.2
 Requires PHP: 5.6
-Stable tag: 1.7.3
+Stable tag: 1.7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. 
 
 == Description ==
 
-Better Notifications for WordPress is a simple but powerful plugin for beginners to advanced users that allows you to customise the email notifications that WordPress sends using the WYSIWYG editor and shortcodes. All of the default WordPress email notifications are available to customise as well as lots of new ones. You can choose to send notifications to individual users, multiple users, all users in a user role, multiple roles - you name it! You can also power-up your notifications with [Premium Add-ons](https://betternotificationsforwp.com/downloads/). Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using an appropriate 3rd party plugin should you wish.
+Better Notifications for WP is a simple but powerful plugin for beginners to advanced users that allows you to customise the email notifications that WordPress sends using the WYSIWYG editor and shortcodes. All of the default WordPress email notifications are available to customise as well as lots of new ones. You can choose to send notifications to individual users, multiple users, all users in a user role, multiple roles - you name it! You can also power-up your notifications with [Premium Add-ons](https://betternotificationsforwp.com/downloads/). Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using an appropriate 3rd party plugin should you wish.
 
 Here's a quick walkthrough of the plugin in action:
 [youtube https://www.youtube.com/watch?v=MxPUyRZPJ1Q]
@@ -21,7 +21,7 @@ Here's a quick walkthrough of the plugin in action:
 = An Example: =
 You want all the users in the Editor role to be notified via email when a new post is published and you'd like to customise it to include your logo along with the author's name and date / time it was published - with this plugin, that's easy.
 
-> A handy list of shortcodes you can use is available [here](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WordPress").
+> A handy list of shortcodes you can use is available [here](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WP").
 
 = Premium Add-ons =
 Power-up your notifications using add-ons:
@@ -32,15 +32,17 @@ Power-up your notifications using add-ons:
 
 [Custom Fields](https://betternotificationsforwp.com/downloads/custom-fields/) - Provides a number of new shortcodes allowing you to include data from custom fields and custom user fields created using [ACF](https://wordpress.org/plugins/advanced-custom-fields/).
 
-[Multisite](https://betternotificationsforwp.com/downloads/multisite/) - Adds new notifications and shortcodes for WordPress Multisite to Better Notifications for WordPress.
-
 [Send to Any Email](https://betternotificationsforwp.com/downloads/send-to-any-email/) - Send notifications to non-WordPress Users.
+
+[Digest](https://betternotificationsforwp.com/downloads/digest/) - Group multiple notifications into a single digest notification.
 
 [Global Override](https://betternotificationsforwp.com/downloads/per-post-override/) - Override some of the settings of notifications directly when editing a post, page, or custom post type.
 
 [Reminders](https://betternotificationsforwp.com/downloads/update-reminder/) - Send a reminder to your users and/or user roles when a post, page, or custom post type hasn't been updated after a set amount of time. Also send a notification when a user hasn't logged in for a set amount of time.
 
-[Profile Builder](https://betternotificationsforwp.com/downloads/profile-builder/) - Adds compatibility and new notifications and shortcodes for Profile Builder Free, Hobbyist, and Pro plugins to Better Notifications for WordPress.
+[Multisite](https://betternotificationsforwp.com/downloads/multisite/) - Adds new notifications and shortcodes for WordPress Multisite to Better Notifications for WP.
+
+[Profile Builder](https://betternotificationsforwp.com/downloads/profile-builder/) - Adds compatibility and new notifications and shortcodes for Profile Builder Free, Hobbyist, and Pro plugins to Better Notifications for WP.
 
 ...and more coming soon!
 
@@ -143,13 +145,13 @@ If you'd like to see a notification in the list above, please drop me a line in 
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Use the settings in the new 'Notifications' Menu item in the sidebar to configure the plugin.
 4. (Optional) Install a plugin to use SMTP instead of `wp_mail()`. I recommend [Post SMTP Mailer/Email Log](https://wordpress.org/plugins/post-smtp/).
-5. Test by creating a notification with some [shortcodes](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WordPress").
+5. Test by creating a notification with some [shortcodes](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WP").
 
 
 
 == Frequently Asked Questions ==
 
-> Full Documentation for BNFW can be found [here](https://betternotificationsforwp.com/documentation/ "Documentation for Better Notifications for WordPress").
+> Full Documentation for BNFW can be found [here](https://betternotificationsforwp.com/documentation/ "Documentation for Better Notifications for WP").
 
 = Is this plugin compatible with the new Block Editor (Gutenberg) in WordPress 5? =
 
@@ -161,7 +163,7 @@ Shortcodes are text in square brackets that output content of some kind. For exa
 
 Shortcodes can be used in the 'Subject' and 'Message Body' of your notifications, except for a select few (due to a restriction in WordPress).
 
-> A handy list of shortcodes you can use is available [here](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WordPress").
+> A handy list of shortcodes you can use is available [here](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WP").
 
 = What are some scenarios this plugin could be used for? =
 
@@ -182,7 +184,7 @@ Yes! Full support for WordPress Multisite was added in 1.6.13, alongside the rel
 
 = Notifications aren't coming through! =
 
-First of all, follow [this article](https://betternotificationsforwp.com/how-can-i-receive-the-best-support/) about how to find out what might be causing the problem. Additionally, please take a look at [this help document](https://betternotificationsforwp.com/documentation/getting-started/how-to-improve-email-delivery/) to see how you might improve email delivery when using Better Notifications for WordPress.
+First of all, follow [this article](https://betternotificationsforwp.com/how-can-i-receive-the-best-support/) about how to find out what might be causing the problem. Additionally, please take a look at [this help document](https://betternotificationsforwp.com/documentation/getting-started/how-to-improve-email-delivery/) to see how you might improve email delivery when using Better Notifications for WP.
 
 Many hosts place a limit on the number of emails that can be sent out within an hour so this may also cause some delay in emails arriving. [This article](https://support.mailpoet.com/knowledgebase/lists-of-hosts-and-their-sending-limits/) has a fairly extensive list of hosts and their corresponding email rate limits that's worth checking out. Alternatively, please check with your host directly to find out what your limit is.
 
@@ -194,7 +196,7 @@ It's possible you're inserting a shortcode into a notification that cannot use i
 
 = Other emails from WordPress / other plugins are being messed up! =
 
-WordPress, by default, sends all emails in Plain Text. If you'd like to include code or use the WYSIWYG editor as part of Better Notifications for WordPress in your emails, you can change this to HTML using the global setting in Better Notification for WordPress. This can be found under the 'Notifications > Settings' screen. Changing this global email format setting will affect how all emails are sent out from WordPress however, so you may experience formatting issues with emails sent out from other plugins if you change the email format setting in this way. If you do, change this setting to Plain Text. You can also set the email format on a per-notification basis when setting-up a new Notification. The caveat is that WordPress will only either allow setting the email format globally (for all emails) or individually for anything that's non-transactional.
+WordPress, by default, sends all emails in Plain Text. If you'd like to include code or use the WYSIWYG editor as part of Better Notifications for WP in your emails, you can change this to HTML using the global setting in Better Notification for WordPress. This can be found under the 'Notifications > Settings' screen. Changing this global email format setting will affect how all emails are sent out from WordPress however, so you may experience formatting issues with emails sent out from other plugins if you change the email format setting in this way. If you do, change this setting to Plain Text. You can also set the email format on a per-notification basis when setting-up a new Notification. The caveat is that WordPress will only either allow setting the email format globally (for all emails) or individually for anything that's non-transactional.
 
 = Custom Post Type 'X' isn't showing in the list of available custom post types =
 
@@ -216,9 +218,17 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 == Changelog ==
 
+= 1.7.4 - 19th August 2019 =
+* New: You can now filter the mail headers in BNFW using `bnfw_mail_headers`. More details [here](https://betternotificationsforwp.com/documentation/actions-and-filters/).
+* Added: Better support for the new Block Editor (Gutenberg) and all post/page/custom post type notifications. More and better support coming soon.
+* Added: Support for the upcoming [Digest add-on](https://betternotificationsforwp.com/downloads/digest/).
+* Fixed: The 'New User Registration - For Admin' notification was sending out the default WordPress notification as well as the BNFW notification in some cases.
+* Fixed: The 'New Comment - Awaiting Moderation' notification was missing from the [Global Override add-on](https://betternotificationsforwp.com/downloads/per-post-override/).
+* Fixed: A fatal error which occasionally occurred when a user changes their password on the front-end.
+
 = 1.7.3 - 10th April 2019 =
-* Added: New Notification - 'User Email Changed - For Admin'. This is sent to an admin after a user has successfully changed and confirmed a new email address.
-* Added: New Notification - 'User Email Changed Confirmation - For User'. This is sent to a user in order for them to confirm a change to their email address.
+* New: Notification - 'User Email Changed - For Admin'. This is sent to an admin after a user has successfully changed and confirmed a new email address.
+* New: Notification - 'User Email Changed Confirmation - For User'. This is sent to a user in order for them to confirm a change to their email address.
 * Added: You can now Enable or Disable a notification by hovering over it on the 'All Notifications' screen as well as enabling or disabling notifications in bulk from the Bulk Actions dropdown menu.
 * Fixed: The 'User Email Changed - For User' and 'User Password Changed' notifications were no longer being disabled when attempting to override it since WordPress 5.0.
 * Fixed: An issue where the new Block Editor (Gutenberg) caused double notifications upon publishing a post. Better support for Gutenberg will be coming this year. For now, it is recommended to use the [Classic Editor](https://wordpress.org/plugins/classic-editor/) plugin.

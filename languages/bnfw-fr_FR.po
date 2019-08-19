@@ -28,7 +28,7 @@ msgid "Show additional email fields"
 msgstr "Afficher des champs d’emails supplémentaires"
 
 #. Plugin Name of the plugin/theme
-msgid "Better Notifications for WordPress"
+msgid "Better Notifications for WP"
 msgstr "Better Notifications pour WordPress"
 
 #. Plugin URI of the plugin/theme

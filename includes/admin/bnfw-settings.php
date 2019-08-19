@@ -200,7 +200,7 @@ function bnfw_general_options() {
 		'bnfw-settings',                // Page to show on
 		'bnfw_general_options_section', // Associate with which settings section?
 		array(
-			esc_html__( 'Allow Better Notifications for WordPress to anonymously track how this plugin is used and help make the plugin better.', 'bnfw' )
+			esc_html__( 'Allow Better Notifications for WP to anonymously track how this plugin is used and help make the plugin better.', 'bnfw' )
 		)
 	);
 }

@@ -38,7 +38,7 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 			// we want to reverse this for the plain text arena of emails.
 			$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
 
-			if ( $bnfw->notifier->notification_exists( 'admin-user', true ) ) {
+			if ( ! $bnfw->notifier->notification_exists( 'admin-user', false ) ) {
 				$message = sprintf( esc_html__( 'New user registration on your site %s:' ), $blogname ) . "\r\n\r\n";
 				$message .= sprintf( esc_html__( 'Username: %s' ), $user->user_login ) . "\r\n\r\n";
 				$message .= sprintf( esc_html__( 'E-mail: %s' ), $user->user_email ) . "\r\n";

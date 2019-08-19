@@ -566,7 +566,7 @@ jQuery(document).ready(function($) {
 					'[global_site_url]';
 				break;
 			default:
-				alert( "This is a new notification that is not available in WordPress by default and has been added by Better Notifications for WordPress. As such, it doesn't have any default content." );
+				alert( "This is a new notification that is not available in WordPress by default and has been added by Better Notifications for WP. As such, it doesn't have any default content." );
 				break;
 		}
 

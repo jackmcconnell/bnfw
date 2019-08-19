@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Better Notifications for WordPress
+ * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.7.3
+ * Version: 1.7.4
  * Author: Made with Fuel
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -135,6 +135,7 @@ class BNFW {
 
 		add_action( 'wp_insert_post'            , array( $this, 'insert_post' ), 10, 2 );
 
+		add_action( 'auto-draft_to_publish'     , array( $this, 'publish_post' ) );
 		add_action( 'draft_to_publish'          , array( $this, 'publish_post' ) );
 		add_action( 'future_to_publish'         , array( $this, 'publish_post' ) );
 		add_action( 'pending_to_publish'        , array( $this, 'publish_post' ) );
@@ -270,9 +271,9 @@ class BNFW {
 		 *
 		 * @since 1.4
 		 */
-		$trigger_insert_post = apply_filters( 'bnfw_trigger_insert_post', false );
+		$trigger_insert_post = apply_filters( 'bnfw_trigger_insert_post', false, $post_id );
 
-		if ( in_array( $current_theme->get( 'Name' ), $insert_post_themes ) || $trigger_insert_post ) {
+		if ( in_array( $current_theme->get( 'Name' ), $insert_post_themes ) || $trigger_insert_post  ) {
 			$this->handle_inserted_post( $post_id );
 		}
 	}
@@ -812,12 +813,11 @@ class BNFW {
 	/**
 	 * Send notification based on type and ref id
 	 *
-	 * @access private
 	 * @since 1.0
 	 * @param string $type Notification type.
-	 * @param int $ref_id Reference id.
+	 * @param mixed $ref_id Reference data.
 	 */
-	private function send_notification( $type, $ref_id ) {
+	public function send_notification( $type, $ref_id ) {
 		$notifications = $this->notifier->get_notifications( $type );
 		foreach ( $notifications as $notification ) {
 			$this->engine->send_notification( $this->notifier->read_settings( $notification->ID ), $ref_id );
@@ -827,11 +827,10 @@ class BNFW {
 	/**
 	 * Send notification async based on type and ref id.
 	 *
-	 * @access private
 	 * @param  string  $type   Notification type.
-	 * @param  int     $ref_id Reference id.
+	 * @param mixed $ref_id Reference data.
 	 */
-	private function send_notification_async( $type, $ref_id ) {
+	public function send_notification_async( $type, $ref_id ) {
 		$notifications = $this->notifier->get_notifications( $type, false );
 		foreach ( $notifications as $notification ) {
 			$transient = get_transient( 'bnfw-async-notifications' );
@@ -839,8 +838,16 @@ class BNFW {
 				$transient = array();
 			}
 
-			$transient[] = array( 'ref_id' => $ref_id, 'notification_id' => $notification->ID, 'notification_type' => $type );
-			set_transient( 'bnfw-async-notifications', $transient, 600 );
+			$notification_data = array(
+				'ref_id'            => $ref_id,
+				'notification_id'   => $notification->ID,
+				'notification_type' => $type,
+			);
+
+			if ( ! in_array( $notification_data, $transient ) ) {
+				$transient[] = $notification_data;
+				set_transient( 'bnfw-async-notifications', $transient, 600 );
+			}
 		}
 	}
 
