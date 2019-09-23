@@ -80,6 +80,12 @@ jQuery(document).ready(function($) {
 
 				$( '#subject-wrapper' ).hide();
 			}
+
+			if ( 'uc-export-data' === notification || 'uc-erase-data' === notification || 'data-export' === notification ||
+				'ca-export-data' === notification || 'ca-erase-data' === notification || 'data-erased' === notification ) {
+
+				$( '#email-formatting' ).hide();
+			}
 		} else if ( 'new-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ||
 				'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
 
@@ -148,6 +154,12 @@ jQuery(document).ready(function($) {
 					'ca-export-data' === notification || 'ca-erase-data' === notification || 'email-changing' === notification ) {
 
 				$( '#subject-wrapper' ).hide();
+			}
+
+			if ( 'uc-export-data' === notification || 'uc-erase-data' === notification || 'data-export' === notification ||
+				'ca-export-data' === notification || 'ca-erase-data' === notification || 'data-erased' === notification ) {
+
+				$( '#email-formatting' ).hide();
 			}
 		} else if ( 'new-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ||
 				 'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {

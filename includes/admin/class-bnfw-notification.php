@@ -128,8 +128,7 @@ class BNFW_Notification {
 			array( $this, 'render_settings_meta_box' ),   // Callback function
 			self::POST_TYPE,                              // Admin page (or post type)
 			'normal',                                     // Context
-			'default',
-			array( '__block_editor_compatible_meta_box' => false )
+			'default'
 		);
 
 		add_meta_box(
@@ -138,8 +137,7 @@ class BNFW_Notification {
 			array( $this, 'render_submitdiv' ),
 			self::POST_TYPE,
 			'side',
-			'core',
-			array( '__block_editor_compatible_meta_box' => false )
+			'core'
 		);
 	}
 

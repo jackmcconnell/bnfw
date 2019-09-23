@@ -3,9 +3,9 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 4.0
-Tested up to: 5.2.2
+Tested up to: 5.2.3
 Requires PHP: 5.6
-Stable tag: 1.7.4
+Stable tag: 1.7.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -217,6 +217,13 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 
 == Changelog ==
+
+= 1.7.5 - 23rd September 2019 =
+* Added: Support for the new [Digest add-on](https://betternotificationsforwp.com/downloads/digest/)!
+* Added: Support for some big changes coming to the [Custom Fields add-on](https://betternotificationsforwp.com/downloads/custom-fields/).
+* Fixed: An issue relating to shortcodes in the [Multisite add-on](https://betternotificationsforwp.com/downloads/multisite/).
+* Fixed: Any 'Privacy' notifications are now hiding options that can't be overridden.
+* Fixed: Disabling automatic paragraphs on the 'User Lost Password - For User' notification wasn't working.
 
 = 1.7.4 - 19th August 2019 =
 * New: You can now filter the mail headers in BNFW using `bnfw_mail_headers`. More details [here](https://betternotificationsforwp.com/documentation/actions-and-filters/).

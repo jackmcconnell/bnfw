@@ -488,6 +488,20 @@ class BNFW_Engine {
 	}
 
 	/**
+	 * Handle Global shortcodes.
+	 *
+	 * @param string $message Message.
+	 * @param string $email   Email.
+	 *
+	 * @return string
+	 */
+	public function handle_global_shortcodes( $message, $email ) {
+		$message = $this->global_shortcodes( $message );
+
+		return $this->handle_global_user_shortcodes( $message, $email );
+	}
+
+	/**
 	 * Handle Global User Shortcodes.
 	 *
 	 * @param string $message String to be processed.

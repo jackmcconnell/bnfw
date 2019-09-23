@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.7.4
+ * Version: 1.7.5
  * Author: Made with Fuel
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -394,6 +394,11 @@ class BNFW {
 	 * @param object $post Post object
 	 */
 	function on_post_scheduled( $post_id, $post ) {
+		// Rest request also triggers the same hook. We can ignore it.
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return;
+		}
+
 		$post_type = $post->post_type;
 
 		if ( BNFW_Notification::POST_TYPE != $post_type ) {
@@ -536,7 +541,9 @@ class BNFW {
 
 			if ( 'html' == $setting['email-formatting'] ) {
 				add_filter( 'wp_mail_content_type', array( $this, 'set_html_content_type' ) );
-				$message = wpautop( $message );
+				if ( 'true' !== $setting['disable-autop'] ) {
+					$message = wpautop( $message );
+				}
 			} else {
 				add_filter( 'wp_mail_content_type', array( $this, 'set_text_content_type' ) );
 			}
