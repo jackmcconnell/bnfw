@@ -66,7 +66,7 @@ class BNFW_Engine {
 				$headers[] = 'Content-type: text/plain';
 			}
 
-			$emails = apply_filters( 'bnfw_emails', $emails, $setting );
+			$emails = apply_filters( 'bnfw_emails', $emails, $setting, $id );
 
 			$send = apply_filters( 'bnfw_can_send_email', true, $setting, $emails, $subject, $message, $headers );
 
