@@ -1000,8 +1000,12 @@ foreach ( $taxs as $tax ) {
 		$args['posts_per_page'] = -1;
 		$args['nopagging'] = true;
 
+		$args = apply_filters( 'bnfw_get_notifications_args', $args, $types, $exclude_disabled );
+
 		$wp_query = new WP_Query();
 		$posts    = $wp_query->query( $args );
+
+		$posts = apply_filters( 'bnfw_get_notifications_posts', $posts, $args, $types, $exclude_disabled );
 
 		return $posts;
 	}
@@ -1031,8 +1035,12 @@ foreach ( $taxs as $tax ) {
 			)
 		);
 
+		$args = apply_filters( 'bnfw_is_notification_disabled_args', $args, $type );
+
 		$wp_query = new WP_Query();
 		$posts    = $wp_query->query( $args );
+
+		$posts = apply_filters( 'bnfw_is_notification_disabled_posts', $posts, $args, $type );
 
 		return count( $posts ) > 0;
 	}
