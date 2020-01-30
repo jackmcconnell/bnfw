@@ -1,4 +1,18 @@
 jQuery(document).ready(function($) {
+	var multisiteNotifications = [
+		'multisite-site-created',
+		'multisite-new-user-created',
+		'multisite-network-admin-email-change-attempted',
+		'multisite-network-admin-email-changed',
+		'multisite-site-welcome',
+		'multisite-site-deleted',
+		'multisite-site-admin-email-change-attempted',
+		'multisite-site-admin-email-changed',
+		'multisite-site-registered',
+		'multisite-new-user-welcome',
+		'multisite-new-user-invited'
+	];
+
     function toggle_fields() {
     	var show_fields = $('#show-fields').is(":checked");
 
@@ -18,7 +32,9 @@ jQuery(document).ready(function($) {
     		$( '#current-user' ).show();
     	}
 
-	    if ( 'new-comment' === $( '#notification' ).val() || 'moderate-comment' === $( '#notification' ).val() ) {
+	    var notification = $( '#notification' ).val();
+
+	    if ( 'new-comment' === notification || 'approve-comment' === notification || 'moderate-comment' === notification ) {
 		    $( '#current-user' ).show();
 	    }
     }
@@ -82,14 +98,14 @@ jQuery(document).ready(function($) {
 			}
 
 			if ( 'uc-export-data' === notification || 'uc-erase-data' === notification || 'data-export' === notification ||
-				'ca-export-data' === notification || 'ca-erase-data' === notification || 'data-erased' === notification ) {
+				'ca-export-data' === notification || 'ca-erase-data' === notification || 'data-erased' === notification || ( -1 !== multisiteNotifications.indexOf( notification ) ) ) {
 
 				$( '#email-formatting' ).hide();
 			}
-		} else if ( 'new-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ||
+		} else if ( 'new-comment' === notification || 'approve-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ||
 				'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
 
-			if ( 'new-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ) {
+			if ( 'new-comment' === notification || 'approve-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ) {
 				$('#post-author').show();
 			} else {
 				$('#post-author').hide();
@@ -157,14 +173,15 @@ jQuery(document).ready(function($) {
 			}
 
 			if ( 'uc-export-data' === notification || 'uc-erase-data' === notification || 'data-export' === notification ||
-				'ca-export-data' === notification || 'ca-erase-data' === notification || 'data-erased' === notification ) {
+				'ca-export-data' === notification || 'ca-erase-data' === notification || 'data-erased' === notification || ( -1 !== multisiteNotifications.indexOf( notification ) ) ) {
 
 				$( '#email-formatting' ).hide();
 			}
-		} else if ( 'new-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ||
-				 'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
+		} else if ( 'new-comment' === notification || 'approve-comment' === notification ||
+					notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ||
+					'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
 
-			if ( 'new-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ) {
+			if ( 'new-comment' === notification || 'approve-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ) {
 				$('#post-author').show();
 			} else {
 				$('#post-author').hide();
@@ -219,6 +236,7 @@ jQuery(document).ready(function($) {
 			splited;
 
 		switch( notification ) {
+			case 'approve-comment':
 			case 'new-comment':
 			case 'new-trackback':
 			case 'new-pingback':

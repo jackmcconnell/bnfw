@@ -3,9 +3,9 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 4.0
-Tested up to: 5.2.3
+Tested up to: 5.3.2
 Requires PHP: 5.6
-Stable tag: 1.7.5
+Stable tag: 1.7.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,7 +26,9 @@ You want all the users in the Editor role to be notified via email when a new po
 = Premium Add-ons =
 Power-up your notifications using add-ons:
 
-[Subscriptions (GDPR Compliancy)](https://betternotificationsforwp.com/downloads/subscriptions-gdpr/) - Allow users to manage their subscriptions for BNFW notifications.
+[Notification Add-on Bundles](https://betternotificationsforwp.com/add-on-bundles/) - Everything you need for your WordPress notifications. Save big when you buy an add-on bundle. Instant access.
+
+[Subscriptions (GDPR)](https://betternotificationsforwp.com/downloads/subscriptions-gdpr/) - Allow users to manage their subscriptions for BNFW notifications.
 
 [Conditional Notifications](https://betternotificationsforwp.com/downloads/conditional-notifications/) - Limit certain notifications depending on which categories, tags, post formats, or terms you choose.
 
@@ -89,6 +91,7 @@ The notifications that are currently available to use are:
 * Post Scheduled
 * New Comment
 * New Comment Awaiting Moderation
+* Comment Approved
 * Post - Custom Field Updated ([Custom Fields Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
 * Post - Update Reminder ([Reminders Add-on](https://betternotificationsforwp.com/downloads/update-reminder/))
 * New Trackback
@@ -218,9 +221,23 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 == Changelog ==
 
+= 1.7.6 - 30th January 2020 =
+* New Notification: New Comment Approved. This is sent after the comment has been approved.
+* New: You can now output the description for the first available category in any new Post/Page/Custom Post Type notification, as well as to New Comment, Comment Awaiting Moderation, and Comment Reply notifications using the shortcode `[post_category_description]`. You can also use the `[post_category_slug]` notification to output the first available category slug.
+* Added: Merged two pull requests that came in via the GitHub clone of this plugin relating to filters - ([#1](https://github.com/jackmcconnell/bnfw/pull/4/commits/501d7cdcb9855ad5aa08e4510f752f9ff319567f) and [#2](https://github.com/jackmcconnell/bnfw/pull/5)).
+* Added: `$update` as 3rd parameter to `bnfw_trigger_insert_post` filter.
+* Added: Additional translatable strings.
+* Improved: 'Post Pending Review' notifications are now only sent for the first update to a post that is pending review. Subsequent updates will not trigger another notification. 
+* Fixed: Advanced Custom Fields (ACF) was triggering incorrect notifications when post/page/custom post types were submitted via a front-end form. 
+* Fixed: The `[post_excerpt]` shortcode now conforms to the `excerpt_length` filter.
+* Fixed: Post Pending Review notifications were being sent in duplicate in certain situations.
+* Fixed: Added an additional check to ensure a Multisite doesn't crash when BNFW is enabled on a site with no Administrator users.
+* Fixed: Multisite notifications were showing the HTMl/Text options for notifications that could only support text.
+
 = 1.7.5 - 23rd September 2019 =
 * Added: Support for the new [Digest add-on](https://betternotificationsforwp.com/downloads/digest/)!
 * Added: Support for some big changes coming to the [Custom Fields add-on](https://betternotificationsforwp.com/downloads/custom-fields/).
+* Added: New Spanish translation.
 * Fixed: An issue relating to shortcodes in the [Multisite add-on](https://betternotificationsforwp.com/downloads/multisite/).
 * Fixed: Any 'Privacy' notifications are now hiding options that can't be overridden.
 * Fixed: Disabling automatic paragraphs on the 'User Lost Password - For User' notification wasn't working.
@@ -249,7 +266,7 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 * Fixed: New Comment Awaiting Moderation notifications weren't being sent to the Post Author, where selected.
 
 = 1.7.1 - 5th November 2018 =
-* New: Full support for the new [Subscriptions (GDPR Compliancy)](https://betternotificationsforwp.com/downloads/subscriptions-gdpr/) add-on.
+* New: Full support for the new [Subscriptions (GDPR)](https://betternotificationsforwp.com/downloads/subscriptions-gdpr/) add-on.
 * Fixed: Comments marked as SPAM were triggering the 'New Comment Awaiting Moderation' notification.
 * Fixed: An issue relating to the 'New Comment Awaiting Moderation' notification not saving when used in conjunction with the Send To Any Email and Custom Fields add-ons.
 * Fixed: A couple of minor javascript errors relating to BNFW add-ons.
@@ -276,7 +293,7 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 * Fixed: The SVG icon on WordPress.org wasn't exported correctly.
 
 = 1.6.14 - 25th May 2018 =
-* New: As part of my plans for implementing GDPR compliancy within BNFW, you can now exclude users and/or roles from your notifications in the new 'Except For' box.
+* New: As part of my plans for implementing GDPR within BNFW, you can now exclude users and/or roles from your notifications in the new 'Except For' box.
 * New: You can now include the post/page author in addition to the list of users and user roles in your notifications (not either/or).
 * New: You can now enable the output of shortcodes again when using the `[post_content]` shortcode in your notifications via a new checkbox in the Settings screen.
 * New: A list of available actions and filters in BNFW is now available in the [website documentation](https://betternotificationsforwp.com/documentation/actions-and-filters/).
@@ -305,7 +322,7 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 * New: If you want to allow other user roles to create or edit notifications, you can now grant them the 'bnfw' capability using a role editor.
 * Added: A new notice will display at the top of all Notification screens explaining how you can improve email deliverability. You can dismiss this permanently at any time.
 * Added: Inline help tips are now available when creating or editing a notification. Handy if you want to remember how something works but don't want to sift through the documentation.
-* Added: Merged two pull request that came in via the GitHub clone of this plugin - ([#1](https://github.com/jackmcconnell/bnfw/pull/1) and [#2](https://github.com/jackmcconnell/bnfw/pull/2)).
+* Added: Merged two pull requests that came in via the GitHub clone of this plugin - ([#1](https://github.com/jackmcconnell/bnfw/pull/1) and [#2](https://github.com/jackmcconnell/bnfw/pull/2)).
 * Added: For faster support, there is now a Priority Support menu item in the BNFW Notifications menu. Priority Support is available to customers with an active subscription to an add-on.
 * Improved: All date related shortcodes now output in the date and time format set in Settings > General in the WordPress Admin.
 * Improved: The list of available notifications has been re-ordered to make more sense.

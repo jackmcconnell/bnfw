@@ -83,11 +83,13 @@ body.post-type-bnfw_notification #poststuff td,
 	}
 
 		/* Left Align Elements on Right of Screen */
+		#bnfw_override_optout .bnfw-help-tip p,
 		#bnfw_submitdiv .bnfw-help-tip p {
 			left: auto;
 			right: -8px;
 		}
 
+			#bnfw_override_optout .bnfw-help-tip p:before,
 			#bnfw_submitdiv .bnfw-help-tip p:before {
 				left: auto;
 				right: 10px;

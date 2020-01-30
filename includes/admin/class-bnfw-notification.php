@@ -122,6 +122,8 @@ class BNFW_Notification {
 	 * @since 1.0
 	 */
 	public function add_meta_boxes() {
+		global $post;
+
 		add_meta_box(
 			'bnfw-post-notification',                      // Unique ID
 			esc_html__( 'Notification Settings', 'bnfw' ), // Title
@@ -139,6 +141,12 @@ class BNFW_Notification {
 			'side',
 			'core'
 		);
+
+		if ( self::POST_TYPE !== get_post_type( $post ) ) {
+			return;
+		}
+
+		do_action( 'bnfw_after_metaboxes', $this->read_settings( $post->ID ) );
 	}
 
 	/**
@@ -180,7 +188,7 @@ class BNFW_Notification {
 				</th>
 				<td>
 					<select name="notification" id="notification" class="select2"
-					        data-placeholder="Select the notification type" style="width:75%">
+							data-placeholder="<?php _e( 'Select the notification type', 'bnfw' ); ?>" style="width:75%">
 						<optgroup label="<?php _e( 'Admin', 'bnfw' ); ?>">
 							<option
 								value="admin-user" <?php selected( 'admin-user', $setting['notification'] ); ?>><?php esc_html_e( 'New User Registration - For Admin', 'bnfw' ); ?></option>
@@ -209,7 +217,7 @@ class BNFW_Notification {
 						</optgroup>
 						<?php do_action( 'bnfw_after_default_notifications_optgroup', $setting ); ?>
 
-						<optgroup label="Transactional">
+						<optgroup label="<?php _e( 'Transactional', 'bnfw' ); ?>">
 							<option
 								value="new-user" <?php selected( 'new-user', $setting['notification'] ); ?>><?php esc_html_e( 'New User Registration - For User', 'bnfw' ); ?></option>
 							<option
@@ -266,6 +274,9 @@ class BNFW_Notification {
 							</option>
 							<option value="moderate-post-comment" <?php selected( 'moderate-post-comment', $setting['notification'] ); ?>>
 								<?php esc_html_e( 'New Comment Awaiting Moderation', 'bnfw' ); ?>
+							</option>
+							<option value="approve-comment" <?php selected( 'approve-comment', $setting['notification'] ); ?>>
+								<?php esc_html_e( 'Comment Approved', 'bnfw' ); ?>
 							</option>
 							<option
 								value="newterm-category" <?php selected( 'newterm-category', $setting['notification'] ); ?>><?php esc_html_e( 'New Category', 'bnfw' ); ?></option>
@@ -421,9 +432,9 @@ foreach ( $taxs as $tax ) {
 				</th>
 				<td>
 					<input type="text" name="from-name" value="<?php echo esc_attr( $setting['from-name'] ); ?>"
-					       placeholder="Site Name" style="width: 37.35%">
+					       placeholder="<?php _e( 'Site Name', 'bnfw' ); ?>" style="width: 37.35%">
 					<input type="text" name="from-email" value="<?php echo esc_attr( $setting['from-email'] ); ?>"
-					       placeholder="Site Email" style="width: 37.3%">
+					       placeholder="<?php _e( 'Site Email', 'bnfw' ); ?>" style="width: 37.3%">
 				</td>
 			</tr>
 
@@ -435,9 +446,9 @@ foreach ( $taxs as $tax ) {
 				</th>
 				<td>
 					<input type="text" name="reply-name" value="<?php echo esc_attr( $setting['reply-name'] ); ?>"
-					       placeholder="Name" style="width: 37.35%">
+					       placeholder="<?php _e( 'Name', 'bnfw' ); ?>" style="width: 37.35%">
 					<input type="text" name="reply-email" value="<?php echo esc_attr( $setting['reply-email'] ); ?>"
-					       placeholder="Email" style="width: 37.3%">
+					       placeholder="<?php _e( 'Email', 'bnfw' ); ?>" style="width: 37.3%">
 				</td>
 			</tr>
 
@@ -449,7 +460,7 @@ foreach ( $taxs as $tax ) {
 
 				<td>
 					<select multiple name="cc[]" class="<?php echo sanitize_html_class( bnfw_get_user_select_class() ); ?>"
-					        data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
+					        data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', __( 'Select User Roles / Users', 'bnfw' ) ); ?>" style="width:75%">
 						<?php bnfw_render_users_dropdown( $setting['cc'] ); ?>
 					</select>
 				</td>
@@ -463,7 +474,7 @@ foreach ( $taxs as $tax ) {
 
 				<td>
 					<select multiple name="bcc[]" class="<?php echo sanitize_html_class( bnfw_get_user_select_class() ); ?>"
-							data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
+							data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', __( 'Select User Roles / Users', 'bnfw' ) ); ?>" style="width:75%">
 						<?php bnfw_render_users_dropdown( $setting['bcc'] ); ?>
 					</select>
 				</td>
@@ -474,7 +485,7 @@ foreach ( $taxs as $tax ) {
 			<tr valign="top" id="post-author">
 				<th>
 					<?php esc_html_e( 'Send to Author', 'bnfw' ); ?>
-					<div class="bnfw-help-tip"><p><?php esc_html_e( 'E.g. If you want a new comment notification to go to the author of the post that was commented on, tick this box. Doing so will hide the "Send To" box below.', 'bnfw' ); ?></p></div>
+					<div class="bnfw-help-tip"><p><?php esc_html_e( 'E.g. If you want a new comment notification to go to the author of the post that was commented on, tick this box.', 'bnfw' ); ?></p></div>
 				</th>
 
 				<td>
@@ -512,7 +523,7 @@ foreach ( $taxs as $tax ) {
 				<td>
 					<select multiple id="users-select" name="users[]"
 					        class="<?php echo sanitize_html_class( bnfw_get_user_select_class() ); ?>"
-					        data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
+					        data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', __( 'Select User Roles / Users', 'bnfw' ) ); ?>" style="width:75%">
 						<?php bnfw_render_users_dropdown( $setting['users'] ); ?>
 					</select>
 				</td>
@@ -530,7 +541,7 @@ foreach ( $taxs as $tax ) {
 				<td>
 					<select multiple id="exclude-users-select" name="exclude-users[]"
 					        class="<?php echo sanitize_html_class( bnfw_get_user_select_class() ); ?>"
-					        data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', 'Select User Roles / Users' ); ?>" style="width:75%">
+					        data-placeholder="<?php echo apply_filters( 'bnfw_email_dropdown_placeholder', __( 'Select User Roles / Users', 'bnfw' ) ); ?>" style="width:75%">
 						<?php bnfw_render_users_dropdown( $setting['exclude-users'] ); ?>
 					</select>
 				</td>
@@ -742,7 +753,7 @@ foreach ( $taxs as $tax ) {
 			$setting['show-fields'] = 'false';
 		}
 
-		$setting = apply_filters( 'bnfw_notification_setting', $setting );
+		$setting = apply_filters( 'bnfw_notification_setting', $setting, $_POST );
 
 		$this->save_settings( $post_id, $setting );
 
@@ -883,7 +894,7 @@ foreach ( $taxs as $tax ) {
 
 			<?php // Hidden submit button early on so that the browser chooses the right button when form is submitted with Return key ?>
 			<div style="display:none;">
-				<?php submit_button( esc_html__( 'Save' ), 'button', 'save' ); ?>
+				<?php submit_button( esc_html__( 'Save', 'bnfw' ), 'button', 'save' ); ?>
 			</div>
 
 			<?php // Always publish. ?>
@@ -1000,8 +1011,12 @@ foreach ( $taxs as $tax ) {
 		$args['posts_per_page'] = -1;
 		$args['nopagging'] = true;
 
+		$args = apply_filters( 'bnfw_get_notifications_args', $args, $types, $exclude_disabled );
+
 		$wp_query = new WP_Query();
 		$posts    = $wp_query->query( $args );
+
+		$posts = apply_filters( 'bnfw_get_notifications_posts', $posts, $args, $types, $exclude_disabled );
 
 		return $posts;
 	}
@@ -1031,8 +1046,12 @@ foreach ( $taxs as $tax ) {
 			)
 		);
 
+		$args = apply_filters( 'bnfw_is_notification_disabled_args', $args, $type );
+
 		$wp_query = new WP_Query();
 		$posts    = $wp_query->query( $args );
+
+		$posts = apply_filters( 'bnfw_is_notification_disabled_posts', $posts, $args, $type );
 
 		return count( $posts ) > 0;
 	}
@@ -1172,6 +1191,9 @@ foreach ( $taxs as $tax ) {
 		switch ( $slug ) {
 			case 'new-comment':
 				$name = esc_html__( 'New Comment', 'bnfw' );
+				break;
+			case 'approve-comment':
+				$name = esc_html__( 'Comment Approved', 'bnfw' );
 				break;
 			case 'moderate-comment':
 				$name = esc_html__( 'New Comment Awaiting Moderation', 'bnfw' );

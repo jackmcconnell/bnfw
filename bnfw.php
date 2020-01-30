@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.7.5
+ * Version: 1.7.6
  * Author: Made with Fuel
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -14,7 +14,7 @@
  */
 
 /**
- * Copyright © 2019 Made with Fuel Ltd. (hello@betternotificationsforwp.com)
+ * Copyright © 2020 Made with Fuel Ltd. (hello@betternotificationsforwp.com)
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
  * published by the Free Software Foundation.
@@ -133,7 +133,7 @@ class BNFW {
 		add_action( 'pending_to_private'        , array( $this, 'private_post' ) );
 		add_action( 'publish_to_private'        , array( $this, 'private_post' ) );
 
-		add_action( 'wp_insert_post'            , array( $this, 'insert_post' ), 10, 2 );
+		add_action( 'wp_insert_post'            , array( $this, 'insert_post' ), 10, 3 );
 
 		add_action( 'auto-draft_to_publish'     , array( $this, 'publish_post' ) );
 		add_action( 'draft_to_publish'          , array( $this, 'publish_post' ) );
@@ -145,9 +145,12 @@ class BNFW {
 		add_action( 'publish_to_publish'        , array( $this, 'update_post' ) );
 		add_action( 'private_to_private'        , array( $this, 'update_post' ) );
 
+		add_action( 'transition_post_status', array( $this, 'on_post_transition' ), 10, 3 );
+
 		add_action( 'init'                      , array( $this, 'custom_post_type_hooks' ), 100 );
 		add_action( 'create_term'               , array( $this, 'create_term' ), 10, 3 );
 
+		add_action( 'transition_comment_status', array( $this, 'on_comment_status_change' ), 10, 3 );
 		add_action( 'comment_post'              , array( $this, 'comment_post' ) );
 		add_action( 'trackback_post'            , array( $this, 'trackback_post' ) );
 		add_action( 'pingback_post'             , array( $this, 'pingback_post' ) );
@@ -196,9 +199,36 @@ class BNFW {
 	public function add_capability_to_admin() {
 		$admins = get_role( 'administrator' );
 
+		if ( is_null( $admins ) ) {
+			return;
+		}
+
 		if ( ! $admins->has_cap( 'bnfw' ) ) {
 			$admins->add_cap( 'bnfw' );
 		}
+	}
+
+	/**
+	 * On post transition.
+	 *
+	 * @param string   $new_status New post status.
+	 * @param string   $old_status Old post status.
+	 * @param \WP_Post $post       Post object.
+	 */
+	public function on_post_transition( $new_status, $old_status, $post ) {
+		if ( ! is_a( $post, 'WP_Post' ) ) {
+			return;
+		}
+
+		if ( 'pending' === $old_status ) {
+			return;
+		}
+
+		if ( 'pending' !== $new_status ) {
+			return;
+		}
+
+		$this->on_post_pending( $post->ID, $post );
 	}
 
 	/**
@@ -211,7 +241,6 @@ class BNFW {
 		$post_types = array_diff( $post_types, array( BNFW_Notification::POST_TYPE ) );
 
 		foreach ( $post_types as $post_type ) {
-			add_action( 'pending_' . $post_type, array( $this, 'on_post_pending' ), 10, 2 );
 			add_action( 'future_' . $post_type, array( $this, 'on_post_scheduled' ), 10, 2 );
 		}
 	}
@@ -257,11 +286,13 @@ class BNFW {
 	/**
 	 * Fires when a post is created for the first time.
 	 *
+	 * @param int    $post_id Post ID
+	 * @param object $post    Post object
+	 * @param bool   $update  Whether this is an existing post being updated or not.
+	 *
 	 * @since 1.3.1
-	 * @param int $post_id Post ID
-	 * @param object $post Post object
 	 */
-	public function insert_post( $post_id, $post ) {
+	public function insert_post( $post_id, $post, $update ) {
 		// Some themes like P2, directly insert posts into DB.
 		$insert_post_themes = apply_filters( 'bnfw_insert_post_themes', array( 'P2', 'Syncope' ) );
 		$current_theme = wp_get_theme();
@@ -271,10 +302,10 @@ class BNFW {
 		 *
 		 * @since 1.4
 		 */
-		$trigger_insert_post = apply_filters( 'bnfw_trigger_insert_post', false, $post_id );
+		$trigger_insert_post = apply_filters( 'bnfw_trigger_insert_post', false, $post_id, $update );
 
 		if ( in_array( $current_theme->get( 'Name' ), $insert_post_themes ) || $trigger_insert_post  ) {
-			$this->handle_inserted_post( $post_id );
+			$this->handle_inserted_post( $post_id, $update );
 		}
 	}
 
@@ -291,11 +322,12 @@ class BNFW {
 	/**
 	 * Trigger correct notifications for inserted posts.
 	 *
-	 * @since 1.6.7
-	 *
 	 * @param int $post_id Post id.
+	 * @param bool $update Whether the post was updated.
+	 *
+	 * @since 1.6.7
 	 */
-	private function handle_inserted_post( $post_id ) {
+	private function handle_inserted_post( $post_id, $update ) {
 		$post = get_post( $post_id );
 
 		if ( ! is_a( $post, 'WP_Post' ) ) {
@@ -304,7 +336,11 @@ class BNFW {
 
 		switch ( $post->post_status ) {
 			case 'publish':
-				$this->publish_post( $post );
+				if ( $update ) {
+					$this->update_post( $post );
+				} else {
+					$this->publish_post( $post );
+				}
 				break;
 
 			case 'private':
@@ -357,9 +393,8 @@ class BNFW {
 	 * @since 1.0
 	 * @param unknown $post
 	 */
-	function update_post( $post ) {
-		// Block editor sends duplicate requests on post update.
-		if ( ( isset( $_GET['meta-box-loader'] ) || isset( $_GET['meta_box'] ) ) ) {
+	public function update_post( $post ) {
+		if ( $this->is_metabox_request() ) {
 			return;
 		}
 
@@ -378,7 +413,11 @@ class BNFW {
 	 * @param int $post_id Post ID
 	 * @param object $post Post object
 	 */
-	function on_post_pending( $post_id, $post ) {
+	public function on_post_pending( $post_id, $post ) {
+		if ( $this->is_metabox_request() ) {
+			return;
+		}
+
 		$post_type = $post->post_type;
 
 		if ( BNFW_Notification::POST_TYPE != $post_type ) {
@@ -404,6 +443,21 @@ class BNFW {
 		if ( BNFW_Notification::POST_TYPE != $post_type ) {
 			$this->send_notification_async( 'future-' . $post_type, $post_id );
 		}
+	}
+
+	/**
+	 * When the status of a comment is changed.
+	 *
+	 * @param string      $new_status New status.
+	 * @param string      $old_status Old status.
+	 * @param \WP_Comment $comment    Comment.
+	 */
+	public function on_comment_status_change( $new_status, $old_status, $comment ) {
+		if ( 'approved' !== $new_status ) {
+			return;
+		}
+
+		$this->send_notification( 'approve-comment', $comment->comment_ID );
 	}
 
 	/**
@@ -1060,6 +1114,17 @@ class BNFW {
 		}
 
 		return '';
+	}
+
+	/**
+	 * Is this a metabox request?
+	 *
+	 * Block editor sends duplicate requests on post update.
+	 *
+	 * @return bool True if metabox request, False otherwise.
+	 */
+	protected function is_metabox_request() {
+		return ( isset( $_GET['meta-box-loader'] ) || isset( $_GET['meta_box'] ) );
 	}
 }
 

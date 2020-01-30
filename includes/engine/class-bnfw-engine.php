@@ -15,8 +15,8 @@ class BNFW_Engine {
 	 * @param array $setting
 	 */
 	public function send_test_email( $setting ) {
-		$subject = 'Test Email: ' . $setting['subject'];
-		$message = '<p><strong>This is a test email. All shortcodes below will show in place but not be replaced with content.</strong></p>' . stripslashes( $setting['message'] );
+		$subject = __( 'Test Email:', 'bnfw' ) . ' ' . $setting['subject'];
+		$message = '<p><strong>' . __( 'This is a test email. All shortcodes below will show in place but not be replaced with content.', 'bnfw' ) . '</strong></p>' . stripslashes( $setting['message'] );
 
 		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
 			$message = wpautop( $message );
@@ -66,7 +66,7 @@ class BNFW_Engine {
 				$headers[] = 'Content-type: text/plain';
 			}
 
-			$emails = apply_filters( 'bnfw_emails', $emails, $setting );
+			$emails = apply_filters( 'bnfw_emails', $emails, $setting, $id );
 
 			$send = apply_filters( 'bnfw_can_send_email', true, $setting, $emails, $subject, $message, $headers );
 
@@ -369,6 +369,7 @@ class BNFW_Engine {
 	public function handle_shortcodes( $message, $notification, $extra_data ) {
 		switch ( $notification ) {
 			case 'new-comment':
+			case 'approve-comment':
 			case 'new-trackback':
 			case 'new-pingback':
 			case 'reply-comment':
@@ -553,7 +554,7 @@ class BNFW_Engine {
 		$message = str_replace( '[post_date_gmt]', bnfw_format_date( $post->post_date_gmt ), $message );
 		$message = str_replace( '[post_content]', $post_content, $message );
 		$message = str_replace( '[post_title]', $post->post_title, $message );
-		$message = str_replace( '[post_excerpt]', ( $this->may_be_strip_shortcode( $post->post_excerpt ? $post->post_excerpt : wp_trim_words( $post_content ) ) ), $message );
+		$message = str_replace( '[post_excerpt]', $this->may_be_strip_shortcode( get_the_excerpt( $post ) ), $message );
 		$message = str_replace( '[post_status]', $post->post_status, $message );
 		$message = str_replace( '[comment_status]', $post->comment_status, $message );
 		$message = str_replace( '[ping_status]', $post->ping_status, $message );
@@ -596,14 +597,22 @@ class BNFW_Engine {
 			$message = str_replace( '[post_scheduled_date_gmt]', 'Published', $message );
 		}
 
-		$category_list = implode( ', ', wp_get_post_categories( $post_id, array( 'fields' => 'names' ) ) );
-		$message = str_replace( '[post_category]', $category_list, $message );
+		$categories = wp_get_post_categories( $post_id, array( 'fields' => 'all' ) );
 
-		$category_slugs = wp_get_post_categories( $post_id, array( 'fields' => 'id=>slug' ) );
-		$category_slugs = array_values( $category_slugs );
+		$message = str_replace( '[post_category]', implode( ', ', wp_list_pluck( $categories, 'name' ) ), $message );
 
-		if ( count( $category_slugs ) > 0 ) {
-			$message = str_replace( '[post_category_slug]', $category_slugs[0], $message );
+		if ( count( $categories ) > 0 ) {
+			$message = str_replace(
+				array(
+					'[post_category_slug]',
+					'[post_category_description]',
+				),
+				array(
+					$categories[0]->slug,
+					$categories[0]->description,
+				),
+				$message
+			);
 		}
 
 		$tag_list = implode( ', ', wp_get_post_tags( $post_id, array( 'fields' => 'names' ) ) );

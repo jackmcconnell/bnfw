@@ -35,7 +35,7 @@ function bnfw_render_users_dropdown( $selected_users ) {
 	$non_wp_users = $selected_users;
 	$user_count = count_users();
 	?>
-    <optgroup label="User Roles">
+    <optgroup label="<?php _e( 'User Roles', 'bnfw' ); ?>">
 		<?php
 		$roles = $wp_roles->get_names();
 
@@ -56,12 +56,12 @@ function bnfw_render_users_dropdown( $selected_users ) {
 			if ( isset( $user_count['avail_roles'][ $role_slug ] ) ) {
 				$count = $user_count['avail_roles'][ $role_slug ];
 			}
-			echo '<option value="role-', esc_attr( $role_slug ), '" ', $selected, '>', esc_html( $role_name ), ' (', $count, ' Users)', '</option>';
+			echo '<option value="role-', esc_attr( $role_slug ), '" ', $selected, '>', esc_html( $role_name ), ' (', $count, ' ' . __( 'Users', 'bnfw' ) . ')', '</option>';
 		}
 		?>
     </optgroup>
 
-    <optgroup label="Users">
+    <optgroup label="<?php _e( 'Users', 'bnfw' ); ?>">
 	<?php
 	$args = array(
 		'order_by' => 'email',
@@ -100,7 +100,7 @@ function bnfw_render_users_dropdown( $selected_users ) {
     </optgroup>
 
 	<?php if ( ! empty( $non_wp_users ) ) { ?>
-        <optgroup label="Non WordPress Users">
+        <optgroup label="<?php _e( 'Non WordPress Users', 'bnfw' ); ?>">
 	        <?php foreach ( $non_wp_users as $non_wp_user ) {
 		        echo '<option value="', esc_attr( $non_wp_user ), '" selected >', esc_html( $non_wp_user ), '</option>';
             }
@@ -124,6 +124,7 @@ function bnfw_is_comment_notification( $notification_name ) {
 		case 'new-trackback':
 		case 'new-pingback':
 		case 'reply-comment':
+		case 'approve-comment':
 			$is_comment_notification = true;
 			break;
 
