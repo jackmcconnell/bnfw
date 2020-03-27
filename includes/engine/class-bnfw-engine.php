@@ -132,6 +132,63 @@ class BNFW_Engine {
 	}
 
 	/**
+	 * Send user login notification email.
+	 *
+	 * @since 1.1
+	 * @param array  $setting  Notification setting
+	 * @param object $user     User object
+	 */
+	public function send_user_login_email( $setting, $user) {
+		
+		$trigger_notification = apply_filters( 'bnfw_trigger_user-login_notification', true, $setting, $user );
+
+		if ( ! $trigger_notification ) {
+			return;
+		}
+
+		$user_id = $user->ID;
+
+		$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $user_id );
+		$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $user_id );
+                $emails  = $this->get_emails( $setting, $user_id );
+		$headers = $this->get_headers( $emails );
+
+		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
+			$message = wpautop( $message );
+		}
+
+		if ( 'html' == $setting['email-formatting'] ) {
+			$headers[] = 'Content-type: text/html';
+			$message = apply_filters( 'bnfw_notification_message', $message, $setting );
+		}
+
+		$subject = $this->handle_global_user_shortcodes( $subject, $user->user_email );
+		$message = $this->handle_global_user_shortcodes( $message, $user->user_email );
+               
+		wp_mail( $user->user_email, stripslashes( $subject ), $message, $headers );
+	}
+
+        
+	/**
+	 * Send user login notification email for admin.
+	 *
+	 * @since 1.1
+	 * @param array  $setting  Notification setting
+	 * @param object $user     User object
+	 */
+	public function send_user_login_email_for_admin( $setting, $user) {
+		
+		$trigger_notification = apply_filters( 'bnfw_trigger_user-login_notification', true, $setting, $user );
+
+		if ( ! $trigger_notification ) {
+			return;
+                 }
+                 $user_id = $user->ID;
+                 
+                 $this->send_notification($setting,$user_id);
+        }
+
+	/**
 	 * Send comment reply notification email.
 	 *
 	 * @since 1.3
@@ -204,6 +261,40 @@ class BNFW_Engine {
 	}
 
 	/**
+	 * Send user role added support User Role Editor by Members Plugin.
+	 *
+	 * @since 1.3.9
+	 *
+	 * @param array $setting Notification setting
+	 * @param int   $user_id User ID
+	 * @param array $old_role Old User Role.
+	 * @param array $new_role New User Role.
+	 */
+	public function send_user_role_added_email( $setting, $user_id, $old_role, $new_role ) {
+		$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $user_id );
+		$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $user_id );
+
+		$subject = $this->handle_user_added_role_shortcodes( $subject, $old_role, $new_role );
+		$message = $this->handle_user_added_role_shortcodes( $message, $old_role, $new_role );
+
+		$headers = array();
+		if ( 'true' != $setting['disable-autop'] && 'html' == $setting['email-formatting'] ) {
+			$message = wpautop( $message );
+		}
+
+		if ( 'html' == $setting['email-formatting'] ) {
+			$headers[] = 'Content-type: text/html';
+			$message = apply_filters( 'bnfw_user_role_changed_email_message', $message, $setting );
+		}
+
+		$user = get_user_by( 'id', $user_id );
+
+		$subject = $this->handle_global_user_shortcodes( $subject, $user->user_email );
+		$message = $this->handle_global_user_shortcodes( $message, $user->user_email );
+		wp_mail( $user->user_email, stripslashes( $subject ), $message, $headers );
+	}
+
+	/**
 	 * Handle User Role shortcodes.
 	 *
 	 * @param string $message  String that needs shortcode processing.
@@ -228,6 +319,38 @@ class BNFW_Engine {
 
 		$message = str_replace( '[user_role_old]', $old_role_name, $message );
 		$message = str_replace( '[user_role_new]', $new_role_name, $message );
+
+		return $message;
+	}
+
+	/**
+	 * Handle User Added Role shortcodes.
+	 *
+	 * @param string $message  String that needs shortcode processing.
+	 * @param array  $old_role Old User Role.
+	 * @param array  $new_role New User Role.
+	 *
+	 * @return string Processed string.
+	 */
+	public function handle_user_added_role_shortcodes( $message, $old_roles, $new_roles ) {
+		$roles = wp_roles();
+
+		$old_role_name = array();
+		$new_role_name = array();
+
+                foreach ($old_roles as $key => $old_role) {
+                    if ( isset( $roles->role_names[ $old_role ] ) ) {
+			$old_role_name[] = $roles->role_names[ $old_role ];
+                    }
+                }
+                foreach ($new_roles as $key => $new_role) {
+                    if ( isset( $roles->role_names[ $new_role ] ) ) {
+			$new_role_name[] = $roles->role_names[ $new_role ];
+                    }
+                }
+                
+		$message = str_replace( '[user_role_old]', implode(',', $old_role_name), $message );
+		$message = str_replace( '[user_role_new]', implode(',', $new_role_name), $message );
 
 		return $message;
 	}
@@ -388,6 +511,12 @@ class BNFW_Engine {
 			case 'user-password':
 			case 'admin-user':
 			case 'welcome-email':
+			case 'user-login':
+                            $message = $this->user_shortcodes( $message, $extra_data );
+				break;
+                        case 'admin-user-login':
+                            $message = $this->user_shortcodes( $message, $extra_data );
+				break;
 			case 'new-user':
 			case 'user-role':
 			case 'admin-role':
@@ -432,7 +561,7 @@ class BNFW_Engine {
 					// handle new terms
 					$message = $this->taxonomy_shortcodes( $message, $type[1], $extra_data );
 
-				} elseif ( 'new' == $type[0] || 'update' == $type[0] || 'pending' == $type[0] || 'future' == $type[0] || 'private' == $type[0] ) {
+				} elseif ( 'new' == $type[0] || 'update' == $type[0] || 'pending' == $type[0] || 'future' == $type[0] || 'private' == $type[0]  || 'trash' == $type[0]) {
 					// handle new, update and pending posts
 					$post_types = get_post_types( array( 'public' => true ), 'names' );
 					$post_types = array_diff( $post_types, array( BNFW_Notification::POST_TYPE ) );
@@ -457,6 +586,12 @@ class BNFW_Engine {
 				} elseif ( 'uc' === $type[0] ) {
 					$message = $this->confirmed_action_shortcodes( $message, $extra_data );
 					$message = $this->handle_global_user_shortcodes( $message, $extra_data['admin_email'] );
+				} elseif ( 'media' === $type[0] ) {
+					$message = $this->post_shortcodes( $message, $extra_data );
+                                        $post = get_post( $extra_data );
+                                        if ( $post instanceof WP_Post ) {
+                                            $message = $this->user_shortcodes( $message, $post->post_author );
+				}
 				}
 				break;
 		}
@@ -531,6 +666,45 @@ class BNFW_Engine {
 	}
 
 	/**
+	 * Handle media post shortcodes.
+	 *
+	 * @since 1.0
+	 * @param string $message
+	 * @param int $post_id
+	 * @return string
+	 */
+	public function media_post_shortcodes( $message, $post ) {
+		
+		$post_content = $this->may_be_strip_shortcode( $post->post_content );
+		$post_content = apply_filters( 'the_content', $post_content );
+		$post_content = str_replace( ']]>', ']]&gt;', $post_content );
+
+		$message = str_replace( '[ID]', $post->ID, $message );
+		$message = str_replace( '[media_date]', bnfw_format_date( $post->post_date ), $message );
+		$message = str_replace( '[media_date_gmt]', bnfw_format_date( $post->post_date_gmt ), $message );
+                $message = str_replace( '[media_description]', $post_content, $message );
+		$message = str_replace( '[media_title]', $post->post_title, $message );
+                $message = str_replace( '[media_alt_text]',get_post_meta($post->ID,'_wp_attachment_image_alt',true),$message);
+                $message = str_replace( '[media_caption]', $this->may_be_strip_shortcode( get_the_excerpt( $post ) ), $message );
+                $message = str_replace( '[media_status]', $post->post_status, $message );
+		$message = str_replace( '[media_modified]', bnfw_format_date( $post->post_modified ), $message );
+		$message = str_replace( '[media_modified_gmt]', bnfw_format_date( $post->post_modified_gmt ), $message );
+                $message = str_replace( '[media_content_filtered]', $post->post_content_filtered, $message );
+                $message = str_replace( '[media_type]', $post->post_type, $message );
+                $message = str_replace( '[media_mime_type]', $post->post_mime_type, $message );
+                $message = str_replace( '[media_slug]', $post->post_name, $message );
+                
+                $dimensions = get_post_meta($post->ID,'_wp_attachment_metadata',true);
+                $media_dimensions = $dimensions['width'].' x '.$dimensions['height'];
+                $message = str_replace( '[media_dimensions]', $media_dimensions, $message );
+                
+                $user_info = get_userdata( $post->post_author );
+		$message = str_replace( '[media_author]', $user_info->display_name, $message );
+                
+                return $message;
+        }
+
+	/**
 	 * Handle post shortcodes.
 	 *
 	 * @since 1.0
@@ -544,6 +718,10 @@ class BNFW_Engine {
 		if ( ! $post instanceof WP_Post ) {
 			return $message;
 		}
+
+                if($post->post_type == 'attachment'){
+                   $message = $this->media_post_shortcodes($message, $post);
+                }
 
 		$post_content = $this->may_be_strip_shortcode( $post->post_content );
 		$post_content = apply_filters( 'the_content', $post_content );

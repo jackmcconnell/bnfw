@@ -3,9 +3,9 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 4.0
-Tested up to: 5.3.2
+Tested up to: 5.4
 Requires PHP: 5.6
-Stable tag: 1.7.6
+Stable tag: 1.7.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -221,6 +221,13 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 == Changelog ==
 
+= 1.7.7 - 27th March 2020 =
+* New: Three new notifications! "New Media Published", "Media Updated", "Media Comment" - complete with new shortcodes for caption, alt text, dimensions, etc.
+* New: "User Logged In - For Admin" notification - sends a notification to the admin when users log in.
+* New: "User Logged In - For User" notification - sends a notification to the user when they log in.
+* New: "Published to Trash" notification - sends a notification when a published post is moved to the trash.
+* Improved: Support for plugins that allow users to be assigned to multiple user roles.
+
 = 1.7.6 - 30th January 2020 =
 * New Notification: New Comment Approved. This is sent after the comment has been approved.
 * New: You can now output the description for the first available category in any new Post/Page/Custom Post Type notification, as well as to New Comment, Comment Awaiting Moderation, and Comment Reply notifications using the shortcode `[post_category_description]`. You can also use the `[post_category_slug]` notification to output the first available category slug.
@@ -322,7 +329,7 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 * New: If you want to allow other user roles to create or edit notifications, you can now grant them the 'bnfw' capability using a role editor.
 * Added: A new notice will display at the top of all Notification screens explaining how you can improve email deliverability. You can dismiss this permanently at any time.
 * Added: Inline help tips are now available when creating or editing a notification. Handy if you want to remember how something works but don't want to sift through the documentation.
-* Added: Merged two pull requests that came in via the GitHub clone of this plugin - ([#1](https://github.com/jackmcconnell/bnfw/pull/1) and [#2](https://github.com/jackmcconnell/bnfw/pull/2)).
+* Added: Merged two pull request that came in via the GitHub clone of this plugin - ([#1](https://github.com/jackmcconnell/bnfw/pull/1) and [#2](https://github.com/jackmcconnell/bnfw/pull/2)).
 * Added: For faster support, there is now a Priority Support menu item in the BNFW Notifications menu. Priority Support is available to customers with an active subscription to an add-on.
 * Improved: All date related shortcodes now output in the date and time format set in Settings > General in the WordPress Admin.
 * Improved: The list of available notifications has been re-ordered to make more sense.

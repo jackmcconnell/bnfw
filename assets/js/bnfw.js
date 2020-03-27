@@ -15,13 +15,20 @@ jQuery(document).ready(function($) {
 
     function toggle_fields() {
     	var show_fields = $('#show-fields').is(":checked");
-
+        var notification = $( "#notification" ).val();
+        if('user-login' === notification){
     	if ( show_fields ) {
+			$('#email, #reply').show();
+            } else {
+			$('#email, #reply').hide();
+            }
+        }else{
+            if ( show_fields ) {
 			$('#email, #cc, #bcc, #reply').show();
     	} else {
 			$('#email, #cc, #bcc, #reply').hide();
     	}
-
+        }
 	    $( '#subject-wrapper' ).show();
     }
 
@@ -44,7 +51,8 @@ jQuery(document).ready(function($) {
 
 		$("#notification, .bnfw-select2").select2();
 		$(".user-select2").select2({
-			tags: BNFW.enableTags
+			tags: BNFW.enableTags,
+                        tokenSeparators: BNFW.enabletokenSeparators
 		} );
 		$(".user-ajax-select2").select2( {
 			ajax: {
@@ -120,6 +128,9 @@ jQuery(document).ready(function($) {
 			toggle_fields();
 			toggle_users();
 			$( '#user-password-msg, #current-user, #post-author' ).hide();
+		} else if ('user-login' === notification){ 
+                        $('#cc, #bcc, #users, #exclude-users, #current-user, #post-author').hide();
+                        $('#toggle-fields').show();
 		} else {
 			$('#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user, #post-author').show();
 			toggle_fields();
@@ -196,6 +207,9 @@ jQuery(document).ready(function($) {
 			toggle_fields();
 			toggle_users();
 			$( '#user-password-msg, #current-user, #post-author' ).hide();
+		} else if ('user-login' === notification){ 
+                        $('#cc, #bcc, #users, #exclude-users, #current-user, #post-author').hide();
+                        $('#toggle-fields').show();
 		} else {
 			$('#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user, #post-author').show();
 			$('#user-password-msg').hide();
@@ -250,6 +264,8 @@ jQuery(document).ready(function($) {
 			case 'email-changed':
 			case 'email-changing':
 			case 'new-user':
+                        case 'user-login':
+                        case 'admin-user-login':
 			case 'welcome-email':
 			case 'user-role':
 			case 'admin-role':
@@ -260,6 +276,15 @@ jQuery(document).ready(function($) {
 			case 'pending-post':
 			case 'future-post':
 			case 'newterm-category':
+			case 'media-new-published':
+                  notification_slug = 'new-media';
+                  break;
+			case 'comment-media':
+                  notification_slug = 'new-comment';
+                  break;
+			case 'media-updated':
+                  notification_slug = 'media-updated';
+                  break;
 			case 'newterm-post_tag':
 				notification_slug = notification;
 				break;

@@ -201,6 +201,8 @@ class BNFW_Notification {
 							<option
 								value="admin-role" <?php selected( 'admin-role', $setting['notification'] ); ?>><?php esc_html_e( 'User Role Changed - For Admin', 'bnfw' ); ?></option>
 							<option
+								value="admin-user-login" <?php selected( 'admin-user-login', $setting['notification'] ); ?>><?php esc_html_e( 'User Logged In - For Admin', 'bnfw' ); ?></option>
+							<option
 								value="core-updated" <?php selected( 'core-updated', $setting['notification'] ); ?>><?php esc_html_e( 'WordPress Core Automatic Background Updates', 'bnfw' ); ?></option>
 
 							<?php if ( version_compare( $wp_version, '4.9.6' ) >= 0 ) : ?>
@@ -224,6 +226,8 @@ class BNFW_Notification {
 								value="welcome-email" <?php selected( 'welcome-email', $setting['notification'] ); ?>><?php esc_html_e( 'New User - Post-registration Email', 'bnfw' ); ?></option>
 							<option
 								value="user-password" <?php selected( 'user-password', $setting['notification'] ); ?>><?php esc_html_e( 'User Lost Password - For User', 'bnfw' ); ?></option>
+							<option
+								value="user-login" <?php selected( 'user-login', $setting['notification'] ); ?>><?php esc_html_e( 'User Logged In - For User', 'bnfw' ); ?></option>
 							<option
 								value="password-changed" <?php selected( 'password-changed', $setting['notification'] ); ?>><?php esc_html_e( 'Password Changed - For User', 'bnfw' ); ?></option>
 							<option value="email-changing" <?php selected( 'email-changing', $setting['notification'] ); ?>>
@@ -269,6 +273,8 @@ class BNFW_Notification {
 								value="private-post" <?php selected( 'private-post', $setting['notification'] ); ?>><?php esc_html_e( 'New Private Post', 'bnfw' ); ?></option>
 							<option
 								value="future-post" <?php selected( 'future-post', $setting['notification'] ); ?>><?php esc_html_e( 'Post Scheduled', 'bnfw' ); ?></option>
+								<option
+								value="trash-post" <?php selected( 'trash-post', $setting['notification'] ); ?>><?php esc_html_e( 'Published Post Moved to Trash', 'bnfw' ); ?></option>
 							<option value="new-comment" <?php selected( 'new-comment', $setting['notification'] ); ?>>
 								<?php esc_html_e( 'New Comment', 'bnfw' ); ?>
 							</option>
@@ -311,6 +317,18 @@ class BNFW_Notification {
 							<?php do_action( 'bnfw_after_notification_options', 'page', 'Page', $setting ); ?>
 						</optgroup>
 						<?php do_action( 'bnfw_after_notification_options_optgroup', 'page', 'Page', $setting ); ?>
+
+						<optgroup label="Media">
+							<option
+								value="media-new-published" <?php selected( 'media-new-published', $setting['notification'] ); ?>><?php esc_html_e( 'New Media Published', 'bnfw' ); ?></option>
+							<option
+								value="comment-media" <?php selected( 'comment-media', $setting['notification'] ); ?>><?php esc_html_e( 'Media Comment', 'bnfw' ); ?></option>
+							<option
+								value="media-updated" <?php selected( 'media-updated', $setting['notification'] ); ?>><?php esc_html_e( 'Media Updated', 'bnfw' ); ?></option>
+
+								<?php do_action( 'bnfw_after_notification_options', 'media', 'Media', $setting ); ?>
+						</optgroup>
+						<?php do_action( 'bnfw_after_notification_options_optgroup', 'media', 'Media', $setting ); ?>
 						<?php
 						$types = apply_filters( 'bnfw_notification_dropdown_posttypes', get_post_types( array(
 							'public'   => true,
@@ -1121,7 +1139,15 @@ foreach ( $taxs as $tax ) {
 				break;
 			case 'users':
 				$users = $this->get_names_from_users( $setting['users'] );
-				echo implode( ', ', $users );
+				if (!empty($users)) {
+					echo implode( ', ', $users );
+				}
+				else {
+                                    if(isset($setting['new-user-role'])){
+					$users = $this->get_names_from_users( $setting['new-user-role'] );
+					echo implode( ', ', $users );
+				}
+				}
 
 				if ( 'true' === $setting['only-post-author'] ) {
 					echo esc_html__( ', Post Author', 'bnfw' );
@@ -1157,15 +1183,25 @@ foreach ( $taxs as $tax ) {
 		$emails = array();
 		$names_from_user_ids = array();
 
-		foreach ( $users as $user ) {
-			if ( $this->starts_with( $user, 'role-' ) ) {
-				$user_roles[] = ucfirst( str_replace( 'role-', '', $user ) );
-			} elseif ( strpos( $user, '@' ) !== false ) {
-				$emails[] = $user;
-			} elseif ( absint( $user ) > 0 ) {
-				$user_ids[] = absint( $user );
-			} else {
-				$emails[] = $user;
+		if ( is_array( $users ) ) {
+			foreach ( $users as $user ) {
+				if ( $this->starts_with( $user, 'role-' ) ) {
+					$user_roles[] = ucfirst( str_replace( 'role-', '', $user ) );
+				} elseif ( strpos( $user, '@' ) !== false ) {
+					$emails[] = $user;
+				} elseif ( absint( $user ) > 0 ) {
+					$user_ids[] = absint( $user );
+				} else {
+					$emails[] = $user;
+				}
+			}
+		}
+		else {
+			// User Roles not associated with a To/CC/BCC field
+			$role = get_role( $users );
+
+			if ( !empty( $role ) ) {
+				$user_roles = array( $role->name );
 			}
 		}
 
@@ -1234,6 +1270,12 @@ foreach ( $taxs as $tax ) {
 			case 'new-user':
 				$name = esc_html__( 'New User Registration - For User', 'bnfw' );
 				break;
+                        case 'user-login':
+				$name = esc_html__( 'User Logged In - For User', 'bnfw' );
+				break;
+                        case 'admin-user-login':
+				$name = esc_html__( 'User Logged In - For Admin', 'bnfw' );
+				break;
 			case 'welcome-email':
 				$name = esc_html__( 'New User - Post-registration Email', 'bnfw' );
 				break;
@@ -1260,6 +1302,9 @@ foreach ( $taxs as $tax ) {
 				break;
 			case 'future-post':
 				$name = esc_html__( 'Post Scheduled', 'bnfw' );
+				break;
+            case 'trash-post':
+				$name = esc_html__( 'Published Post Moved to Trash', 'bnfw' );
 				break;
 			case 'new-page':
 				$name = esc_html__( 'New Page Published', 'bnfw' );
@@ -1288,6 +1333,16 @@ foreach ( $taxs as $tax ) {
 			case 'data-erased':
 				$name = esc_html__( 'Privacy - Data Erased - For User', 'bnfw' );
 				break;
+			case 'media-new-published':
+				$name = esc_html__( 'New Media Published', 'bnfw' );
+				break;
+			case 'comment-media':
+			 	$name = esc_html__( 'Media Comment', 'bnfw' );
+			 	break;
+			case 'media-updated':
+			 	$name = esc_html__( 'Media Updated', 'bnfw' );
+			 	break;
+
 			default:
 				$splited  = explode( '-', $slug );
 				$label    = $splited[1];

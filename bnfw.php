@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.7.6
+ * Version: 1.7.7
  * Author: Made with Fuel
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -92,6 +92,8 @@ class BNFW {
 			require_once 'includes/libraries/EDD_SL_Plugin_Updater.php';
 		}
 
+                include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+
 		require_once 'vendor/persist-admin-notices-dismissal/persist-admin-notices-dismissal.php';
 
 		require_once 'includes/license/class-bnfw-license.php';
@@ -135,6 +137,8 @@ class BNFW {
 
 		add_action( 'wp_insert_post'            , array( $this, 'insert_post' ), 10, 3 );
 
+		add_action( 'publish_to_trash'          , array( $this, 'trash_post' ));
+
 		add_action( 'auto-draft_to_publish'     , array( $this, 'publish_post' ) );
 		add_action( 'draft_to_publish'          , array( $this, 'publish_post' ) );
 		add_action( 'future_to_publish'         , array( $this, 'publish_post' ) );
@@ -145,20 +149,30 @@ class BNFW {
 		add_action( 'publish_to_publish'        , array( $this, 'update_post' ) );
 		add_action( 'private_to_private'        , array( $this, 'update_post' ) );
 
+		add_action( 'add_attachment', array( $this, 'new_publish_media_notification' ), 10, 1 );
+        add_action( 'edit_attachment', array( $this, 'media_attachment_data_update_notification' ), 10 );
+
 		add_action( 'transition_post_status', array( $this, 'on_post_transition' ), 10, 3 );
 
 		add_action( 'init'                      , array( $this, 'custom_post_type_hooks' ), 100 );
 		add_action( 'create_term'               , array( $this, 'create_term' ), 10, 3 );
 
-		add_action( 'transition_comment_status', array( $this, 'on_comment_status_change' ), 10, 3 );
+		add_action( 'transition_comment_status' , array( $this, 'on_comment_status_change' ), 10, 3 );
 		add_action( 'comment_post'              , array( $this, 'comment_post' ) );
 		add_action( 'trackback_post'            , array( $this, 'trackback_post' ) );
 		add_action( 'pingback_post'             , array( $this, 'pingback_post' ) );
 
-		add_action( 'user_register', array( $this, 'user_register' ) );
+		add_action( 'user_register'				, array( $this, 'user_register' ) );
 
 		add_action( 'user_register'             , array( $this, 'welcome_email' ) );
+                
+                if ( is_plugin_active('members/members.php') ) {
+                   add_action( 'profile_update'            , array( $this, 'user_role_added' ), 10, 2 );
+                }else{
 		add_action( 'set_user_role'             , array( $this, 'user_role_changed' ), 10, 3 );
+                }
+                
+                add_action( 'wp_login'			, array( $this, 'user_login' ),10,2);
 
 		if ( version_compare( $wp_version, '4.4', '>=' ) ) {
 			add_filter( 'retrieve_password_title', array( $this, 'change_password_email_title' ), 10, 3 );
@@ -173,9 +187,9 @@ class BNFW {
 		add_filter( 'send_password_change_email', array( $this, 'should_password_changed_email_be_sent' ), 10, 3 );
 		add_filter( 'password_change_email'     , array( $this, 'on_password_changed' ), 10, 2 );
 
-		add_filter( 'send_email_change_email', array( $this, 'should_email_changed_email_be_sent' ), 10, 3 );
+		add_filter( 'send_email_change_email'	, array( $this, 'should_email_changed_email_be_sent' ), 10, 3 );
 		add_filter( 'email_change_email'        , array( $this, 'on_email_changed' ), 10, 2 );
-		add_filter( 'new_user_email_content', array( $this, 'on_email_changing' ), 10, 2 );
+		add_filter( 'new_user_email_content'	, array( $this, 'on_email_changing' ), 10, 2 );
 
 		add_filter( 'auto_core_update_email'    , array( $this, 'on_core_updated' ), 10, 4 );
 
@@ -406,6 +420,23 @@ class BNFW {
 		}
 	}
 
+	
+    /**
+     * Fires when a post is moved publish to trash.
+     *
+     */
+    public function trash_post($post) {
+        if ($this->is_metabox_request()) {
+            return;
+        }
+        $post_id = $post->ID;
+        $post_type = $post->post_type;
+       
+        if (BNFW_Notification::POST_TYPE != $post_type) {
+            $this->send_notification_async('trash-' . $post_type, $post_id);
+        }
+    }
+
 	/**
 	 * Fires when a post is pending for review.
 	 *
@@ -423,6 +454,34 @@ class BNFW {
 		if ( BNFW_Notification::POST_TYPE != $post_type ) {
 			$this->send_notification_async( 'pending-' . $post_type, $post_id );
 		}
+	}
+
+        
+	/**
+	 * On Media Published.
+	 *
+	 * @param int  $post_id Attachment post id.
+	 */
+
+	public function new_publish_media_notification( $post_id ) {
+	    $post_type = get_post_type($post_id);
+            
+	    if (BNFW_Notification::POST_TYPE != $post_type && $post_type == 'attachment') {
+		 	$this->send_notification_async( 'media-new-published', $post_id );		
+	    }
+	}
+           
+        /**
+	 * On Media Attachment Data Update.
+	 *
+	 * @param int  $post_id Attachment post id.
+	 */
+
+	public function media_attachment_data_update_notification($post_id ) {
+	    $post_type = get_post_type($post_id);
+	    if (BNFW_Notification::POST_TYPE != $post_type && $post_type == 'attachment') {
+		 	$this->send_notification_async( 'media-updated', $post_id );		
+	    }
 	}
 
 	/**
@@ -481,6 +540,9 @@ class BNFW {
 			if ( 'post' != $post->post_type ) {
 				$notification_type = 'comment-' . $post->post_type;
 			}
+                        if('attachment' == $post->post_type){
+                            $notification_type = 'comment-media';
+                        }
 
 			$this->send_notification( $notification_type, $comment_id );
 		}
@@ -796,6 +858,35 @@ class BNFW {
 	}
 
 	/**
+	 * Send notification for user when user login.
+	 *
+	 * @since 1.0
+	 * @param string $user_name
+         * @param object $user_data User object.
+	 */
+	public function user_login( $user_name, $user_data ) {
+                $user_id = $user_data->ID;
+                $notifications = $this->notifier->get_notifications( 'user-login' );
+		foreach ( $notifications as $notification ) {
+			$this->engine->send_user_login_email( $this->notifier->read_settings( $notification->ID ), get_userdata( $user_id ) );
+		}
+                $this->user_login_admin_notification($user_id);
+	}
+
+	/**
+	 * Send notification for admin when user login.
+	 *
+	 * @since 1.0
+	 * @param int $user_id
+	 */
+	public function user_login_admin_notification( $user_id ) {
+                $notifications = $this->notifier->get_notifications( 'admin-user-login' );
+		foreach ( $notifications as $notification ) {
+			$this->engine->send_user_login_email_for_admin( $this->notifier->read_settings( $notification->ID ), get_userdata( $user_id ) );
+		}
+	}
+
+	/**
 	 * Send notification about new users to site admin.
 	 *
 	 * @since 1.7.1
@@ -870,6 +961,83 @@ class BNFW {
 			}
 		}
 	}
+
+	/**
+	 * Send notification when a user role added support User Role Editor by Members Plugin.
+	 *
+	 * @since 1.3.9
+	 *
+	 * @param int    $user_id   User ID
+	 * @param string $new_role  New User role
+	 * @param array  $old_roles Old User role
+	 */
+	public function user_role_added( $user_id, $old_user_data ) {
+            
+            if(isset($_POST['members_user_roles']) && !empty($_POST['members_user_roles'])){
+                    // Get the current user roles.
+                    $old_roles = (array) $old_user_data->roles;
+
+                    // Sanitize the posted roles.
+                    $new_roles = array_map( 'members_sanitize_role', $_POST['members_user_roles'] );
+                        
+                    sort($old_roles);
+                    sort($new_roles);
+                    $old_roles_str = implode('', $old_roles);
+                    $new_roles_str = implode('', $new_roles);
+		if ( ! empty( $old_roles ) &&  $old_roles_str !== $new_roles_str) {
+			$notifications = $this->notifier->get_notifications( 'user-role' );
+			foreach ( $notifications as $notification ) {
+
+				/**
+				 * Trigger User Role Changed - For User notification.
+				 *
+				 * @since 1.6.5
+				 */
+				if ( apply_filters( 'bnfw_trigger_user-role-added_notification', true, $notification, $new_roles, $old_roles ) ) {
+					$this->engine->send_user_role_added_email(
+						$this->notifier->read_settings( $notification->ID ),
+						$user_id,
+						$old_roles,
+						$new_roles
+					);
+				}
+			}
+
+			$notifications = $this->notifier->get_notifications( 'admin-role' );
+			foreach ( $notifications as $notification ) {
+
+				/**
+				 * Trigger User Role Changed - For User notification.
+				 *
+				 * @since 1.6.5
+				 */
+				if ( apply_filters( 'bnfw_trigger_user-role-added_notification', true, $notification, $new_roles, $old_roles ) ) {
+					$setting            = $this->notifier->read_settings( $notification->ID );
+					$setting['message'] = $this->engine->handle_user_added_role_shortcodes( $setting['message'], $old_roles, $new_roles );
+					$setting['subject'] = $this->engine->handle_user_added_role_shortcodes( $setting['subject'], $old_roles, $new_roles );
+
+					$this->engine->send_notification( $setting, $user_id );
+				}
+			}
+		}
+              }
+	}
+        
+        /**
+        * Sanitizes a role name.  This is a wrapper for the `sanitize_key()` WordPress function.  Only
+        * alphanumeric characters and underscores are allowed.  Hyphens are also replaced with underscores.
+        *
+        * @since  1.0.0
+        * @access public
+        * @return int
+        */
+        function members_sanitize_role( $role ) {
+
+            $_role = strtolower( $role );
+            $_role = preg_replace( '/[^a-z0-9_\-\s]/', '', $_role );
+
+            return apply_filters( 'members_sanitize_role', str_replace( ' ', '_', $_role ), $role );
+        }
 
 	/**
 	 * Send notification based on type and ref id
