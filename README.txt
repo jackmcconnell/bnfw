@@ -58,6 +58,7 @@ The notifications that are currently available to use are:
 * Password Changed - For Admin
 * User Email Changed - For Admin
 * User Role Changed - For Admin
+* User Logged In - For Admin
 * WordPress Core Automatic Background Updates
 * Privacy – Confirm Action: Export Data Request – For Admin
 * Privacy – Confirm Action: Erase Data Request – For Admin
@@ -71,6 +72,7 @@ The notifications that are currently available to use are:
 * User Email Changed Confirmation - For User
 * User Email Changed - For User
 * User Role Changed - For User
+* User Logged In - For User
 * Comment Reply
 * Privacy – Confirm Action: Export Data Request – For User
 * Privacy – Confirm Action: Erase Data Request – For User
@@ -89,6 +91,7 @@ The notifications that are currently available to use are:
 * Post Pending Review
 * New Private Post
 * Post Scheduled
+* Published Post Moved to Trash
 * New Comment
 * New Comment Awaiting Moderation
 * Comment Approved
@@ -109,6 +112,12 @@ The notifications that are currently available to use are:
 * Page - Comment Reply
 * Page - Custom Field Updated ([Custom Fields Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
 * Page - Update Reminder ([Reminders Add-on](https://betternotificationsforwp.com/downloads/update-reminder/))
+
+**Media**
+
+* New Media Published
+* Media Updated
+* Media - New Comment
 
 **Posts**
 
