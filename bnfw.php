@@ -149,10 +149,10 @@ class BNFW {
 		add_action( 'publish_to_publish'        , array( $this, 'update_post' ) );
 		add_action( 'private_to_private'        , array( $this, 'update_post' ) );
 
-		add_action( 'add_attachment', array( $this, 'new_publish_media_notification' ), 10, 1 );
-        add_action( 'edit_attachment', array( $this, 'media_attachment_data_update_notification' ), 10 );
+		add_action( 'add_attachment'			, array( $this, 'new_publish_media_notification' ), 10, 1 );
+        add_action( 'edit_attachment'			, array( $this, 'media_attachment_data_update_notification' ), 10 );
 
-		add_action( 'transition_post_status', array( $this, 'on_post_transition' ), 10, 3 );
+		add_action( 'transition_post_status'	, array( $this, 'on_post_transition' ), 10, 3 );
 
 		add_action( 'init'                      , array( $this, 'custom_post_type_hooks' ), 100 );
 		add_action( 'create_term'               , array( $this, 'create_term' ), 10, 3 );
@@ -166,13 +166,13 @@ class BNFW {
 
 		add_action( 'user_register'             , array( $this, 'welcome_email' ) );
                 
-                if ( is_plugin_active('members/members.php') ) {
-                   add_action( 'profile_update'            , array( $this, 'user_role_added' ), 10, 2 );
-                }else{
-		add_action( 'set_user_role'             , array( $this, 'user_role_changed' ), 10, 3 );
-                }
+    	if ( is_plugin_active('members/members.php') ) {
+            add_action( 'profile_update'        , array( $this, 'user_role_added' ), 10, 2 );
+        }else{
+			add_action( 'set_user_role'         , array( $this, 'user_role_changed' ), 10, 3 );
+        }
                 
-                add_action( 'wp_login'			, array( $this, 'user_login' ),10,2);
+        add_action( 'wp_login'					, array( $this, 'user_login' ),10,2);
 
 		if ( version_compare( $wp_version, '4.4', '>=' ) ) {
 			add_filter( 'retrieve_password_title', array( $this, 'change_password_email_title' ), 10, 3 );
@@ -467,7 +467,7 @@ class BNFW {
 	    $post_type = get_post_type($post_id);
             
 	    if (BNFW_Notification::POST_TYPE != $post_type && $post_type == 'attachment') {
-		 	$this->send_notification_async( 'media-new-published', $post_id );		
+		 	$this->send_notification_async( 'new-media', $post_id );		
 	    }
 	}
            
@@ -480,7 +480,7 @@ class BNFW {
 	public function media_attachment_data_update_notification($post_id ) {
 	    $post_type = get_post_type($post_id);
 	    if (BNFW_Notification::POST_TYPE != $post_type && $post_type == 'attachment') {
-		 	$this->send_notification_async( 'media-updated', $post_id );		
+		 	$this->send_notification_async( 'update-media', $post_id );		
 	    }
 	}
 
@@ -540,9 +540,10 @@ class BNFW {
 			if ( 'post' != $post->post_type ) {
 				$notification_type = 'comment-' . $post->post_type;
 			}
-                        if('attachment' == $post->post_type){
-                            $notification_type = 'comment-media';
-                        }
+			
+			if('attachment' == $post->post_type){
+				$notification_type = 'comment-media';
+			}
 
 			$this->send_notification( $notification_type, $comment_id );
 		}
@@ -865,12 +866,14 @@ class BNFW {
          * @param object $user_data User object.
 	 */
 	public function user_login( $user_name, $user_data ) {
-                $user_id = $user_data->ID;
-                $notifications = $this->notifier->get_notifications( 'user-login' );
+        $user_id = $user_data->ID;
+        $notifications = $this->notifier->get_notifications( 'user-login' );
+		
 		foreach ( $notifications as $notification ) {
 			$this->engine->send_user_login_email( $this->notifier->read_settings( $notification->ID ), get_userdata( $user_id ) );
 		}
-                $this->user_login_admin_notification($user_id);
+        
+		$this->user_login_admin_notification($user_id);
 	}
 
 	/**
@@ -880,7 +883,8 @@ class BNFW {
 	 * @param int $user_id
 	 */
 	public function user_login_admin_notification( $user_id ) {
-                $notifications = $this->notifier->get_notifications( 'admin-user-login' );
+        $notifications = $this->notifier->get_notifications( 'admin-user-login' );
+		
 		foreach ( $notifications as $notification ) {
 			$this->engine->send_user_login_email_for_admin( $this->notifier->read_settings( $notification->ID ), get_userdata( $user_id ) );
 		}

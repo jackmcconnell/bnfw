@@ -555,6 +555,15 @@ class BNFW_Engine {
 				$message = $this->data_erased_shortcodes( $message, $extra_data );
 				break;
 
+                        case 'new-media':
+                        case 'update-media':
+                            $message = $this->post_shortcodes( $message, $extra_data );
+                            $post = get_post( $extra_data );
+                            if ( $post instanceof WP_Post ) {
+                                $message = $this->user_shortcodes( $message, $post->post_author );
+                            }
+                            break;
+
 			default:
 				$type = explode( '-', $notification, 2 );
 				if ( 'newterm' == $type[0] ) {
@@ -586,13 +595,7 @@ class BNFW_Engine {
 				} elseif ( 'uc' === $type[0] ) {
 					$message = $this->confirmed_action_shortcodes( $message, $extra_data );
 					$message = $this->handle_global_user_shortcodes( $message, $extra_data['admin_email'] );
-				} elseif ( 'media' === $type[0] ) {
-					$message = $this->post_shortcodes( $message, $extra_data );
-                                        $post = get_post( $extra_data );
-                                        if ( $post instanceof WP_Post ) {
-                                            $message = $this->user_shortcodes( $message, $post->post_author );
-				}
-				}
+					}
 				break;
 		}
 
@@ -674,35 +677,31 @@ class BNFW_Engine {
 	 * @return string
 	 */
 	public function media_post_shortcodes( $message, $post ) {
-		
 		$post_content = $this->may_be_strip_shortcode( $post->post_content );
 		$post_content = apply_filters( 'the_content', $post_content );
 		$post_content = str_replace( ']]>', ']]&gt;', $post_content );
-
 		$message = str_replace( '[ID]', $post->ID, $message );
 		$message = str_replace( '[media_date]', bnfw_format_date( $post->post_date ), $message );
 		$message = str_replace( '[media_date_gmt]', bnfw_format_date( $post->post_date_gmt ), $message );
-                $message = str_replace( '[media_description]', $post_content, $message );
+        $message = str_replace( '[media_description]', $post_content, $message );
 		$message = str_replace( '[media_title]', $post->post_title, $message );
-                $message = str_replace( '[media_alt_text]',get_post_meta($post->ID,'_wp_attachment_image_alt',true),$message);
-                $message = str_replace( '[media_caption]', $this->may_be_strip_shortcode( get_the_excerpt( $post ) ), $message );
-                $message = str_replace( '[media_status]', $post->post_status, $message );
+        $message = str_replace( '[media_alt_text]',get_post_meta($post->ID,'_wp_attachment_image_alt',true),$message);
+        $message = str_replace( '[media_caption]', $this->may_be_strip_shortcode( get_the_excerpt( $post ) ), $message );
+        $message = str_replace( '[media_status]', $post->post_status, $message );
 		$message = str_replace( '[media_modified]', bnfw_format_date( $post->post_modified ), $message );
 		$message = str_replace( '[media_modified_gmt]', bnfw_format_date( $post->post_modified_gmt ), $message );
-                $message = str_replace( '[media_content_filtered]', $post->post_content_filtered, $message );
-                $message = str_replace( '[media_type]', $post->post_type, $message );
-                $message = str_replace( '[media_mime_type]', $post->post_mime_type, $message );
-                $message = str_replace( '[media_slug]', $post->post_name, $message );
-                
-                $dimensions = get_post_meta($post->ID,'_wp_attachment_metadata',true);
-                $media_dimensions = $dimensions['width'].' x '.$dimensions['height'];
-                $message = str_replace( '[media_dimensions]', $media_dimensions, $message );
-                
-                $user_info = get_userdata( $post->post_author );
+		$message = str_replace( '[media_content_filtered]', $post->post_content_filtered, $message );
+		$message = str_replace( '[media_type]', $post->post_type, $message );
+		$message = str_replace( '[media_mime_type]', $post->post_mime_type, $message );
+		$message = str_replace( '[media_slug]', $post->post_name, $message );
+		$dimensions = get_post_meta($post->ID,'_wp_attachment_metadata',true);
+		$media_dimensions = $dimensions['width'].' x '.$dimensions['height'];
+		$message = str_replace( '[media_dimensions]', $media_dimensions, $message );  
+		$user_info = get_userdata( $post->post_author );
 		$message = str_replace( '[media_author]', $user_info->display_name, $message );
                 
-                return $message;
-        }
+        return $message;
+    }
 
 	/**
 	 * Handle post shortcodes.
@@ -719,9 +718,9 @@ class BNFW_Engine {
 			return $message;
 		}
 
-                if($post->post_type == 'attachment'){
-                   $message = $this->media_post_shortcodes($message, $post);
-                }
+		if($post->post_type == 'attachment'){
+			$message = $this->media_post_shortcodes($message, $post);
+		}
 
 		$post_content = $this->may_be_strip_shortcode( $post->post_content );
 		$post_content = apply_filters( 'the_content', $post_content );

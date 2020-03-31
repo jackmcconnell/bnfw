@@ -320,15 +320,15 @@ class BNFW_Notification {
 
 						<optgroup label="Media">
 							<option
-								value="media-new-published" <?php selected( 'media-new-published', $setting['notification'] ); ?>><?php esc_html_e( 'New Media Published', 'bnfw' ); ?></option>
+								value="new-media" <?php selected( 'new-media', $setting['notification'] ); ?>><?php esc_html_e( 'New Media Published', 'bnfw' ); ?></option>
 							<option
-								value="comment-media" <?php selected( 'comment-media', $setting['notification'] ); ?>><?php esc_html_e( 'Media Comment', 'bnfw' ); ?></option>
+								value="update-media" <?php selected( 'update-media', $setting['notification'] ); ?>><?php esc_html_e( 'Media Updated', 'bnfw' ); ?></option>
 							<option
-								value="media-updated" <?php selected( 'media-updated', $setting['notification'] ); ?>><?php esc_html_e( 'Media Updated', 'bnfw' ); ?></option>
-
-								<?php do_action( 'bnfw_after_notification_options', 'media', 'Media', $setting ); ?>
+								value="comment-media" <?php selected( 'comment-media', $setting['notification'] ); ?>><?php esc_html_e( 'Media - New Comment', 'bnfw' ); ?></option>
+							<?php do_action( 'bnfw_after_notification_options', 'media', 'Media', $setting ); ?>
 						</optgroup>
 						<?php do_action( 'bnfw_after_notification_options_optgroup', 'media', 'Media', $setting ); ?>
+
 						<?php
 						$types = apply_filters( 'bnfw_notification_dropdown_posttypes', get_post_types( array(
 							'public'   => true,
@@ -1270,10 +1270,10 @@ foreach ( $taxs as $tax ) {
 			case 'new-user':
 				$name = esc_html__( 'New User Registration - For User', 'bnfw' );
 				break;
-                        case 'user-login':
+            case 'user-login':
 				$name = esc_html__( 'User Logged In - For User', 'bnfw' );
 				break;
-                        case 'admin-user-login':
+            case 'admin-user-login':
 				$name = esc_html__( 'User Logged In - For Admin', 'bnfw' );
 				break;
 			case 'welcome-email':
@@ -1333,15 +1333,16 @@ foreach ( $taxs as $tax ) {
 			case 'data-erased':
 				$name = esc_html__( 'Privacy - Data Erased - For User', 'bnfw' );
 				break;
-			case 'media-new-published':
+			case 'new-media':
 				$name = esc_html__( 'New Media Published', 'bnfw' );
 				break;
-			case 'comment-media':
-			 	$name = esc_html__( 'Media Comment', 'bnfw' );
-			 	break;
-			case 'media-updated':
+			case 'update-media':
 			 	$name = esc_html__( 'Media Updated', 'bnfw' );
 			 	break;
+			case 'comment-media':
+			 	$name = esc_html__( 'Media - New Comment', 'bnfw' );
+			 	break;
+			
 
 			default:
 				$splited  = explode( '-', $slug );

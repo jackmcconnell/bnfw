@@ -264,8 +264,8 @@ jQuery(document).ready(function($) {
 			case 'email-changed':
 			case 'email-changing':
 			case 'new-user':
-                        case 'user-login':
-                        case 'admin-user-login':
+        	case 'user-login':
+            case 'admin-user-login':
 			case 'welcome-email':
 			case 'user-role':
 			case 'admin-role':
@@ -276,15 +276,9 @@ jQuery(document).ready(function($) {
 			case 'pending-post':
 			case 'future-post':
 			case 'newterm-category':
-			case 'media-new-published':
-                  notification_slug = 'new-media';
-                  break;
+			case 'new-media':
 			case 'comment-media':
-                  notification_slug = 'new-comment';
-                  break;
-			case 'media-updated':
-                  notification_slug = 'media-updated';
-                  break;
+			case 'update-media':
 			case 'newterm-post_tag':
 				notification_slug = notification;
 				break;
