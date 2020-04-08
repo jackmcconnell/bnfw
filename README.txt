@@ -5,7 +5,7 @@ Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC,
 Requires at least: 4.0
 Tested up to: 5.4
 Requires PHP: 5.6
-Stable tag: 1.7.7
+Stable tag: 1.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -94,7 +94,7 @@ The notifications that are currently available to use are:
 * Published Post Moved to Trash
 * New Comment
 * New Comment Awaiting Moderation
-* Comment Approved
+* Post - Comment Approved
 * Post - Custom Field Updated ([Custom Fields Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
 * Post - Update Reminder ([Reminders Add-on](https://betternotificationsforwp.com/downloads/update-reminder/))
 * New Trackback
@@ -109,6 +109,7 @@ The notifications that are currently available to use are:
 * Page Scheduled
 * Page - New Comment
 * Page - New Comment Awaiting Moderation
+* Page - Comment Approved
 * Page - Comment Reply
 * Page - Custom Field Updated ([Custom Fields Add-on](https://betternotificationsforwp.com/downloads/custom-fields/))
 * Page - Update Reminder ([Reminders Add-on](https://betternotificationsforwp.com/downloads/update-reminder/))
@@ -118,6 +119,9 @@ The notifications that are currently available to use are:
 * New Media Published
 * Media Updated
 * Media - New Comment
+* Media - New Comment Awaiting Moderation
+* Media - Comment Approved
+* Media - Comment Reply
 
 **Posts**
 
@@ -229,6 +233,12 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 
 == Changelog ==
+
+= 1.8 - 8th April 2020 =
+* POTENTIAL BREAKING CHANGES - Please edit and re-save each comment notification you have set-up to ensure that the correct notification is selected and saved.
+* New: A huge overhaul of the comment notifications which now gives a great comment management workflow.
+* New: New Comment, New Comment Awaiting Moderation, Comment Approved, and Comment Reply notifications are now availble to all posts, pages, custom post types, and media attachments.
+* Improved: The 'Send this notification to the Author' checkbox has been overhauled to work better for the above notifications. See the relevant section in [this support document](https://betternotificationsforwp.com/documentation/notifications/adding-a-new-notification/) for more information.
 
 = 1.7.7 - 27th March 2020 =
 * New: Three new notifications! "New Media Published", "Media Updated", "Media Comment" - complete with new shortcodes for caption, alt text, dimensions, etc.

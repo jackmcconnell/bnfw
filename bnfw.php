@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.7.7
+ * Version: 1.8
  * Author: Made with Fuel
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -516,7 +516,23 @@ class BNFW {
 			return;
 		}
 
-		$this->send_notification( 'approve-comment', $comment->comment_ID );
+                $post = get_post( $comment->comment_post_ID );
+                
+		$notification_type = 'approve-'.$post->post_type.'-comment';
+
+		$this->send_notification( $notification_type, $comment->comment_ID );
+                
+                // Send new comment notification after comment approve
+                $notification_type = 'new-comment'; // old notification name
+
+		if ( 'post' != $post->post_type ) {
+                    $notification_type = 'comment-' . $post->post_type;
+		}
+
+		$this->send_notification( $notification_type, $comment->comment_ID );
+                
+                // Send comment reply notification after comment approve.
+                $this->commentsReply($comment->comment_ID);
 	}
 
 	/**
@@ -541,13 +557,23 @@ class BNFW {
 				$notification_type = 'comment-' . $post->post_type;
 			}
 			
-			if('attachment' == $post->post_type){
-				$notification_type = 'comment-media';
-			}
-
 			$this->send_notification( $notification_type, $comment_id );
+                        
+                        // comment reply notification.
+                        $this->commentsReply($comment_id);
 		}
+	}
 
+        /**
+	 * Send notification for comments reply
+	 *
+	 * @since 1.0
+	 * @param int $comment_id
+	 */
+        public function commentsReply($comment_id) {
+               $the_comment = get_comment( $comment_id );
+               $post = get_post( $the_comment->comment_post_ID );
+                
 		// comment reply notification.
 		if ( $this->can_send_comment_notification( $the_comment ) ) {
 			if ( $the_comment->comment_parent > 0 ) {

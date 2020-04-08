@@ -40,8 +40,8 @@ jQuery(document).ready(function($) {
     	}
 
 	    var notification = $( '#notification' ).val();
-
-	    if ( 'new-comment' === notification || 'approve-comment' === notification || 'moderate-comment' === notification ) {
+            var check_comment = notification.split('-');
+	    if ( 'new-comment' === notification || 'approve' === check_comment[0] || 'moderate-comment' === notification ) {
 		    $( '#current-user' ).show();
 	    }
     }
@@ -81,6 +81,8 @@ jQuery(document).ready(function($) {
 
 		toggle_fields();
 
+                var check_comment = notification.split('-');
+
 		if ( 'reply-comment' === notification || notification.startsWith( 'commentreply-' ) ||
 				'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
 				'password-changed' === notification || 'email-changed' === notification || 'email-changing' === notification || 'user-role' === notification ||
@@ -110,10 +112,10 @@ jQuery(document).ready(function($) {
 
 				$( '#email-formatting' ).hide();
 			}
-		} else if ( 'new-comment' === notification || 'approve-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ||
+		} else if ( 'new-comment' === notification || 'approve' === check_comment[0] || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ||
 				'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
 
-			if ( 'new-comment' === notification || 'approve-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ) {
+			if ( 'new-comment' === notification || 'approve' === check_comment[0] || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ) {
 				$('#post-author').show();
 			} else {
 				$('#post-author').hide();
@@ -159,6 +161,8 @@ jQuery(document).ready(function($) {
 		var $this = $(this),
 			notification = $this.val();
 
+                        var check_comment = notification.split('-');
+
 		if ( 'reply-comment' === notification || notification.startsWith( 'commentreply-' ) ||
 			'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
 			'password-changed' === notification || 'email-changed' === notification || 'email-changing' === notification || 'user-role' === notification ||
@@ -188,11 +192,11 @@ jQuery(document).ready(function($) {
 
 				$( '#email-formatting' ).hide();
 			}
-		} else if ( 'new-comment' === notification || 'approve-comment' === notification ||
+		} else if ( 'new-comment' === notification || 'approve' === check_comment[0] ||
 					notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ||
 					'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
 
-			if ( 'new-comment' === notification || 'approve-comment' === notification || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ) {
+			if ( 'new-comment' === notification || 'approve' === check_comment[0] || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ) {
 				$('#post-author').show();
 			} else {
 				$('#post-author').hide();
@@ -250,7 +254,6 @@ jQuery(document).ready(function($) {
 			splited;
 
 		switch( notification ) {
-			case 'approve-comment':
 			case 'new-comment':
 			case 'new-trackback':
 			case 'new-pingback':
@@ -264,8 +267,8 @@ jQuery(document).ready(function($) {
 			case 'email-changed':
 			case 'email-changing':
 			case 'new-user':
-        	case 'user-login':
-            case 'admin-user-login':
+                        case 'user-login':
+                        case 'admin-user-login':
 			case 'welcome-email':
 			case 'user-role':
 			case 'admin-role':
@@ -277,7 +280,7 @@ jQuery(document).ready(function($) {
 			case 'future-post':
 			case 'newterm-category':
 			case 'new-media':
-			case 'comment-media':
+			case 'comment-attachment':
 			case 'update-media':
 			case 'newterm-post_tag':
 				notification_slug = notification;
@@ -303,6 +306,9 @@ jQuery(document).ready(function($) {
 						break;
 					case 'comment':
 						notification_slug = 'new-comment';
+						break;
+                                        case 'approve':
+						notification_slug = 'approve-comment';
 						break;
 					case 'moderate':
 						notification_slug = 'moderate-comment';

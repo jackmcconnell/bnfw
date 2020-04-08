@@ -492,7 +492,6 @@ class BNFW_Engine {
 	public function handle_shortcodes( $message, $notification, $extra_data ) {
 		switch ( $notification ) {
 			case 'new-comment':
-			case 'approve-comment':
 			case 'new-trackback':
 			case 'new-pingback':
 			case 'reply-comment':
@@ -589,6 +588,15 @@ class BNFW_Engine {
 					if ( 0 != $comment->user_id ) {
 						$message = $this->user_shortcodes( $message, $comment->user_id );
 					}
+				}elseif ( 'approve' === $type[0] ) {
+					// handle Approve comments notification
+                                        $message = $this->comment_shortcodes( $message, $extra_data );
+                                        $comment = get_comment( $extra_data );
+                                        $message = $this->post_shortcodes( $message, $comment->comment_post_ID );
+                                        if ( 0 != $comment->user_id ) {
+                                            $message = $this->user_shortcodes( $message, $comment->user_id );
+                                        }
+                                        break;
 				} elseif ( 'ca' === $type[0] ) {
 					$message = $this->confirm_action_shortcodes( $message, $extra_data );
 					$message = $this->handle_global_user_shortcodes( $message, $extra_data['email'] );
@@ -1078,6 +1086,12 @@ class BNFW_Engine {
 				$post_id = $comment->comment_post_ID;
 			}
 
+                        $type = explode( '-', $setting['notification'], 2 );
+			if ('approve' == $type[0] ) {
+				if ( ! in_array( $comment->comment_author_email, $emails['to'] ) ) {
+					$emails['to'][] = $comment->comment_author_email;
+				}
+			}else{
 			$post_author = get_post_field( 'post_author', $post_id );
 			$author      = get_user_by( 'id', $post_author );
 			if ( false !== $author && $post_author != $exclude ) {
@@ -1085,6 +1099,7 @@ class BNFW_Engine {
 					$emails['to'][] = $author->user_email;
 				}
 			}
+		}
 		}
 
 		if ( 'true' == $setting['show-fields'] ) {
