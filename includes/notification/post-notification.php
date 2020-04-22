@@ -20,11 +20,12 @@ function bnfw_post_notifications( $notifications, $post_type ) {
 	$notifications[] = 'pending-' . $post_type;
 	$notifications[] = 'future-' . $post_type;
 	$notifications[] = 'comment-' . $post_type;
-	$notifications[] = 'moderate-' . $post_type . '-comment';
+    $notifications[] = 'moderate-' . $post_type . '-comment';
+    if($post_type == 'post'){
 	$notifications[] = 'new-comment';
 	$notifications[] = 'new-trackback';
 	$notifications[] = 'new-pingback';
-
+    }
 	return $notifications;
 }
 add_filter( 'bnfw_post_notifications', 'bnfw_post_notifications', 10, 2 );

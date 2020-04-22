@@ -1067,16 +1067,15 @@ class BNFW_Engine {
 			}
 		}
 
-		$to_emails = array();
+		$emails['to'] = array();
 
 		if ( ! empty( $setting['users'] ) ) {
-			$to_emails = $this->get_emails_from_users( $setting['users'], $exclude, $id, $setting );
+			$emails['to'] = $this->get_emails_from_users( $setting['users'], $exclude, $id, $setting );
 		}
 
 		/**
 		 * BNFW get to emails.
 		 */
-		$emails['to'] = apply_filters( 'bnfw_to_emails', $to_emails, $setting, $id );
 
 		if ( $process_post_authors && 'true' === $setting['only-post-author'] ) {
 			$post_id = $id;
@@ -1150,6 +1149,7 @@ class BNFW_Engine {
 				$emails['bcc'] = array_diff( $emails['bcc'], $excluded_emails );
 			}
 		}
+                $emails['to'] = apply_filters( 'bnfw_to_emails', $emails['to'], $setting, $id );
 
 		return $emails;
 	}

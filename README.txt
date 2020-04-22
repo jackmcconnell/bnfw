@@ -5,7 +5,7 @@ Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC,
 Requires at least: 4.0
 Tested up to: 5.4
 Requires PHP: 5.6
-Stable tag: 1.8
+Stable tag: 1.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -233,6 +233,10 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 
 == Changelog ==
+
+= 1.8.1 - 21st April 2020 =
+* Added: Core changes to allow the [Global Override add-on](https://betternotificationsforwp.com/downloads/per-post-override/) to only send out notifications once.
+* Fixed: A range of issues relating to the [Global Override add-on](https://betternotificationsforwp.com/downloads/per-post-override/). 
 
 = 1.8 - 8th April 2020 =
 * POTENTIAL BREAKING CHANGES - Please edit and re-save each comment notification you have set-up to ensure that the correct notification is selected and saved.
