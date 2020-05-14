@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.8.1
+ * Version: 1.8.2
  * Author: Made with Fuel
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -654,7 +654,7 @@ class BNFW {
 			if ( '' === $user_data ) {
 				return $this->engine->handle_shortcodes( $setting['subject'], 'user-password', $user_data->ID );
 			} else {
-				return $setting['subject'];
+				return $this->engine->handle_shortcodes( $setting['subject'], 'user-password', $user_data->ID );
 			}
 		}
 

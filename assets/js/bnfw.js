@@ -383,7 +383,7 @@ jQuery(document).ready(function($) {
 				subject = '[[global_site_title]] Password Reset';
 				body = 'Someone has requested a password reset for the following account: <br>' +
 					'Site Name: [global_site_title] <br>' +
-					'Username: [user_login] <br>' +
+					'Username: [email_user_login] <br>' +
 					'If this was a mistake, just ignore this email and nothing will happen. <br>' +
 					'To reset your password, visit the following address: [password_reset_link]';
 

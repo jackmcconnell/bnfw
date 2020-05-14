@@ -3,9 +3,9 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 4.0
-Tested up to: 5.4
+Tested up to: 5.4.1
 Requires PHP: 5.6
-Stable tag: 1.8.1
+Stable tag: 1.8.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -233,6 +233,12 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 
 == Changelog ==
+
+= 1.8.2 - 14th May 2020 =
+* Fixed: Email addresses stored in custom fields weren't being used in Comment notifications when the Custom Fields add-on was installed.
+* Fixed: Two PHP notices showing above the subscriptions form when the Subscriptions add-on was installed.
+* Fixed: 'The User Lost Password - For User' notification wasn't outputting shortcodes in the message subject.
+* Fixed: 'The User Lost Password - For User' notification had an incorrect shortcode when inserting the default email content.
 
 = 1.8.1 - 21st April 2020 =
 * Added: Core changes to allow the [Global Override add-on](https://betternotificationsforwp.com/downloads/per-post-override/) to only send out notifications once.

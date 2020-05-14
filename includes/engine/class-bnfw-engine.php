@@ -507,7 +507,6 @@ class BNFW_Engine {
 			case 'admin-password':
 			case 'admin-password-changed':
 			case 'admin-email-changed':
-			case 'user-password':
 			case 'admin-user':
 			case 'welcome-email':
 			case 'user-login':
@@ -525,6 +524,7 @@ class BNFW_Engine {
 				break;
 
 			case 'email-changed':
+                        case 'user-password':
 				// handle users (lost password and new user registration)
 				$message = $this->user_shortcodes( $message, $extra_data, 'email_' );
 				break;
@@ -1196,9 +1196,10 @@ class BNFW_Engine {
 		$emails_from_user_roles = $this->get_emails_from_role( $user_roles, $exclude );
 
 		if ( ! empty( $setting ) ) {
-			if ( $this->starts_with( $setting['notification'], 'comment-' ) || $this->starts_with( $setting['notification'], 'moderate-' ) ) {
 				// for new comment notifications, we need to use post id instead of comment id.
-				$post_id = bnfw_get_post_id_from_comment( $post_id );
+                    if ( bnfw_is_comment_notification( $setting['notification'] )  &&  $post_id ) {
+				$comment = get_comment( $post_id );
+				$post_id = $comment->comment_post_ID;
 			}
 		}
 
