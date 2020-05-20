@@ -373,6 +373,8 @@ class BNFW_Notification {
 									</option>
 									<option
 										value="commentreply-<?php echo esc_attr( $type ); ?>" <?php selected( 'commentreply-' . $type, $setting['notification'] ); ?>><?php echo "'$label' ", esc_html__( 'Comment Reply', 'bnfw' ); ?></option>
+									<option
+										value="trash-<?php echo esc_attr( $type ); ?>" <?php selected( 'trash-' . $type, $setting['notification'] ); ?>><?php echo "'$label' ", esc_html__( 'Moved to Trash', 'bnfw' ); ?></option>
 									<?php do_action( 'bnfw_after_notification_options', $type, $label, $setting ); ?>
 								</optgroup>
 								<?php do_action( 'bnfw_after_notification_options_optgroup', $type, $label, $setting ); ?>
