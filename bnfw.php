@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.8.2
+ * Version: 1.8.3
  * Author: Made with Fuel
  * Author URI: https://betternotificationsforwp.com/
  * Author Email: hello@betternotificationsforwp.com
@@ -1136,19 +1136,24 @@ class BNFW {
 	 */
 	public function handle_user_request_email_content( $content, $email_data ) {
 		$field = 'message';
+                $new_content = '';
 
 		switch ( $email_data['description'] ) {
 			case 'Export Personal Data':
 				$notification_name = 'ca-export-data';
-				$content           = $this->handle_user_request_notification( $notification_name, $field, $email_data );
+				$new_content           = $this->handle_user_request_notification( $notification_name, $field, $email_data );
 				break;
 			case 'Erase Personal Data':
 				$notification_name = 'ca-erase-data';
-				$content           = $this->handle_user_request_notification( $notification_name, $field, $email_data );
+				$new_content           = $this->handle_user_request_notification( $notification_name, $field, $email_data );
 				break;
 		}
-
-		return $content;
+                
+                if(!empty($new_content)){
+                    return $new_content;
+                }else{
+                    return $content;
+                }
 	}
 
 	/**
@@ -1162,19 +1167,23 @@ class BNFW {
 	 */
 	public function handle_user_request_email_subject( $subject, $blogname, $email_data ) {
 		$field = 'subject';
+                $new_subject = '';
 
 		switch ( $email_data['description'] ) {
 			case 'Export Personal Data':
 				$notification_name           = 'ca-export-data';
-				$subject = $this->handle_user_request_notification( $notification_name, $field, $email_data );
+				$new_subject = $this->handle_user_request_notification( $notification_name, $field, $email_data );
 				break;
 			case 'Erase Personal Data':
 				$notification_name = 'ca-erase-data';
-				$content           = $this->handle_user_request_notification( $notification_name, $field, $email_data );
+				$new_subject           = $this->handle_user_request_notification( $notification_name, $field, $email_data );
 				break;
 		}
-
-		return $subject;
+                if(!empty($new_subject)){
+                    return $new_subject;
+                }else{
+                    return $subject;
+                }
 	}
 
 	/**
@@ -1187,19 +1196,24 @@ class BNFW {
 	 */
 	public function handle_user_confirmed_action_email_content( $content, $email_data ) {
 		$field = 'message';
+                $new_content = '';
 
 		switch ( $email_data['description'] ) {
 			case 'Export Personal Data':
 				$notification_name = 'uc-export-data';
-				$content           = $this->handle_user_confirmed_action_notification( $notification_name, $field, $email_data );
+				$new_content           = $this->handle_user_confirmed_action_notification( $notification_name, $field, $email_data );
 				break;
 			case 'Erase Personal Data':
 				$notification_name = 'uc-erase-data';
-				$content           = $this->handle_user_confirmed_action_notification( $notification_name, $field, $email_data );
+				$new_content           = $this->handle_user_confirmed_action_notification( $notification_name, $field, $email_data );
 				break;
 		}
 
-		return $content;
+                if(!empty($new_content)){
+                    return $new_content;
+                }else{
+                    return $content;
+                }
 	}
 
 	/**
@@ -1213,6 +1227,7 @@ class BNFW {
 	public function handle_data_export_email_content( $content, $request_id ) {
 		$field = 'message';
 		$notification_name = 'data-export';
+                $new_content = '';
 
 		$notifications = $this->notifier->get_notifications( $notification_name );
 		if ( count( $notifications ) > 0 ) {
@@ -1220,10 +1235,14 @@ class BNFW {
 			// If there are multiple notification then we will read data about only the last one
 			$setting = $this->notifier->read_settings( end( $notifications )->ID );
 
-			return $this->engine->handle_data_export_email_shortcodes( $setting[ $field ], $setting, $request_id );
+			$new_content = $this->engine->handle_data_export_email_shortcodes( $setting[ $field ], $setting, $request_id );
 		}
 
-		return $content;
+		if(!empty($new_content)){
+                    return $new_content;
+                }else{
+                    return $content;
+                }
 	}
 
 	public function handle_erasure_complete_email_subject( $subject, $sitename, $email_data ) {
@@ -1240,17 +1259,19 @@ class BNFW {
 
 	protected function handle_erasure_complete_email_notification( $field, $content, $email_data ) {
 		$notification_name = 'data-erased';
-
+                $new_content = '';
 		$notifications = $this->notifier->get_notifications( $notification_name );
 		if ( count( $notifications ) > 0 ) {
 			// Ideally there should be only one notification for this type.
 			// If there are multiple notification then we will read data about only the last one
 			$setting = $this->notifier->read_settings( end( $notifications )->ID );
-
-			return $this->engine->handle_shortcodes( $setting[ $field ], $notification_name, $email_data );
+                        $new_content = $this->engine->handle_shortcodes( $setting[ $field ], $notification_name, $email_data );
 		}
-
-		return $content;
+                if(!empty($new_content)){
+                    return $new_content;
+                }else{
+                    return $content;
+                }
 	}
 
 	/**

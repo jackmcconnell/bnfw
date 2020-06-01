@@ -5,7 +5,7 @@ Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC,
 Requires at least: 4.0
 Tested up to: 5.4.1
 Requires PHP: 5.6
-Stable tag: 1.8.2
+Stable tag: 1.8.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -233,6 +233,10 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 
 == Changelog ==
+
+= 1.8.3 - 1st June 2020 =
+* Fixed: If you activate BNFW and have not created any notifications, the default WordPress personal data export and erase request emails did not get sent.
+* Added: Compatibility with the 1.2 release of the [Custom Fields add-on](https://betternotificationsforwp.com/downloads/custom-fields/).
 
 = 1.8.2 - 14th May 2020 =
 * Fixed: Email addresses stored in custom fields weren't being used in Comment notifications when the Custom Fields add-on was installed.

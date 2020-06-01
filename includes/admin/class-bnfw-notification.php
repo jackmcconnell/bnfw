@@ -516,7 +516,7 @@ foreach ( $taxs as $tax ) {
 			<tr valign="top" id="post-author">
 				<th>
 					<?php esc_html_e( 'Send to Author', 'bnfw' ); ?>
-					<div class="bnfw-help-tip"><p><?php esc_html_e( 'E.g. If you want a new comment notification to go to the author of the post that was commented on, tick this box.', 'bnfw' ); ?></p></div>
+					<div class="bnfw-help-tip"><p><?php esc_html_e( 'E.g. If you want a new post published notification to go to the post author, tick this box.', 'bnfw' ); ?></p></div>
 				</th>
 
 				<td>
