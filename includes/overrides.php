@@ -24,7 +24,6 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 
 		if ( version_compare( $wp_version, '4.3', '>=' ) ) {
 			// for WordPress 4.3 and above
-			global $wpdb;
 
 			if ( version_compare( $wp_version, '4.3', '=' ) ) {
 				$notify = $deprecated;
@@ -94,8 +93,14 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 				$wp_hasher = new PasswordHash( 8, true );
 			}
 			$hashed = time() . ':' . $wp_hasher->HashPassword( $key );
-			$wpdb->update( $wpdb->users, array( 'user_activation_key' => $hashed ), array( 'user_login' => $user->user_login ) );
-
+                        
+                        wp_update_user(
+				array(
+				'ID' => $user->ID,
+				'user_activation_key' => $hashed,
+				)
+			);
+                        
 			if ( $bnfw->notifier->notification_exists( 'new-user', false ) ) {
 				$notifications = $bnfw->notifier->get_notifications( 'new-user' );
 				$password_url  = network_site_url( 'wp-login.php?action=rp&key=' . $key . '&login=' . rawurlencode( $user->user_login ), 'login' );

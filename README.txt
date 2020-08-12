@@ -2,10 +2,10 @@
 Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
-Requires at least: 4.0
-Tested up to: 5.4.1
+Requires at least: 4.8
+Tested up to: 5.5
 Requires PHP: 5.6
-Stable tag: 1.8.3
+Stable tag: 1.8.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -234,6 +234,12 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 == Changelog ==
 
+= 1.8.4 - 12th August 2020 =
+* Fixed: In certain situations, the password reset key would get modified when using the User Lost Password - For User notification.
+* Fixed: An issue in the Custom Fields add-on where the Send to Author checkbox did not send a User Custom Field Updated notification to the user.
+* Improved: Compatibility with the latest version of the [Digest add-on](https://betternotificationsforwp.com/downloads/digest/).
+* Improved: Compatibility with the latest version of the [Multisite add-on](https://betternotificationsforwp.com/downloads/multisite/).
+
 = 1.8.3 - 1st June 2020 =
 * Fixed: If you activate BNFW and have not created any notifications, the default WordPress personal data export and erase request emails did not get sent.
 * Added: Compatibility with the 1.2 release of the [Custom Fields add-on](https://betternotificationsforwp.com/downloads/custom-fields/).
@@ -246,7 +252,7 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 = 1.8.1 - 21st April 2020 =
 * Added: Core changes to allow the [Global Override add-on](https://betternotificationsforwp.com/downloads/per-post-override/) to only send out notifications once.
-* Fixed: A range of issues relating to the [Global Override add-on](https://betternotificationsforwp.com/downloads/per-post-override/). 
+* Fixed: A range of issues relating to the [Global Override add-on](https://betternotificationsforwp.com/downloads/per-post-override/).
 
 = 1.8 - 8th April 2020 =
 * POTENTIAL BREAKING CHANGES - Please edit and re-save each comment notification you have set-up to ensure that the correct notification is selected and saved.
@@ -267,8 +273,8 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 * Added: Merged two pull requests that came in via the GitHub clone of this plugin relating to filters - ([#1](https://github.com/jackmcconnell/bnfw/pull/4/commits/501d7cdcb9855ad5aa08e4510f752f9ff319567f) and [#2](https://github.com/jackmcconnell/bnfw/pull/5)).
 * Added: `$update` as 3rd parameter to `bnfw_trigger_insert_post` filter.
 * Added: Additional translatable strings.
-* Improved: 'Post Pending Review' notifications are now only sent for the first update to a post that is pending review. Subsequent updates will not trigger another notification. 
-* Fixed: Advanced Custom Fields (ACF) was triggering incorrect notifications when post/page/custom post types were submitted via a front-end form. 
+* Improved: 'Post Pending Review' notifications are now only sent for the first update to a post that is pending review. Subsequent updates will not trigger another notification.
+* Fixed: Advanced Custom Fields (ACF) was triggering incorrect notifications when post/page/custom post types were submitted via a front-end form.
 * Fixed: The `[post_excerpt]` shortcode now conforms to the `excerpt_length` filter.
 * Fixed: Post Pending Review notifications were being sent in duplicate in certain situations.
 * Fixed: Added an additional check to ensure a Multisite doesn't crash when BNFW is enabled on a site with no Administrator users.

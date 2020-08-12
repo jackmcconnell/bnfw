@@ -1,12 +1,14 @@
 <?php
+
 /**
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.8.3
+ * Version: 1.8.4
+ * Requires at least: 4.8
+ * Requires PHP: 5.6
  * Author: Made with Fuel
- * Author URI: https://betternotificationsforwp.com/
- * Author Email: hello@betternotificationsforwp.com
+ * Author URI: https://madewithfuel.com/
  * License: GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: bnfw
@@ -165,13 +167,13 @@ class BNFW {
 		add_action( 'user_register'				, array( $this, 'user_register' ) );
 
 		add_action( 'user_register'             , array( $this, 'welcome_email' ) );
-                
+
     	if ( is_plugin_active('members/members.php') ) {
             add_action( 'profile_update'        , array( $this, 'user_role_added' ), 10, 2 );
         }else{
 			add_action( 'set_user_role'         , array( $this, 'user_role_changed' ), 10, 3 );
         }
-                
+
         add_action( 'wp_login'					, array( $this, 'user_login' ),10,2);
 
 		if ( version_compare( $wp_version, '4.4', '>=' ) ) {
@@ -420,7 +422,7 @@ class BNFW {
 		}
 	}
 
-	
+
     /**
      * Fires when a post is moved publish to trash.
      *
@@ -431,7 +433,7 @@ class BNFW {
         }
         $post_id = $post->ID;
         $post_type = $post->post_type;
-       
+
         if (BNFW_Notification::POST_TYPE != $post_type) {
             $this->send_notification_async('trash-' . $post_type, $post_id);
         }
@@ -456,7 +458,7 @@ class BNFW {
 		}
 	}
 
-        
+
 	/**
 	 * On Media Published.
 	 *
@@ -465,12 +467,12 @@ class BNFW {
 
 	public function new_publish_media_notification( $post_id ) {
 	    $post_type = get_post_type($post_id);
-            
+
 	    if (BNFW_Notification::POST_TYPE != $post_type && $post_type == 'attachment') {
-		 	$this->send_notification_async( 'new-media', $post_id );		
+		 	$this->send_notification_async( 'new-media', $post_id );
 	    }
 	}
-           
+
         /**
 	 * On Media Attachment Data Update.
 	 *
@@ -480,7 +482,7 @@ class BNFW {
 	public function media_attachment_data_update_notification($post_id ) {
 	    $post_type = get_post_type($post_id);
 	    if (BNFW_Notification::POST_TYPE != $post_type && $post_type == 'attachment') {
-		 	$this->send_notification_async( 'update-media', $post_id );		
+		 	$this->send_notification_async( 'update-media', $post_id );
 	    }
 	}
 
@@ -517,11 +519,11 @@ class BNFW {
 		}
 
                 $post = get_post( $comment->comment_post_ID );
-                
+
 		$notification_type = 'approve-'.$post->post_type.'-comment';
 
 		$this->send_notification( $notification_type, $comment->comment_ID );
-                
+
                 // Send new comment notification after comment approve
                 $notification_type = 'new-comment'; // old notification name
 
@@ -530,7 +532,7 @@ class BNFW {
 		}
 
 		$this->send_notification( $notification_type, $comment->comment_ID );
-                
+
                 // Send comment reply notification after comment approve.
                 $this->commentsReply($comment->comment_ID);
 	}
@@ -556,9 +558,9 @@ class BNFW {
 			if ( 'post' != $post->post_type ) {
 				$notification_type = 'comment-' . $post->post_type;
 			}
-			
+
 			$this->send_notification( $notification_type, $comment_id );
-                        
+
                         // comment reply notification.
                         $this->commentsReply($comment_id);
 		}
@@ -573,7 +575,7 @@ class BNFW {
         public function commentsReply($comment_id) {
                $the_comment = get_comment( $comment_id );
                $post = get_post( $the_comment->comment_post_ID );
-                
+
 		// comment reply notification.
 		if ( $this->can_send_comment_notification( $the_comment ) ) {
 			if ( $the_comment->comment_parent > 0 ) {
@@ -689,6 +691,9 @@ class BNFW {
 				}
 			} else {
 				add_filter( 'wp_mail_content_type', array( $this, 'set_text_content_type' ) );
+				if('text' == $setting['email-formatting'] ){
+				 $message = strip_tags($message);
+				}
 			}
 		} else {
 			if ( $this->notifier->notification_exists( 'user-password', false ) ) {
@@ -894,11 +899,11 @@ class BNFW {
 	public function user_login( $user_name, $user_data ) {
         $user_id = $user_data->ID;
         $notifications = $this->notifier->get_notifications( 'user-login' );
-		
+
 		foreach ( $notifications as $notification ) {
 			$this->engine->send_user_login_email( $this->notifier->read_settings( $notification->ID ), get_userdata( $user_id ) );
 		}
-        
+
 		$this->user_login_admin_notification($user_id);
 	}
 
@@ -910,7 +915,7 @@ class BNFW {
 	 */
 	public function user_login_admin_notification( $user_id ) {
         $notifications = $this->notifier->get_notifications( 'admin-user-login' );
-		
+
 		foreach ( $notifications as $notification ) {
 			$this->engine->send_user_login_email_for_admin( $this->notifier->read_settings( $notification->ID ), get_userdata( $user_id ) );
 		}
@@ -1002,14 +1007,14 @@ class BNFW {
 	 * @param array  $old_roles Old User role
 	 */
 	public function user_role_added( $user_id, $old_user_data ) {
-            
+
             if(isset($_POST['members_user_roles']) && !empty($_POST['members_user_roles'])){
                     // Get the current user roles.
                     $old_roles = (array) $old_user_data->roles;
 
                     // Sanitize the posted roles.
                     $new_roles = array_map( 'members_sanitize_role', $_POST['members_user_roles'] );
-                        
+
                     sort($old_roles);
                     sort($new_roles);
                     $old_roles_str = implode('', $old_roles);
@@ -1052,7 +1057,7 @@ class BNFW {
 		}
               }
 	}
-        
+
         /**
         * Sanitizes a role name.  This is a wrapper for the `sanitize_key()` WordPress function.  Only
         * alphanumeric characters and underscores are allowed.  Hyphens are also replaced with underscores.
@@ -1148,7 +1153,7 @@ class BNFW {
 				$new_content           = $this->handle_user_request_notification( $notification_name, $field, $email_data );
 				break;
 		}
-                
+
                 if(!empty($new_content)){
                     return $new_content;
                 }else{

@@ -40,7 +40,7 @@ jQuery(document).ready(function($) {
     	}
 
 	    var notification = $( '#notification' ).val();
-            var check_comment = notification.split('-');
+        var check_comment = notification.split('-');
 	    if ( 'new-comment' === notification || 'approve' === check_comment[0] || 'moderate-comment' === notification ) {
 		    $( '#current-user' ).show();
 	    }
@@ -50,10 +50,12 @@ jQuery(document).ready(function($) {
 		var notification = $('#notification').val();
 
 		$("#notification, .bnfw-select2").select2();
+
 		$(".user-select2").select2({
 			tags: BNFW.enableTags,
-                        tokenSeparators: BNFW.enabletokenSeparators
+            tokenSeparators: BNFW.enabletokenSeparators
 		} );
+
 		$(".user-ajax-select2").select2( {
 			ajax: {
 				url: ajaxurl,
@@ -81,7 +83,7 @@ jQuery(document).ready(function($) {
 
 		toggle_fields();
 
-                var check_comment = notification.split('-');
+        var check_comment = notification.split('-');
 
 		if ( 'reply-comment' === notification || notification.startsWith( 'commentreply-' ) ||
 				'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
@@ -131,8 +133,8 @@ jQuery(document).ready(function($) {
 			toggle_users();
 			$( '#user-password-msg, #current-user, #post-author' ).hide();
 		} else if ('user-login' === notification){ 
-                        $('#cc, #bcc, #users, #exclude-users, #current-user, #post-author').hide();
-                        $('#toggle-fields').show();
+			$('#cc, #bcc, #users, #exclude-users, #current-user, #post-author').hide();
+			$('#toggle-fields').show();
 		} else {
 			$('#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user, #post-author').show();
 			toggle_fields();
@@ -161,7 +163,7 @@ jQuery(document).ready(function($) {
 		var $this = $(this),
 			notification = $this.val();
 
-                        var check_comment = notification.split('-');
+        var check_comment = notification.split('-');
 
 		if ( 'reply-comment' === notification || notification.startsWith( 'commentreply-' ) ||
 			'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
@@ -212,8 +214,8 @@ jQuery(document).ready(function($) {
 			toggle_users();
 			$( '#user-password-msg, #current-user, #post-author' ).hide();
 		} else if ('user-login' === notification){ 
-                        $('#cc, #bcc, #users, #exclude-users, #current-user, #post-author').hide();
-                        $('#toggle-fields').show();
+			$('#cc, #bcc, #users, #exclude-users, #current-user, #post-author').hide();
+			$('#toggle-fields').show();
 		} else {
 			$('#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user, #post-author').show();
 			$('#user-password-msg').hide();
@@ -267,8 +269,8 @@ jQuery(document).ready(function($) {
 			case 'email-changed':
 			case 'email-changing':
 			case 'new-user':
-                        case 'user-login':
-                        case 'admin-user-login':
+			case 'user-login':
+			case 'admin-user-login':
 			case 'welcome-email':
 			case 'user-role':
 			case 'admin-role':
@@ -307,7 +309,7 @@ jQuery(document).ready(function($) {
 					case 'comment':
 						notification_slug = 'new-comment';
 						break;
-                                        case 'approve':
+                    case 'approve':
 						notification_slug = 'approve-comment';
 						break;
 					case 'moderate':

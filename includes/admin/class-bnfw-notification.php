@@ -70,7 +70,7 @@ class BNFW_Notification {
 			'show_ui'           => true,
 			'show_in_menu'      => true,
 			'menu_icon'         => 'dashicons-email-alt',
-			'menu_position'     => 100,
+			'menu_position'     => 101,
 			'rewrite'           => false,
 			'map_meta_cap'      => false,
 			'capabilities'      => array(
@@ -750,10 +750,16 @@ foreach ( $taxs as $tax ) {
 		if ( ! current_user_can( 'bnfw' ) ) {
 			return;
 		}
+               
+                if ( isset( $_POST['digest-interval'] ) && 'no' != $_POST['digest-interval']) {
+                   $subject = $_POST['subject'];
+                }else{
+                   $subject = sanitize_text_field( $_POST['subject'] );
+                }
 
 		$setting = array(
 			'notification'         => sanitize_text_field( $_POST['notification'] ),
-			'subject'              => sanitize_text_field( $_POST['subject'] ),
+			'subject'              => $subject,
 			'message'              => $_POST['notification_message'],
 			'disabled'             => isset( $_POST['disabled'] ) ? sanitize_text_field( $_POST['disabled'] ) : 'false',
 			'email-formatting'     => isset( $_POST['email-formatting'] ) ? sanitize_text_field( $_POST['email-formatting'] ) : 'html',
