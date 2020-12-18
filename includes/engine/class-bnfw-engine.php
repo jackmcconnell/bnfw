@@ -49,9 +49,11 @@ class BNFW_Engine {
          *
          * @since 1.3.6
          */
+
         $notification_disabled = apply_filters( 'bnfw_notification_disabled', ( 'true' === $setting[ 'disabled' ] ), $id, $setting );
 
         if ( ! $notification_disabled ) {
+
             $subject = $this->handle_shortcodes( $setting[ 'subject' ], $setting[ 'notification' ], $id );
             $message = $this->handle_shortcodes( $setting[ 'message' ], $setting[ 'notification' ], $id );
             $emails  = $this->get_emails( $setting, $id );
@@ -519,6 +521,7 @@ class BNFW_Engine {
      * @return string Processed string.
      */
     public function handle_shortcodes( $message, $notification, $extra_data ) {
+
         switch ( $notification ) {
             case 'new-comment':
             case 'new-trackback':
@@ -699,7 +702,9 @@ class BNFW_Engine {
             $message = $this->user_shortcodes( $message, $user->ID, 'email_' );
         }
 
-        $message = str_replace( '[global_user_email]', $email, $message );
+        $message = str_replace( '[privacy_policy_url]', get_privacy_policy_url(), $message );
+
+        $message = str_replace( array('[global_user_email]','[user_email]'), $email, $message );
 
         return $message;
     }
@@ -1450,6 +1455,9 @@ class BNFW_Engine {
 
     protected function data_export_shortcodes( $message, $request_id ) {
         $export_file_url = get_post_meta( $request_id, '_export_file_url', true );
+
+        $export_file_url = 'Download File: '.$this->get_export_downloadable_url($request_id);
+
         $message         = str_replace( '[data_privacy_download_url]', $export_file_url, $message );
 
         $expiration      = apply_filters( 'wp_privacy_export_expiration', 3 * DAY_IN_SECONDS );
@@ -1460,7 +1468,9 @@ class BNFW_Engine {
     }
 
     protected function data_erased_shortcodes( $message, $extra_data ) {
-        $message = str_replace( '[privacy_policy_url]', $extra_data[ 'privacy_policy_url' ], $message );
+        $privacy_policy_url = (!isset($extra_data[ 'privacy_policy_url' ]))? get_privacy_policy_url() : $extra_data[ 'privacy_policy_url' ];
+
+        $message = str_replace( '[privacy_policy_url]', $privacy_policy_url, $message );
         $message = str_replace( '[sitename]', $extra_data[ 'sitename' ], $message );
 
         return $message;
@@ -1545,6 +1555,38 @@ class BNFW_Engine {
      */
     public function set_text_content_type() {
         return 'text/plain';
+    }
+
+    /**
+     * Get user's download URL from data export request
+     *
+     * @since 1.8.4
+     * @param int $user_email
+     * @return string $download_url | string error message
+     */
+    public function get_export_downloadable_url($request_id = null){
+        if(!$request_id)
+            return;
+
+        global $wpdb;
+        $table = $wpdb->prefix.'posts';
+        $query = 'SELECT ID FROM '.$table.' WHERE  `post_type` =  "user_request" AND `ID` = '.$request_id;
+        
+        $query = apply_filters('export_downloadable_url_query',$query,$request_id);
+
+        $get_id = $wpdb->get_var($query);
+
+        $file = get_post_meta($get_id,'_export_file_name',true);
+        $upload_url = wp_upload_dir();
+        $dl_url = $upload_url['baseurl'].'/wp-personal-data-exports/'.$file;
+
+        $dl_url = apply_filters('export_downloadable_url_return',$dl_url);
+
+        if($dl_url)
+            return $dl_url;
+        else
+            return __('Error: Download link is not available please contact support');
+
     }
 
 }

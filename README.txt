@@ -1,15 +1,15 @@
-=== Better Notifications for WP ===
+=== Customize WordPress Emails and Alerts - Better Notifications for WP ===
 Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
-Tags: notification, email, push, sms, alert, HTML, customize, bulk, trigger, CC, BCC
+Tags: notification, email, alert, message, notify, send, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 4.8
-Tested up to: 5.5
+Tested up to: 5.6
 Requires PHP: 5.6
-Stable tag: 1.8.4
+Stable tag: 1.8.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
+Supercharge your WordPress email notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Increase power with Add-ons.
 
 == Description ==
 
@@ -29,6 +29,7 @@ Power-up your notifications using add-ons:
 [Notification Add-on Bundles](https://betternotificationsforwp.com/add-on-bundles/) - Everything you need for your WordPress notifications. Save big when you buy an add-on bundle. Instant access.
 
 [Subscriptions (GDPR)](https://betternotificationsforwp.com/downloads/subscriptions-gdpr/) - Allow users to manage their subscriptions for BNFW notifications.
+If you want to let users create their own email notifications, check out my other plugin: [Content Notify](https://contentnotify.com).
 
 [Conditional Notifications](https://betternotificationsforwp.com/downloads/conditional-notifications/) - Limit certain notifications depending on which categories, tags, post formats, or terms you choose.
 
@@ -148,6 +149,8 @@ The notifications that are currently available to use are:
 
 If you'd like to see a notification in the list above, please drop me a line in the forum and I'll see what I can do to add it.
 
+If you want to let users create their own email notifications, check out my other plugin: [Content Notify](https://contentnotify.com).
+
 > Like this plugin? Please leave it [a great review](https://wordpress.org/support/plugin/bnfw/reviews/?rate=5#new-post)! Don't think the plugin is worthy of 5 stars? Having problems? Let me know in the [forum](https://wordpress.org/support/plugin/bnfw/) and I'll do my best to help.
 
 > DISCLAIMER
@@ -198,6 +201,10 @@ Yes! There is an option for suppressing comments marked as SPAM in the plugin se
 
 Yes! Full support for WordPress Multisite was added in 1.6.13, alongside the release of the [Multisite Add-on](https://betternotificationsforwp.com/downloads/multisite/).
 
+= Can users create their own email notifications? =
+
+Not using BNFW. If you want to let users create their own email notifications, check out my other plugin: [Content Notify](https://contentnotify.com).
+
 = Notifications aren't coming through! =
 
 First of all, follow [this article](https://betternotificationsforwp.com/how-can-i-receive-the-best-support/) about how to find out what might be causing the problem. Additionally, please take a look at [this help document](https://betternotificationsforwp.com/documentation/getting-started/how-to-improve-email-delivery/) to see how you might improve email delivery when using Better Notifications for WP.
@@ -233,6 +240,14 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 
 == Changelog ==
+
+= 1.8.5 - 18th December 2020 =
+* New: Shortcode - [user_old_email] and [user_new_email] can now be used in 'User Email Changed - For User' and 'User Email Changed - For Admin' notifications.
+* Fixed: 'User Role Changed' notifications weren't being sent out when editing users using bulk edit when plugins that allowed multiple user roles were being used.
+* Fixed: Numerous issues with Privacy notifications, including emails not sending and shortcodes not working.
+* Fixed: Conditional Notifications fields were showing on incorrect notifications if that add-on was being used.
+* Fixed: POT file regenerated to account for missing translatable strings.
+* Have a Merry Christmas and a happy New Year. Thanks for using BNFW :)
 
 = 1.8.4 - 12th August 2020 =
 * Fixed: In certain situations, the password reset key would get modified when using the User Lost Password - For User notification.
