@@ -3,9 +3,9 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, alert, message, notify, send, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 4.8
-Tested up to: 5.6
+Tested up to: 5.7.1
 Requires PHP: 5.6
-Stable tag: 1.8.5
+Stable tag: 1.8.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -240,6 +240,13 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 
 == Changelog ==
+
+= 1.8.6 - 26th April 2021 =
+* Fixed: Post Author and Update Author shortcodes now work as expected again following an issue introduced in WordPress 5.7.
+* Fixed: User Lost Password notifications now work correctly if users only log in with their email address.
+* Removed: `<div>` tags were being added when using the Insert Default Content button on a notification.
+* Updated persist-admin-noticed-dismissal 3rd party library to latest version.
+* Updated: EDD_SL_Plugin_Updater is now at the latest version for add-ons.
 
 = 1.8.5 - 18th December 2020 =
 * New: Shortcode - [user_old_email] and [user_new_email] can now be used in 'User Email Changed - For User' and 'User Email Changed - For Admin' notifications.

@@ -39,7 +39,25 @@ class BNFW_Notification {
 		add_action( 'admin_enqueue_scripts', array( $this, 'is_assets_needed' ) );
 
 		add_action( 'admin_notices', array( $this, 'show_help_notice' ) );
+
+		add_action('admin_print_scripts',array($this,'gutenberg_flag'));
 	}
+
+	/**
+	* Flag variable to check if gutenberge is active
+	* added fix for gutenberge
+	*
+	* @since 1.3
+	*/
+	public function gutenberg_flag(){
+		$bnfw = BNFW::Factory();
+		?>
+		<script type="text/javascript">
+			var bnfw_gutenberge_is_active = <?php echo ($bnfw->is_gutenberg_active())? 'true;' : 'false;'; ?>
+		</script>
+		<?php
+	}
+
 
 	/**
 	 * Register bnfw_notification custom post type.

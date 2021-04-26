@@ -1,9 +1,8 @@
 <?php
-
 /**
  * Persist Admin notices Dismissal
  *
- * Copyright (C) 2016  Agbonghama Collins <http://w3guy.com>
+ * Copyright (C) 2016 Collins Agbonghama <https://w3guy.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @package Persist Admin notices Dismissal
- * @author  Agbonghama Collins
- * @author  Andy Fragen
+ * @author  Collins Agbonghama, Andy Fragen
  * @license http://www.gnu.org/licenses GNU General Public License
- * @version 1.3.2
  */
 
 /**
@@ -45,6 +42,24 @@ if ( ! class_exists( 'PAnD' ) ) {
 		public static function init() {
 			add_action( 'admin_enqueue_scripts', array( __CLASS__, 'load_script' ) );
 			add_action( 'wp_ajax_dismiss_admin_notice', array( __CLASS__, 'dismiss_admin_notice' ) );
+
+			/**
+			 * Filter to activate another filter providing a simpler use case.
+			 *
+			 * @since 1.4.3
+			 *
+			 * @param bool
+			 */
+			if ( apply_filters( 'pand_theme_loader', false ) ) {
+				add_filter(
+					'pand_dismiss_notice_js_url',
+					function( $js_url, $composer_path ) {
+						return get_stylesheet_directory_uri() . $composer_path;
+					},
+					10,
+					2
+				);
+			}
 		}
 
 		/**
@@ -52,11 +67,25 @@ if ( ! class_exists( 'PAnD' ) ) {
 		 */
 		public static function load_script() {
 
-		    if(is_customize_preview()) return;
+			if ( is_customize_preview() ) {
+				return;
+			}
 
+			$js_url        = plugins_url( 'dismiss-notice.js', __FILE__ );
+			$composer_path = '/vendor/collizo4sky/persist-admin-notices-dismissal/dismiss-notice.js';
+
+			/**
+			 * Filter dismiss-notice.js URL.
+			 *
+			 * @since 1.4.3
+			 *
+			 * @param string $js_url URL to the Javascript file.
+			 * @param string $composer_path Relative path of Javascript file from composer install.
+			 */
+			$js_url = apply_filters( 'pand_dismiss_notice_js_url', $js_url, $composer_path );
 			wp_enqueue_script(
 				'dismissible-notices',
-				plugins_url( 'dismiss-notice.js', __FILE__ ),
+				$js_url,
 				array( 'jquery', 'common' ),
 				false,
 				true
@@ -76,19 +105,17 @@ if ( ! class_exists( 'PAnD' ) ) {
 		 * Uses check_ajax_referer to verify nonce.
 		 */
 		public static function dismiss_admin_notice() {
-			$option_name        = sanitize_text_field( $_POST['option_name'] );
-			$dismissible_length = sanitize_text_field( $_POST['dismissible_length'] );
-			$transient          = 0;
+			$option_name        = isset( $_POST['option_name'] ) ? sanitize_text_field( wp_unslash( $_POST['option_name'] ) ) : '';
+			$dismissible_length = isset( $_POST['dismissible_length'] ) ? sanitize_text_field( wp_unslash( $_POST['dismissible_length'] ) ) : 0;
 
-			if ( 'forever' != $dismissible_length ) {
-				// If $dismissible_length is not an integer default to 1
-				$dismissible_length = ( 0 == absint( $dismissible_length ) ) ? 1 : $dismissible_length;
-				$transient          = absint( $dismissible_length ) * DAY_IN_SECONDS;
+			if ( 'forever' !== $dismissible_length ) {
+				// If $dismissible_length is not an integer default to 1.
+				$dismissible_length = ( 0 === absint( $dismissible_length ) ) ? 1 : $dismissible_length;
 				$dismissible_length = strtotime( absint( $dismissible_length ) . ' days' );
 			}
 
 			check_ajax_referer( 'dismissible-notice', 'nonce' );
-			set_site_transient( $option_name, $dismissible_length, $transient );
+			self::set_admin_notice_cache( $option_name, $dismissible_length );
 			wp_die();
 		}
 
@@ -103,15 +130,56 @@ if ( ! class_exists( 'PAnD' ) ) {
 			$array       = explode( '-', $arg );
 			$length      = array_pop( $array );
 			$option_name = implode( '-', $array );
-			$db_record   = get_site_transient( $option_name );
+			$db_record   = self::get_admin_notice_cache( $option_name );
 
-			if ( 'forever' == $db_record ) {
+			if ( 'forever' === $db_record ) {
 				return false;
 			} elseif ( absint( $db_record ) >= time() ) {
 				return false;
 			} else {
 				return true;
 			}
+		}
+
+		/**
+		 * Returns admin notice cached timeout.
+		 *
+		 * @access public
+		 *
+		 * @param string|bool $id admin notice name or false.
+		 *
+		 * @return array|bool The timeout. False if expired.
+		 */
+		public static function get_admin_notice_cache( $id = false ) {
+			if ( ! $id ) {
+				return false;
+			}
+			$cache_key = 'pand-' . md5( $id );
+			$timeout   = get_site_option( $cache_key );
+			$timeout   = 'forever' === $timeout ? time() + 60 : $timeout;
+
+			if ( empty( $timeout ) || time() > $timeout ) {
+				return false;
+			}
+
+			return $timeout;
+		}
+
+		/**
+		 * Sets admin notice timeout in site option.
+		 *
+		 * @access public
+		 *
+		 * @param string      $id       Data Identifier.
+		 * @param string|bool $timeout  Timeout for admin notice.
+		 *
+		 * @return bool
+		 */
+		public static function set_admin_notice_cache( $id, $timeout ) {
+			$cache_key = 'pand-' . md5( $id );
+			update_site_option( $cache_key, $timeout );
+
+			return true;
 		}
 
 	}

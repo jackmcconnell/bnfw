@@ -4,7 +4,7 @@
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.8.5
+ * Version: 1.8.6
  * Requires at least: 4.8
  * Requires PHP: 5.6
  * Author: Made with Fuel
@@ -524,7 +524,7 @@ class BNFW {
 
         $notification_type = 'approve-' . $post->post_type . '-comment';
 
-        $this->send_notification( $notification_type, $comment->comment_ID );
+        $this->send_notification( $notification_type, $comment->comment_ID, false );
 
         // Send new comment notification after comment approve
         $notification_type = 'new-comment'; // old notification name
@@ -631,7 +631,7 @@ class BNFW {
      */
     function on_lost_password() {
         $user_login = sanitize_text_field( $_POST[ 'user_login' ] );
-        $user       = get_user_by( 'login', $user_login );
+        $user       = get_user_by( 'login', $user_login ) ?: get_user_by( 'email', $user_login );
         if ( $user ) {
             $this->send_notification( 'admin-password', $user->ID );
         }
@@ -1194,8 +1194,8 @@ class BNFW {
      * @param string $type Notification type.
      * @param mixed $ref_id Reference data.
      */
-    public function send_notification( $type, $ref_id ) {
-        $notifications = $this->notifier->get_notifications( $type );
+    public function send_notification( $type, $ref_id, $include_disabled = true ) {
+        $notifications = $this->notifier->get_notifications( $type , $include_disabled);
         foreach ( $notifications as $notification ) {
             $this->engine->send_notification( $this->notifier->read_settings( $notification->ID ), $ref_id );
         }
@@ -1473,6 +1473,43 @@ class BNFW {
     protected function is_metabox_request() {
         return ( isset( $_GET[ 'meta-box-loader' ] ) || isset( $_GET[ 'meta_box' ] ) );
     }
+
+
+    /**
+	 * Check if Gutenberg is active.
+     *
+	 *
+	 * @return bool
+	 * @since 1.3
+	 */
+	public function is_gutenberg_active() {
+		$gutenberg    = false;
+		$block_editor = false;
+
+		if ( has_filter( 'replace_editor', 'gutenberg_init' ) ) {
+			// Gutenberg is installed and activated.
+			$gutenberg = true;
+		}
+
+		if ( version_compare( $GLOBALS['wp_version'], '5.0-beta', '>' ) ) {
+			// Block editor.
+			$block_editor = true;
+		}
+
+		if ( ! $gutenberg && ! $block_editor ) {
+			return false;
+		}
+
+		include_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+		if ( ! is_plugin_active( 'classic-editor/classic-editor.php' ) ) {
+			return true;
+		}
+
+		$use_block_editor = ( get_option( 'classic-editor-replace' ) === 'no-replace' );
+
+		return $use_block_editor;
+	}
 
 }
 

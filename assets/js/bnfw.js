@@ -633,7 +633,7 @@ jQuery(document).ready(function($) {
 
 		if ( body !== '' ) {
 			if ( tinyMCE && tinyMCE.editors && tinyMCE.editors['notification_message'] ) {
-				tinyMCE.editors['notification_message'].selection.setContent( '<div>' + body + '</div>' );
+				tinyMCE.editors['notification_message'].selection.setContent( body );
 			}
 		}
 

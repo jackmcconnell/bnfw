@@ -841,7 +841,13 @@ class BNFW_Engine {
 
         $message = str_replace( '[author_link]', get_author_posts_url( $post->post_author ), $message );
 
-        if ( $last_id = get_post_meta( $post->ID, '_edit_last', true ) ) {
+        if ( $last_id = get_post_meta( $post->ID, '_edit_lock', true ) ) {
+            
+            $last_id = explode(':',$last_id);
+            if(count($last_id) > 1){
+                $last_id = end($last_id);
+            }
+
             if ( $post->post_author != $last_id ) {
                 $last_user_info = get_userdata( $last_id );
             } else {
