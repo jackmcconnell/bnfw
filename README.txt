@@ -3,11 +3,12 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, alert, message, notify, send, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 4.8
-Tested up to: 5.7.1
-Requires PHP: 5.6
-Stable tag: 1.8.6
+Tested up to: 5.9
+Requires PHP: 7.0
+Stable tag: 1.8.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Update URI: https://wordpress.org/plugins/bnfw/
 
 Supercharge your WordPress email notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Increase power with Add-ons.
 
@@ -21,7 +22,7 @@ Here's a quick walkthrough of the plugin in action:
 = An Example: =
 You want all the users in the Editor role to be notified via email when a new post is published and you'd like to customise it to include your logo along with the author's name and date / time it was published - with this plugin, that's easy.
 
-> A handy list of shortcodes you can use is available [here](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WP").
+> A handy list of shortcodes you can use is available [here](https://betternotificationsforwp.com/documentation/notifications/shortcodes/ "Shortcodes for use in Better Notifications for WP").
 
 = Premium Add-ons =
 Power-up your notifications using add-ons:
@@ -163,8 +164,8 @@ If you want to let users create their own email notifications, check out my othe
 1. Upload the 'bnfw' plugin folder to the '/wp-content/plugins/' directory or install it via your WordPress Admin.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Use the settings in the new 'Notifications' Menu item in the sidebar to configure the plugin.
-4. (Optional) Install a plugin to use SMTP instead of `wp_mail()`. I recommend [Post SMTP Mailer/Email Log](https://wordpress.org/plugins/post-smtp/).
-5. Test by creating a notification with some [shortcodes](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WP").
+4. (Optional) Read our article on [how to improve email delivery in WordPress](https://betternotificationsforwp.com/guides/how-to-improve-email-delivery-wordpress/).
+5. Test by creating a notification with some [shortcodes](https://betternotificationsforwp.com/documentation/notifications/shortcodes/ "Shortcodes for use in Better Notifications for WP").
 
 
 
@@ -182,7 +183,7 @@ Shortcodes are text in square brackets that output content of some kind. For exa
 
 Shortcodes can be used in the 'Subject' and 'Message Body' of your notifications, except for a select few (due to a restriction in WordPress).
 
-> A handy list of shortcodes you can use is available [here](https://betternotificationsforwp.com/shortcodes/ "Shortcodes for use in Better Notifications for WP").
+> A handy list of shortcodes you can use is available [here](https://betternotificationsforwp.com/documentation/notifications/shortcodes/ "Shortcodes for use in Better Notifications for WP").
 
 = What are some scenarios this plugin could be used for? =
 
@@ -240,6 +241,10 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 
 == Changelog ==
+
+= 1.8.7 - 27th January 2022 =
+* IMPORTANT! It is recommended that you update this plugin to the latest version.
+* Fixed: A security issue affecting select2 fields when searching for a user or user role.
 
 = 1.8.6 - 26th April 2021 =
 * Fixed: Post Author and Update Author shortcodes now work as expected again following an issue introduced in WordPress 5.7.

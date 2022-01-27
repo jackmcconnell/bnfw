@@ -724,9 +724,10 @@ foreach ( $taxs as $tax ) {
 		wp_enqueue_style( 'bnfw', plugins_url( '../assets/css/bnfw.css', dirname( __FILE__ ) ), array( 'dashicons', 'select2' ), '0.1' );
 
 		$strings = array(
-			'validation_element' => apply_filters( 'bnfw_validation_element', '#users-select' ),
-			'empty_user' => esc_html__( 'You must choose at least one User or User Role to send the notification to before you can save', 'bnfw' ),
-			'enableTags' => false,
+			'validation_element'           => apply_filters( 'bnfw_validation_element', '#users-select' ),
+			'empty_user'                   => esc_html__( 'You must choose at least one User or User Role to send the notification to before you can save', 'bnfw' ),
+			'enableTags'                   => false,
+			'bnfw_users_search_ajax_nonce' => wp_create_nonce( 'bnfw_users_search_ajax_nonce' ),
 		);
 
 		/**

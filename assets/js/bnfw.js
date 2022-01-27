@@ -64,6 +64,7 @@ jQuery(document).ready(function($) {
 					return {
 						action: 'bnfw_search_users',
 						query: params.term,
+						bnfw_security: BNFW.bnfw_users_search_ajax_nonce,
 						page: params.page
 					};
 				},

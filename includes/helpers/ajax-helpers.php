@@ -11,6 +11,10 @@
  * @since 1.3.6
  */
 function bnfw_search_users() {
+	check_ajax_referer( 'bnfw_users_search_ajax_nonce', 'bnfw_security' );
+	if ( ! current_user_can( 'bnfw' ) ) {
+		wp_die( -1 );
+	}
 	global $wp_roles;
 
 	$roles_data = array();

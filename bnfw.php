@@ -4,9 +4,9 @@
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.8.6
+ * Version: 1.8.7
  * Requires at least: 4.8
- * Requires PHP: 5.6
+ * Requires PHP: 7.0
  * Author: Made with Fuel
  * Author URI: https://madewithfuel.com/
  * License: GPLv2 or later
@@ -16,7 +16,7 @@
  */
 
 /**
- * Copyright © 2021 Made with Fuel Ltd. (hello@betternotificationsforwp.com)
+ * Copyright © 2022 Made with Fuel Ltd. (hello@betternotificationsforwp.com)
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
  * published by the Free Software Foundation.
