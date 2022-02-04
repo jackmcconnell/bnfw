@@ -3,252 +3,290 @@
  * License handler for BNFW
  *
  * @since 1.4
+ * @package bnfw
  */
 
-defined( 'ABSPATH' ) || exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit; // Exit if accessed directly.
 
-/**
- * BNFW_License Class
- */
-class BNFW_License {
-	private $file;
-	private $license;
-	private $item_name;
-	private $item_shortname;
-	private $version;
-	private $author;
-	private $api_url = 'https://betternotificationsforwp.com/';
-
+if ( ! class_exists( 'BNFW_License', false ) ) {
 	/**
-	 * Class constructor
-	 *
-	 * @param string $_file
-	 * @param string $_item_name
-	 * @param string $_version
-	 * @param string $_author
-	 * @param string $_optname
-	 * @param string $_api_url
+	 * BNFW_License Class
 	 */
-	function __construct( $_file, $_item_name, $_version, $_author, $_optname = null, $_api_url = null ) {
-		$bnfw_options = get_option( 'bnfw_licenses' );
+	class BNFW_License {
+		/**
+		 * Holds info about file
+		 *
+		 * @var string
+		 */
+		private $file;
+		/**
+		 * Holds the license key
+		 *
+		 * @var string
+		 */
+		private $license;
+		/**
+		 * Holds the item name
+		 *
+		 * @var string
+		 */
+		private $item_name;
+		/**
+		 * Holds the item shortname
+		 *
+		 * @var string
+		 */
+		private $item_shortname;
+		/**
+		 * Holds the plugin version
+		 *
+		 * @var string
+		 */
+		private $version;
+		/**
+		 * Holds the info about author
+		 *
+		 * @var string
+		 */
+		private $author;
+		/**
+		 * Holds the API URL
+		 *
+		 * @var string
+		 */
+		private $api_url = 'https://betternotificationsforwp.com/';
 
-		$this->file           = $_file;
-		$this->item_name      = $_item_name;
-		$this->item_shortname = 'bnfw_' . preg_replace( '/[^a-zA-Z0-9_\s]/', '', str_replace( ' ', '_', strtolower( $this->item_name ) ) );
-		$this->version        = $_version;
-		$this->license        = isset( $bnfw_options[ $this->item_shortname . '_license_key' ] ) ? trim( $bnfw_options[ $this->item_shortname . '_license_key' ] ) : '';
-		$this->author         = $_author;
-		$this->api_url        = is_null( $_api_url ) ? $this->api_url : $_api_url;
+		/**
+		 * Class constructor
+		 *
+		 * @param string $_file File.
+		 * @param string $_item_name Item name.
+		 * @param string $_version Verison.
+		 * @param string $_author Author.
+		 * @param string $_optname Optname.
+		 * @param string $_api_url API URL.
+		 */
+		public function __construct( $_file, $_item_name, $_version, $_author, $_optname = null, $_api_url = null ) {
+			$bnfw_options = get_option( 'bnfw_licenses' );
 
-		// Setup hooks
-		$this->hooks();
-		$this->auto_updater();
-	}
+			$this->file           = $_file;
+			$this->item_name      = $_item_name;
+			$this->item_shortname = 'bnfw_' . preg_replace( '/[^a-zA-Z0-9_\s]/', '', str_replace( ' ', '_', strtolower( $this->item_name ) ) );
+			$this->version        = $_version;
+			$this->license        = isset( $bnfw_options[ $this->item_shortname . '_license_key' ] ) ? trim( $bnfw_options[ $this->item_shortname . '_license_key' ] ) : '';
+			$this->author         = $_author;
+			$this->api_url        = is_null( $_api_url ) ? $this->api_url : $_api_url;
 
-	/**
-	 * Setup hooks
-	 *
-	 * @access  private
-	 * @return  void
-	 */
-	private function hooks() {
-		// Register settings
-		add_filter( 'bnfw_settings_licenses', array( $this, 'settings' ), 1 );
+			// Setup hooks.
+			$this->hooks();
+			$this->auto_updater();
+		}
 
-		// Activate license key on settings save
-		add_action( 'admin_init', array( $this, 'activate_license' ) );
+		/**
+		 * Setup hooks
+		 *
+		 * @access  private
+		 * @return  void
+		 */
+		private function hooks() {
+			// Register settings.
+			add_filter( 'bnfw_settings_licenses', array( $this, 'settings' ), 1 );
 
-		// Deactivate license key
-		add_action( 'admin_init', array( $this, 'deactivate_license' ) );
+			// Activate license key on settings save.
+			add_action( 'admin_init', array( $this, 'activate_license' ) );
 
-		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'update_plugins_transient_unserialize_icons' ), 99 );
-	}
+			// Deactivate license key.
+			add_action( 'admin_init', array( $this, 'deactivate_license' ) );
 
-	/**
-	 * Filter the transient data for our plugin's icons.
-	 * Since icons are passed back as serialized arrays, we need to unserialize them.
-	 * This has to be run from within your plugin.
-	 *
-	 * Based on code from https://renventura.com/adding-update-icons-for-commercial-plugins/
-	 *
-	 * @param  (object) $transient - Full transient data
-	 *
-	 * @return mixed (object) $transient
-	 */
-	public function update_plugins_transient_unserialize_icons( $transient ) {
+			add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'update_plugins_transient_unserialize_icons' ), 99 );
+		}
 
-		if ( is_object( $transient ) && isset( $transient->response ) && is_array( $transient->response ) ) {
+		/**
+		 * Filter the transient data for our plugin's icons.
+		 * Since icons are passed back as serialized arrays, we need to unserialize them.
+		 * This has to be run from within your plugin.
+		 *
+		 * Based on code from https://renventura.com/adding-update-icons-for-commercial-plugins/
+		 *
+		 * @param mixed $transient New value of site transient.
+		 *
+		 * @return mixed (object) $transient
+		 */
+		public function update_plugins_transient_unserialize_icons( $transient ) {
 
-			$basename = plugin_basename( __FILE__ );
+			if ( is_object( $transient ) && isset( $transient->response ) && is_array( $transient->response ) ) {
 
-			// Received a response for our plugin
-			$plugin = isset( $transient->response[ $basename ] ) ? $transient->response[ $basename ] : new stdClass;
+				$basename = plugin_basename( __FILE__ );
 
-			// Are there any icons set for the plugin?
-			if ( isset( $plugin->icons ) ) {
-				$icons = is_string( $plugin->icons ) ? unserialize( $plugin->icons ) : $plugin->icons;
-				$transient->response[ $basename ]->icons = $icons;
+				// Received a response for our plugin.
+				$plugin = isset( $transient->response[ $basename ] ) ? $transient->response[ $basename ] : new stdClass();
+
+				// Are there any icons set for the plugin?
+				if ( isset( $plugin->icons ) ) {
+					$icons                                   = is_string( $plugin->icons ) ? unserialize( $plugin->icons ) : $plugin->icons; // phpcs:ignore
+					$transient->response[ $basename ]->icons = $icons;
+				}
 			}
+
+			return $transient;
 		}
 
-		return $transient;
-	}
-
-	/**
-	 * Auto updater
-	 *
-	 * @access  private
-	 * @return  void
-	 */
-	private function auto_updater() {
-		// Setup the updater
-		$edd_updater = new EDD_SL_Plugin_Updater(
-			$this->api_url,
-			$this->file,
-			array(
-				'version'   => $this->version,
-				'license'   => $this->license,
-				'item_name' => $this->item_name,
-				'author'    => $this->author,
-			)
-		);
-	}
-
-	/**
-	 * Add license field to settings
-	 *
-	 * @access  public
-	 *
-	 * @param array $settings
-	 *
-	 * @return  array
-	 */
-	public function settings( $settings ) {
-		if ( 'Multisite Add-on' === $this->item_name && ! is_multisite() ) {
-			return $settings;
+		/**
+		 * Auto updater
+		 *
+		 * @access  private
+		 * @return  void
+		 */
+		private function auto_updater() {
+			// Setup the updater.
+			$edd_updater = new EDD_SL_Plugin_Updater(
+				$this->api_url,
+				$this->file,
+				array(
+					'version'   => $this->version,
+					'license'   => $this->license,
+					'item_name' => $this->item_name,
+					'author'    => $this->author,
+				)
+			);
 		}
 
-		if ( 'Multisite Add-on' === $this->item_name && is_multisite() ) {
-			if ( ! is_main_site() ) {
+		/**
+		 * Add license field to settings
+		 *
+		 * @access  public
+		 *
+		 * @param array $settings Setting data.
+		 *
+		 * @return  array
+		 */
+		public function settings( $settings ) {
+			if ( 'Multisite Add-on' === $this->item_name && ! is_multisite() ) {
 				return $settings;
 			}
+
+			if ( 'Multisite Add-on' === $this->item_name && is_multisite() ) {
+				if ( ! is_main_site() ) {
+					return $settings;
+				}
+			}
+
+			$bnfw_license_settings = array(
+				array(
+					'id'      => $this->item_shortname . '_license_key',
+					'name'    => sprintf( /* translators: %1$s Item name. */ esc_html__( '%1$s License Key', 'bnfw' ), $this->item_name ),
+					'desc'    => '',
+					'type'    => 'license_key',
+					'options' => array( 'is_valid_license_option' => $this->item_shortname . '_license_active' ),
+					'size'    => 'regular',
+				),
+			);
+
+			return array_merge( $settings, $bnfw_license_settings );
 		}
 
-		$bnfw_license_settings = array(
-			array(
-				'id'      => $this->item_shortname . '_license_key',
-				'name'    => sprintf( esc_html__( '%1$s License Key', 'bnfw' ), $this->item_name ),
-				'desc'    => '',
-				'type'    => 'license_key',
-				'options' => array( 'is_valid_license_option' => $this->item_shortname . '_license_active' ),
-				'size'    => 'regular',
-			),
-		);
+		/**
+		 * Activate the license key
+		 *
+		 * @access  public
+		 * @return  void
+		 */
+		public function activate_license() {
+			if ( ! isset( $_POST['bnfw_licenses'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+				return;
+			}
 
-		return array_merge( $settings, $bnfw_license_settings );
-	}
+			if ( ! isset( $_POST['bnfw_licenses'][ $this->item_shortname . '_license_key' ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+				return;
+			}
 
-	/**
-	 * Activate the license key
-	 *
-	 * @access  public
-	 * @return  void
-	 */
-	public function activate_license() {
-		if ( ! isset( $_POST['bnfw_licenses'] ) ) {
-			return;
-		}
+			if ( 'valid' === get_option( $this->item_shortname . '_license_active' ) ) {
+				return;
+			}
 
-		if ( ! isset( $_POST['bnfw_licenses'][ $this->item_shortname . '_license_key' ] ) ) {
-			return;
-		}
+			$license = sanitize_text_field( $_POST['bnfw_licenses'][ $this->item_shortname . '_license_key' ] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
-		if ( 'valid' == get_option( $this->item_shortname . '_license_active' ) ) {
-			return;
-		}
-
-		$license = sanitize_text_field( $_POST['bnfw_licenses'][ $this->item_shortname . '_license_key' ] );
-
-		// Data to send to the API
-		$api_params = array(
-			'edd_action' => 'activate_license',
-			'license'    => $license,
-			'item_name'  => urlencode( $this->item_name ),
-		);
-
-		if ( 'Multisite Add-on' === $this->item_name && is_multisite() ) {
-			$api_params['url'] = get_home_url( get_main_site_id() );
-		}
-
-		// Call the API
-		$response = wp_remote_get(
-			esc_url_raw( add_query_arg( $api_params, $this->api_url ) ),
-			array(
-				'timeout'   => 15,
-				'body'      => $api_params,
-				'sslverify' => false,
-			)
-		);
-
-		// Make sure there are no errors
-		if ( is_wp_error( $response ) ) {
-			return;
-		}
-
-		// Decode license data
-		$license_data = json_decode( wp_remote_retrieve_body( $response ) );
-
-		update_option( $this->item_shortname . '_license_active', $license_data->license );
-	}
-
-	/**
-	 * Deactivate the license key
-	 *
-	 * @access  public
-	 * @return  void
-	 */
-	public function deactivate_license() {
-		if ( ! isset( $_POST['bnfw_licenses'] ) ) {
-			return;
-		}
-
-		if ( ! isset( $_POST['bnfw_licenses'][ $this->item_shortname . '_license_key' ] ) ) {
-			return;
-		}
-
-		// Run on deactivate button press
-		if ( isset( $_POST[ $this->item_shortname . '_license_key_deactivate' ] ) ) {
-
-			// Data to send to the API
+			// Data to send to the API.
 			$api_params = array(
-				'edd_action' => 'deactivate_license',
-				'license'    => $this->license,
-				'item_name'  => urlencode( $this->item_name ),
+				'edd_action' => 'activate_license',
+				'license'    => $license,
+				'item_name'  => urlencode( $this->item_name ), // phpcs:ignore
 			);
 
 			if ( 'Multisite Add-on' === $this->item_name && is_multisite() ) {
 				$api_params['url'] = get_home_url( get_main_site_id() );
 			}
 
-			// Call the API
+			// Call the API.
 			$response = wp_remote_get(
 				esc_url_raw( add_query_arg( $api_params, $this->api_url ) ),
 				array(
 					'timeout'   => 15,
+					'body'      => $api_params,
 					'sslverify' => false,
 				)
 			);
 
-			// Make sure there are no errors
+			// Make sure there are no errors.
 			if ( is_wp_error( $response ) ) {
 				return;
 			}
 
-			// Decode the license data
+			// Decode license data.
 			$license_data = json_decode( wp_remote_retrieve_body( $response ) );
 
-			if ( 'deactivated' == $license_data->license ) {
-				delete_option( $this->item_shortname . '_license_active' );
+			update_option( $this->item_shortname . '_license_active', $license_data->license );
+		}
+
+		/**
+		 * Deactivate the license key
+		 *
+		 * @access  public
+		 * @return  void
+		 */
+		public function deactivate_license() {
+			if ( ! isset( $_POST['bnfw_licenses'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+				return;
+			}
+
+			if ( ! isset( $_POST['bnfw_licenses'][ $this->item_shortname . '_license_key' ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+				return;
+			}
+
+			// Run on deactivate button press.
+			if ( isset( $_POST[ $this->item_shortname . '_license_key_deactivate' ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+				// Data to send to the API.
+				$api_params = array(
+					'edd_action' => 'deactivate_license',
+					'license'    => $this->license,
+					'item_name'  => urlencode( $this->item_name ), // phpcs:ignore
+				);
+
+				if ( 'Multisite Add-on' === $this->item_name && is_multisite() ) {
+					$api_params['url'] = get_home_url( get_main_site_id() );
+				}
+
+				// Call the API.
+				$response = wp_remote_get(
+					esc_url_raw( add_query_arg( $api_params, $this->api_url ) ),
+					array(
+						'timeout'   => 15,
+						'sslverify' => false,
+					)
+				);
+
+				// Make sure there are no errors.
+				if ( is_wp_error( $response ) ) {
+					return;
+				}
+
+				// Decode the license data.
+				$license_data = json_decode( wp_remote_retrieve_body( $response ) );
+
+				if ( 'deactivated' === $license_data->license ) {
+					delete_option( $this->item_shortname . '_license_active' );
+				}
 			}
 		}
 	}

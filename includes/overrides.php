@@ -2,20 +2,21 @@
 /**
  * Override default WordPress emails
  *
+ * @package bnfw
  */
 
-/**
- * Email login credentials to a newly-registered user.
- *
- * A new user registration notification is also sent to admin email.
- *
- * @param int    $user_id    User ID.
- * @param null   $deprecated Not used (argument deprecated).
- * @param string $notify     Optional. Type of notification that should happen. Accepts 'admin' or an empty
- *                           string (admin only), or 'both' (admin and user). The empty string value was kept
- *                           for backward-compatibility purposes with the renamed parameter. Default empty.
- */
 if ( ! function_exists( 'wp_new_user_notification' ) ) {
+	/**
+	 * Email login credentials to a newly-registered user.
+	 *
+	 * A new user registration notification is also sent to admin email.
+	 *
+	 * @param int    $user_id    User ID.
+	 * @param null   $deprecated Not used (argument deprecated).
+	 * @param string $notify     Optional. Type of notification that should happen. Accepts 'admin' or an empty
+	 *                           string (admin only), or 'both' (admin and user). The empty string value was kept
+	 *                           for backward-compatibility purposes with the renamed parameter. Default empty.
+	 */
 	function wp_new_user_notification( $user_id, $deprecated = null, $notify = '' ) {
 		global $wp_version, $wp_hasher;
 
@@ -23,12 +24,12 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 		$user = get_userdata( $user_id );
 
 		if ( version_compare( $wp_version, '4.3', '>=' ) ) {
-			// for WordPress 4.3 and above
+			// for WordPress 4.3 and above.
 
 			if ( version_compare( $wp_version, '4.3', '=' ) ) {
 				$notify = $deprecated;
 			} else {
-				if ( $deprecated !== null ) {
+				if ( null !== $deprecated ) {
 					_deprecated_argument( __FUNCTION__, '4.3.1' );
 				}
 			}
@@ -38,8 +39,11 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 			$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
 
 			if ( ! $bnfw->notifier->notification_exists( 'admin-user', false ) ) {
+				/* translators: %s site name. */
 				$message = sprintf( esc_html__( 'New user registration on your site %s:' ), $blogname ) . "\r\n\r\n";
+				/* translators: %s username. */
 				$message .= sprintf( esc_html__( 'Username: %s' ), $user->user_login ) . "\r\n\r\n";
+				/* translators: %s email. */
 				$message .= sprintf( esc_html__( 'E-mail: %s' ), $user->user_email ) . "\r\n";
 
 				$wp_new_user_notification_email_admin = array(
@@ -69,12 +73,14 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 				 */
 				$wp_new_user_notification_email_admin = apply_filters( 'wp_new_user_notification_email_admin', $wp_new_user_notification_email_admin, $user, $blogname );
 
-				@wp_mail(
-					$wp_new_user_notification_email_admin['to'],
-					wp_specialchars_decode( sprintf( $wp_new_user_notification_email_admin['subject'], $blogname ) ),
-					$wp_new_user_notification_email_admin['message'],
-					$wp_new_user_notification_email_admin['headers']
-				);
+				if ( isset( $wp_new_user_notification_email_admin['to'] ) && ! empty( $wp_new_user_notification_email_admin['to'] ) ) {
+					wp_mail(
+						$wp_new_user_notification_email_admin['to'],
+						wp_specialchars_decode( sprintf( $wp_new_user_notification_email_admin['subject'], $blogname ) ),
+						$wp_new_user_notification_email_admin['message'],
+						$wp_new_user_notification_email_admin['headers']
+					);
+				}
 			}
 
 			if ( 'admin' === $notify || empty( $notify ) ) {
@@ -90,23 +96,23 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 			// Now insert the key, hashed, into the DB.
 			if ( empty( $wp_hasher ) ) {
 				require_once ABSPATH . WPINC . '/class-phpass.php';
-				$wp_hasher = new PasswordHash( 8, true );
+				$wp_hasher = new PasswordHash( 8, true ); // phpcs:ignore
 			}
 			$hashed = time() . ':' . $wp_hasher->HashPassword( $key );
-                        
-                        wp_update_user(
+
+			wp_update_user(
 				array(
-				'ID' => $user->ID,
-				'user_activation_key' => $hashed,
+					'ID'                  => $user->ID,
+					'user_activation_key' => $hashed,
 				)
 			);
-                        
+
 			if ( $bnfw->notifier->notification_exists( 'new-user', false ) ) {
 				$notifications = $bnfw->notifier->get_notifications( 'new-user' );
 				$password_url  = network_site_url( 'wp-login.php?action=rp&key=' . $key . '&login=' . rawurlencode( $user->user_login ), 'login' );
 
 				foreach ( $notifications as $notification ) {
-					$setting = $bnfw->notifier->read_settings( $notification->ID );
+					$setting              = $bnfw->notifier->read_settings( $notification->ID );
 					$trigger_notification = apply_filters( 'bnfw_trigger_new-user_notification', true, $setting, $user );
 
 					if ( $trigger_notification ) {
@@ -114,17 +120,18 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 					}
 				}
 			} else {
-				$message = sprintf( esc_html__( 'Username: %s' ), $user->user_login ) . "\r\n\r\n";
+				/* translators: %s username. */
+				$message  = sprintf( esc_html__( 'Username: %s' ), $user->user_login ) . "\r\n\r\n";
 				$message .= esc_html__( 'To set your password, visit the following address:' ) . "\r\n\r\n";
 				$message .= '<' . network_site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user->user_login ), 'login' ) . ">\r\n\r\n";
 
 				$message .= wp_login_url() . "\r\n";
-
+				/* translators: %s message. */
 				wp_mail( $user->user_email, sprintf( esc_html__( '[%s] Your username and password info' ), $blogname ), $message );
 			}
 		} else {
 
-			// for WordPress below 4.3
+			// for WordPress below 4.3,.
 			$plaintext_pass = $deprecated;
 
 			// The blogname option is escaped with esc_html on the way into the database in sanitize_option
@@ -132,11 +139,14 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 			$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
 
 			if ( ! $bnfw->notifier->notification_exists( 'admin-user', false ) ) {
+				/* translators: %s site name. */
 				$message = sprintf( esc_html__( 'New user registration on your site %s:' ), $blogname ) . "\r\n\r\n";
+				/* translators: %s username. */
 				$message .= sprintf( esc_html__( 'Username: %s' ), $user->user_login ) . "\r\n\r\n";
+				/* translators: %s email. */
 				$message .= sprintf( esc_html__( 'E-mail: %s' ), $user->user_email ) . "\r\n";
-
-				@wp_mail( get_option( 'admin_email' ), sprintf( esc_html__( '[%s] New User Registration' ), $blogname ), $message );
+				/* translators: %s Blogname. */
+				wp_mail( get_option( 'admin_email' ), sprintf( esc_html__( '[%s] New User Registration' ), $blogname ), $message );
 			}
 
 			if ( empty( $plaintext_pass ) ) {
@@ -149,10 +159,12 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 					$bnfw->engine->send_registration_email( $bnfw->notifier->read_settings( $notification->ID ), $user, $plaintext_pass );
 				}
 			} else {
+				/* translators: %s username. */
 				$message = sprintf( esc_html__( 'Username: %s' ), $user->user_login ) . "\r\n";
+				/* translators: %s password. */
 				$message .= sprintf( esc_html__( 'Password: %s' ), $plaintext_pass ) . "\r\n";
 				$message .= wp_login_url() . "\r\n";
-
+				/* translators: %s blogname. */
 				wp_mail( $user->user_email, sprintf( esc_html__( '[%s] Your username and password' ), $blogname ), $message );
 			}
 		}
@@ -173,7 +185,7 @@ if ( ! function_exists( 'wp_password_change_notification' ) ) {
 
 			if ( count( $notifications ) > 0 ) {
 				// Ideally there should be only one notification for this type.
-				// If there are multiple notification then we will read data about only the last one
+				// If there are multiple notification then we will read data about only the last one.
 				$bnfw->engine->send_notification( $bnfw->notifier->read_settings( end( $notifications )->ID ), $user->ID );
 			}
 		} else {

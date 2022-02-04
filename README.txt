@@ -5,7 +5,7 @@ Tags: notification, email, alert, message, notify, send, HTML, customize, bulk, 
 Requires at least: 4.8
 Tested up to: 5.9
 Requires PHP: 7.0
-Stable tag: 1.8.7
+Stable tag: 1.8.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Update URI: https://wordpress.org/plugins/bnfw/
@@ -241,6 +241,10 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 
 == Changelog ==
+
+= 1.8.8 - 4th February 2022 =
+* Improved: Select2 library is now included with the plugin instead of being loaded from CDN.
+* Fixed: Various changes relating to plugin structure, data sanitisation, and  validation.
 
 = 1.8.7 - 27th January 2022 =
 * IMPORTANT! It is recommended that you update this plugin to the latest version.
