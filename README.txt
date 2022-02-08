@@ -5,7 +5,7 @@ Tags: notification, email, alert, message, notify, send, HTML, customize, bulk, 
 Requires at least: 4.8
 Tested up to: 5.9
 Requires PHP: 7.0
-Stable tag: 1.8.8
+Stable tag: 1.8.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Update URI: https://wordpress.org/plugins/bnfw/
@@ -242,9 +242,15 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 == Changelog ==
 
+= 1.8.9 - 8th February 2022 =
+* Fixed: HTML formatting wasn't being applied to notifications since WordPress 5.9.
+* Fixed: Searching/selecting users on smaller sites was not rendering any results.
+* Improved: Better compatibility with WordPress coding standards.
+* Improved: Further improvements to plugin structure, data sanitisation, and validation.
+
 = 1.8.8 - 4th February 2022 =
 * Improved: Select2 library is now included with the plugin instead of being loaded from CDN.
-* Fixed: Various changes relating to plugin structure, data sanitisation, and  validation.
+* Improved: Various changes relating to plugin structure, data sanitisation, and validation.
 
 = 1.8.7 - 27th January 2022 =
 * IMPORTANT! It is recommended that you update this plugin to the latest version.
@@ -254,7 +260,7 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 * Fixed: Post Author and Update Author shortcodes now work as expected again following an issue introduced in WordPress 5.7.
 * Fixed: User Lost Password notifications now work correctly if users only log in with their email address.
 * Removed: `<div>` tags were being added when using the Insert Default Content button on a notification.
-* Updated persist-admin-noticed-dismissal 3rd party library to latest version.
+* Updated: persist-admin-noticed-dismissal 3rd party library to latest version.
 * Updated: EDD_SL_Plugin_Updater is now at the latest version for add-ons.
 
 = 1.8.5 - 18th December 2020 =

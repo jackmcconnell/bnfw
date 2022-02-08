@@ -41,7 +41,8 @@ if ( ! class_exists( 'BNFW_License_Setting', false ) ) {
 		 * @since 1.4
 		 */
 		public function bnfw_render_license_page() {
-			$settings = apply_filters( 'bnfw_settings_licenses', array() );
+			$settings     = apply_filters( 'bnfw_settings_licenses', array() );
+			$allowed_html = bnfw_expanded_alowed_tags();
 			ob_start(); ?>
 
 			<div class="wrap">
@@ -69,7 +70,7 @@ if ( ! class_exists( 'BNFW_License_Setting', false ) ) {
 			</div>
 
 			<?php
-			echo ob_get_clean();
+			echo wp_kses( ob_get_clean(), $allowed_html );
 		}
 		/**
 		 * BNFW license settings.
@@ -127,7 +128,7 @@ if ( ! class_exists( 'BNFW_License_Setting', false ) ) {
 		 */
 		public function bnfw_license_key_callback( $args ) {
 			$bnfw_options = get_option( 'bnfw_licenses' );
-
+			$allowed_html = bnfw_expanded_alowed_tags();
 			if ( isset( $bnfw_options[ $args['id'] ] ) ) {
 				$value = $bnfw_options[ $args['id'] ];
 			} else {
@@ -142,8 +143,7 @@ if ( ! class_exists( 'BNFW_License_Setting', false ) ) {
 			}
 
 			$html .= '<label for="bnfw_licenses[' . $args['id'] . ']"> ' . esc_html( $args['desc'] ) . '</label>';
-
-			echo $html; // phpcs:ignore
+			echo wp_kses( $html, $allowed_html );
 		}
 	}
 	new BNFW_License_Setting();

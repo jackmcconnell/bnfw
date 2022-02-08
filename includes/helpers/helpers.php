@@ -32,6 +32,24 @@ if ( ! function_exists( 'bnfw_expanded_alowed_tags' ) ) {
 	 * @return array
 	 */
 	function bnfw_expanded_alowed_tags() {
+		$allowed_html = wp_kses_allowed_html( 'post' );
+		// iframe.
+		$allowed_html['iframe'] = array(
+			'src'             => array(),
+			'height'          => array(),
+			'width'           => array(),
+			'frameborder'     => array(),
+			'allowfullscreen' => array(),
+		);
+		// form fields - input.
+		$allowed_html['input'] = array(
+			'class' => array(),
+			'id'    => array(),
+			'name'  => array(),
+			'value' => array(),
+			'type'  => array(),
+		);
+		// select.
 		$allowed_html['select'] = array(
 			'class' => array(),
 			'id'    => array(),
@@ -42,6 +60,10 @@ if ( ! function_exists( 'bnfw_expanded_alowed_tags' ) ) {
 		// select options.
 		$allowed_html['option'] = array(
 			'selected' => array(),
+		);
+		// style.
+		$allowed_html['style'] = array(
+			'types' => array(),
 		);
 		return $allowed_html;
 	}
@@ -83,7 +105,7 @@ if ( ! function_exists( 'bnfw_render_users_dropdown' ) ) {
 				if ( isset( $user_count['avail_roles'][ $role_slug ] ) ) {
 					$count = $user_count['avail_roles'][ $role_slug ];
 				}
-				echo wp_kses( '<option value="role-', esc_attr( $role_slug ), '" ', $selected, '>', esc_html( $role_name ), ' (', $count, ' ' . __( 'Users', 'bnfw' ) . ')', '</option>', $allowed_html );
+				echo '<option value="role-', esc_attr( $role_slug ), '" ', $selected, '>', esc_html( $role_name ), ' (', $count, ' ' . __( 'Users', 'bnfw' ) . ')', '</option>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 			?>
 		</optgroup>
@@ -120,7 +142,7 @@ if ( ! function_exists( 'bnfw_render_users_dropdown' ) ) {
 				$non_wp_users = array_diff( $non_wp_users, array( $user->ID ) );
 			}
 
-			echo wp_kses( '<option value="', esc_attr( $user->ID ), '" ', $selected, '>', esc_html( $user->user_login ), '</option>', $allowed_html );
+			echo '<option value="', esc_attr( $user->ID ), '" ', $selected, '>', esc_html( $user->user_login ), '</option>';// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		?>

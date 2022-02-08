@@ -57,7 +57,7 @@ if ( ! class_exists( 'BNFW_Settings', false ) ) {
 			</div>
 
 			<?php
-			echo ob_get_clean(); // phpcs:ignore
+			echo ob_get_clean();// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 		/**
 		 * External Menu Item Links
@@ -77,21 +77,21 @@ if ( ! class_exists( 'BNFW_Settings', false ) ) {
 				}
 
 				// Documentation Link.
-				$submenu['edit.php?post_type=bnfw_notification'][500] = array(// phpcs:ignore
+				$submenu['edit.php?post_type=bnfw_notification'][500] = array(// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 					'<div id="bnfw-menu-item-documentation" style="color: #73daeb;">' . __( 'Documentation', 'bnfw' ) . '</div>',
 					'bnfw',
 					$doc_url,
 				);
 
 				// Add-ons Link.
-				$submenu['edit.php?post_type=bnfw_notification'][600] = array(// phpcs:ignore
+				$submenu['edit.php?post_type=bnfw_notification'][600] = array(// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 					'<div id="bnfw-menu-item-addons" style="color: #ff6f59;">' . __( 'Premium Add-ons', 'bnfw' ) . '</div>',
 					'bnfw',
 					$store_url,
 				);
 
 				// Add-ons Link.
-				$submenu['edit.php?post_type=bnfw_notification'][700] = array(// phpcs:ignore
+				$submenu['edit.php?post_type=bnfw_notification'][700] = array(// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 					'<div id="bnfw-menu-item-support" style="color: #f00001;">' . __( 'Priority Support', 'bnfw' ) . '</div>',
 					'bnfw',
 					$support_url,

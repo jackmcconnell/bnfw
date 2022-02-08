@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.8.8
+ * Version: 1.8.9
  * Requires at least: 4.8
  * Requires PHP: 7.0
  * Author: Made with Fuel
@@ -39,8 +39,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 *
 		 * @var string
 		 */
-		public $bnfw_version = '1.8.8';
-		
+		public $bnfw_version = '1.8.9';
 		/**
 		 * Class Constructor.
 		 *
@@ -645,8 +644,11 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 * @since 1.0
 		 */
 		public function on_lost_password() {
-			$user_login = sanitize_text_field( $_POST['user_login'] );// phpcs:ignore
-			$user       = get_user_by( 'login', $user_login ) ?: get_user_by( 'email', $user_login );// phpcs:ignore
+			$user_login = ! empty( $_POST['user_login'] ) ? sanitize_text_field( wp_unslash( $_POST['user_login'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$user       = get_user_by( 'login', $user_login );
+			if ( false === $user ) {
+				$user = get_user_by( 'email', $user_login );
+			}
 			if ( $user ) {
 				$this->send_notification( 'admin-password', $user->ID );
 			}
@@ -744,7 +746,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 * @return bool
 		 */
 		public function should_password_changed_email_be_sent( $send, $user, $userdata ) {
-			$bnfw = BNFW::factory();// phpcs:ignore
+			$bnfw = selff::factory();
 
 			if ( ! $send ) {
 				return $send;
@@ -777,7 +779,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 * @return bool
 		 */
 		public function should_email_changed_email_be_sent( $send, $user_old_data, $user_new_data ) {
-			$bnfw = BNFW::factory();// phpcs:ignore
+			$bnfw = selff::factory();
 
 			if ( $bnfw->notifier->notification_exists( 'admin-email-changed', false ) ) {
 				$notifications = $bnfw->notifier->get_notifications( 'admin-email-changed' );
@@ -1120,12 +1122,12 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 */
 		public function user_role_added( $user_id, $old_user_data ) {
 
-			if ( isset( $_POST['members_user_roles'] ) && ! empty( $_POST['members_user_roles'] ) ) {// phpcs:ignore
+			if ( isset( $_POST['members_user_roles'] ) && ! empty( $_POST['members_user_roles'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 				// Get the current user roles.
 				$old_roles = (array) $old_user_data->roles;
 
 				// Sanitize the posted roles.
-				$new_roles = array_map( array( $this, 'bnfw_members_sanitize_role' ), $_POST['members_user_roles'] );// phpcs:ignore
+				$new_roles = array_map( array( $this, 'bnfw_members_sanitize_role' ), $_POST['members_user_roles'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 				sort( $old_roles );
 				sort( $new_roles );
@@ -1477,7 +1479,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 * @return bool True if metabox request, False otherwise.
 		 */
 		protected function is_metabox_request() {
-			return ( isset( $_GET['meta-box-loader'] ) || isset( $_GET['meta_box'] ) );// phpcs:ignore
+			return ( isset( $_GET['meta-box-loader'] ) || isset( $_GET['meta_box'] ) );
 		}
 
 		/**

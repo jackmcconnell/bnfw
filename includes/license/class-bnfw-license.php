@@ -123,7 +123,7 @@ if ( ! class_exists( 'BNFW_License', false ) ) {
 
 				// Are there any icons set for the plugin?
 				if ( isset( $plugin->icons ) ) {
-					$icons                                   = is_string( $plugin->icons ) ? unserialize( $plugin->icons ) : $plugin->icons; // phpcs:ignore
+					$icons                                   = is_string( $plugin->icons ) ? unserialize( $plugin->icons ) : $plugin->icons;
 					$transient->response[ $basename ]->icons = $icons;
 				}
 			}
@@ -210,7 +210,7 @@ if ( ! class_exists( 'BNFW_License', false ) ) {
 			$api_params = array(
 				'edd_action' => 'activate_license',
 				'license'    => $license,
-				'item_name'  => urlencode( $this->item_name ), // phpcs:ignore
+				'item_name'  => urlencode( $this->item_name ),
 			);
 
 			if ( 'Multisite Add-on' === $this->item_name && is_multisite() ) {
@@ -260,7 +260,7 @@ if ( ! class_exists( 'BNFW_License', false ) ) {
 				$api_params = array(
 					'edd_action' => 'deactivate_license',
 					'license'    => $this->license,
-					'item_name'  => urlencode( $this->item_name ), // phpcs:ignore
+					'item_name'  => urlencode( $this->item_name ),
 				);
 
 				if ( 'Multisite Add-on' === $this->item_name && is_multisite() ) {

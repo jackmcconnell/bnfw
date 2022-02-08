@@ -794,7 +794,7 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 			$setting = array(
 				'notification'         => isset( $_POST['notification'] ) ? sanitize_text_field( wp_unslash( $_POST['notification'] ) ) : '',
 				'subject'              => $subject,
-				'message'              => isset( $_POST['notification_message'] ) ? sanitize_text_field( wp_unslash( $_POST['notification_message'] ) ) : '',
+				'message'              => isset( $_POST['notification_message'] ) ? wp_kses_post( wp_unslash( $_POST['notification_message'] ) ) : '',
 				'disabled'             => isset( $_POST['disabled'] ) ? sanitize_text_field( wp_unslash( $_POST['disabled'] ) ) : 'false',
 				'email-formatting'     => isset( $_POST['email-formatting'] ) ? sanitize_text_field( wp_unslash( $_POST['email-formatting'] ) ) : 'html',
 				'disable-current-user' => isset( $_POST['disable-current-user'] ) ? sanitize_text_field( wp_unslash( $_POST['disable-current-user'] ) ) : 'false',
