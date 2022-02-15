@@ -70,7 +70,7 @@ if ( ! class_exists( 'BNFW_License_Setting', false ) ) {
 			</div>
 
 			<?php
-			echo wp_kses( ob_get_clean(), $allowed_html );
+			echo ob_get_clean();// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 		/**
 		 * BNFW license settings.

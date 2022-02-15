@@ -5,7 +5,7 @@ Tags: notification, email, alert, message, notify, send, HTML, customize, bulk, 
 Requires at least: 4.8
 Tested up to: 5.9
 Requires PHP: 7.0
-Stable tag: 1.8.10
+Stable tag: 1.8.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Update URI: https://wordpress.org/plugins/bnfw/
@@ -241,6 +241,11 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 
 == Changelog ==
+
+= 1.8.11 - 15th February 2022 =
+* Fixed: An issue where add-on licenses couldn't be saved.
+* Fixed: Some HTML characters were being encoded when added through the Text part of the notification editor.
+* Improved: Further improvements to plugin structure, data sanitisation, and validation.
 
 = 1.8.10 - 8th February 2022 =
 * Fixed: A fatal error when sending an email address changed notification.

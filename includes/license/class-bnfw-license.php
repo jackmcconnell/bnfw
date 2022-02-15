@@ -204,7 +204,7 @@ if ( ! class_exists( 'BNFW_License', false ) ) {
 				return;
 			}
 
-			$license = sanitize_text_field( $_POST['bnfw_licenses'][ $this->item_shortname . '_license_key' ] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			$license = sanitize_text_field( $_POST['bnfw_licenses'][ $this->item_shortname . '_license_key' ] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 			// Data to send to the API.
 			$api_params = array(
@@ -284,7 +284,7 @@ if ( ! class_exists( 'BNFW_License', false ) ) {
 				// Decode the license data.
 				$license_data = json_decode( wp_remote_retrieve_body( $response ) );
 
-				if ( 'deactivated' === $license_data->license ) {
+				if ( 'deactivated' === (string) $license_data->license ) {
 					delete_option( $this->item_shortname . '_license_active' );
 				}
 			}
