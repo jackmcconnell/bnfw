@@ -127,8 +127,14 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			$subject = str_replace( '[password_url]', $password_url, $subject );
 			$message = str_replace( '[password_url]', $password_url, $message );
 
+			$subject = str_replace( '[password_url_raw]', $password_url, $subject );
+			$message = str_replace( '[password_url_raw]', $password_url, $message );
+
 			$subject = str_replace( '[login_url]', wp_login_url(), $subject );
 			$message = str_replace( '[login_url]', wp_login_url(), $message );
+
+			$subject = str_replace( '[login_url_raw]', wp_login_url(), $subject );
+			$message = str_replace( '[login_url_raw]', wp_login_url(), $message );
 
 			if ( 'true' !== $setting['disable-autop'] && 'html' === $setting['email-formatting'] ) {
 				$message = wpautop( $message );
@@ -398,9 +404,6 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 				$headers[] = 'Content-type: text/html';
 			} else {
 				$headers[] = 'Content-type: text/plain';
-				if ( 'text' === $setting['email-formatting'] ) {
-					$message = wp_strip_all_tags( $message );
-				}
 			}
 			$email_data['headers'] = $headers;
 

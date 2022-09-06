@@ -3,9 +3,9 @@
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.8.11
+ * Version: 1.9
  * Requires at least: 4.8
- * Requires PHP: 7.0
+ * Requires PHP: 7.1
  * Author: Made with Fuel
  * Author URI: https://madewithfuel.com/
  * License: GPLv2 or later
@@ -39,7 +39,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 *
 		 * @var string
 		 */
-		public $bnfw_version = '1.8.11';
+		public $bnfw_version = '1.9';
 		/**
 		 * Class Constructor.
 		 *
@@ -146,12 +146,17 @@ if ( ! class_exists( 'BNFW', false ) ) {
 			add_action( 'admin_init', array( 'PAnD', 'init' ) );
 			add_action( 'admin_init', array( $this, 'add_capability_to_admin' ) );
 
+			// Fire when privately publish.
+			add_action( 'auto-draft_to_private', array( $this, 'publish_private_post' ), 10, 1 );
+
 			add_action( 'draft_to_private', array( $this, 'private_post' ) );
 			add_action( 'future_to_private', array( $this, 'private_post' ) );
 			add_action( 'pending_to_private', array( $this, 'private_post' ) );
 			add_action( 'publish_to_private', array( $this, 'private_post' ) );
 
 			add_action( 'wp_insert_post', array( $this, 'insert_post' ), 10, 3 );
+
+			add_action( 'attachment_updated', array( $this, 'trash_attachment' ), 10, 3 );
 
 			add_action( 'publish_to_trash', array( $this, 'trash_post' ) );
 
@@ -208,8 +213,8 @@ if ( ! class_exists( 'BNFW', false ) ) {
 			add_filter( 'password_change_email', array( $this, 'on_password_changed' ), 10, 2 );
 
 			add_filter( 'send_email_change_email', array( $this, 'should_email_changed_email_be_sent' ), 10, 3 );
-			add_filter( 'email_change_email', array( $this, 'on_email_changed' ), 10, 3 );
-			add_filter( 'new_user_email_content', array( $this, 'on_email_changing' ), 10, 2 );
+			add_filter( 'email_change_email', array( $this, 'on_email_changed' ), PHP_INT_MAX, 3 );
+			add_filter( 'new_user_email_content', array( $this, 'on_email_changing' ), PHP_INT_MAX, 2 );
 
 			add_filter( 'auto_core_update_email', array( $this, 'on_core_updated' ), 10, 4 );
 
@@ -224,7 +229,51 @@ if ( ! class_exists( 'BNFW', false ) ) {
 			add_filter( 'user_confirmed_action_email_content', array( $this, 'handle_erasure_complete_email_content' ), 10, 2 );
 
 			add_filter( 'plugin_action_links', array( $this, 'plugin_action_links' ), 10, 4 );
+			add_filter( 'wp_mail', array( $this, 'bnfw_update_email_changing_subject' ), 10, 1 );
 			add_action( 'shutdown', array( $this, 'on_shutdown' ) );
+
+		}
+
+		/**
+		 * Changed the subject when use request to change the email.
+		 *
+		 * @param array $args Email arguments.
+		 *
+		 * @return mixed
+		 */
+		public function bnfw_update_email_changing_subject( $args ) {
+			$notification_name = 'email-changed';
+			$notifications     = $this->notifier->get_notifications( $notification_name );
+			if ( count( $notifications ) > 0 ) {
+				$setting = $this->notifier->read_settings( end( $notifications )->ID );
+				if ( str_contains( $args['message'], '/profile.php?newuseremail=' ) ) {
+					$subject         = str_replace( '[global_site_title]', get_bloginfo( 'name' ), $setting['subject'] );
+					$subject         = str_replace( '[[global_site_title]]', get_bloginfo( 'name' ), $subject );
+					$args['subject'] = $subject;
+				} elseif ( str_contains( $args['message'], '?newuseremail=' ) ) {
+					$subject         = str_replace( '[global_site_title]', get_bloginfo( 'name' ), $setting['subject'] );
+					$subject         = str_replace( '[[global_site_title]]', get_bloginfo( 'name' ), $subject );
+					$args['subject'] = $subject;
+				}
+			}
+
+			return $args;
+		}
+
+		/**
+		 * Fires when a media is moved to trash.
+		 *
+		 * @param int     $post_id Post ID.
+		 * @param WP_Post $post_after Post object following the update.
+		 * @param WP_Post $post_before  Post object before the update.
+		 */
+		public function trash_attachment( $post_id, $post_after, $post_before ) {
+			$post_type          = get_post_type( $post_id );
+			$post_status_before = $post_before->post_status;
+			$post_status_after  = $post_after->post_status;
+			if ( BNFW_Notification::POST_TYPE !== $post_type && 'inherit' === $post_status_before && 'trash' === $post_status_after ) {
+				$this->send_notification_async( 'trash-' . $post_type, $post_id );
+			}
 		}
 
 		/**
@@ -405,6 +454,17 @@ if ( ! class_exists( 'BNFW', false ) ) {
 			if ( BNFW_Notification::POST_TYPE !== $post_type ) {
 				$this->send_notification_async( 'new-' . $post_type, $post_id );
 			}
+		}
+
+		/**
+		 * Fire an email when post status change to private.
+		 *
+		 * @param object $post Post Object.
+		 *
+		 * @return void
+		 */
+		public function publish_private_post( $post ) {
+			$this->private_post( $post );
 		}
 
 		/**
@@ -746,7 +806,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 * @return bool
 		 */
 		public function should_password_changed_email_be_sent( $send, $user, $userdata ) {
-			$bnfw = BNFW::factory();
+			$bnfw = self::factory();
 
 			if ( ! $send ) {
 				return $send;
@@ -779,7 +839,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 * @return bool
 		 */
 		public function should_email_changed_email_be_sent( $send, $user_old_data, $user_new_data ) {
-			$bnfw = BNFW::factory();
+			$bnfw = self::factory();
 
 			if ( $bnfw->notifier->notification_exists( 'admin-email-changed', false ) ) {
 				$notifications = $bnfw->notifier->get_notifications( 'admin-email-changed' );
@@ -819,10 +879,23 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 */
 		public function on_email_changed( $email_data, $user_old_data, $user_new_data ) {
 
-			$email            = $this->handle_filtered_data_notification( 'email-changed', $email_data, $user_old_data['ID'] );
-			$email['message'] = str_replace( '[user_old_email]', $user_old_data['user_email'], $email['message'] );
-			$email['message'] = str_replace( '[user_new_email]', $user_new_data['user_email'], $email['message'] );
-			return $email;
+			$email                 = $this->handle_filtered_data_notification( 'email-changed', $email_data, $user_old_data['ID'] );
+			$user                  = get_user_by( 'ID', $user_old_data['ID'] );
+			$email['message']      = str_replace( '[user_nicename]', $user->user_login, $email['message'] );
+			$email['message']      = str_replace( '[user_old_email]', $user_old_data['user_email'], $email['message'] );
+			$email['message']      = str_replace( '[user_new_email]', $user_new_data['user_email'], $email['message'] );
+			$email_data['message'] = $email['message'];
+
+			$notifications = $this->notifier->get_notifications( 'email-changed' );
+			if ( count( $notifications ) > 0 ) {
+				$setting = $this->notifier->read_settings( end( $notifications )->ID );
+				// Ensures the content type of the message.
+				if ( 'html' === $setting['email-formatting'] ) {
+					$email_data['message'] = wpautop( $email_data['message'] );
+				}
+			}
+
+			return $email_data;
 		}
 		/**
 		 * Filters the text of the email sent when a change of user email address is attempted.
@@ -840,13 +913,63 @@ if ( ! class_exists( 'BNFW', false ) ) {
 
 			$notifications = $this->notifier->get_notifications( $notification_name );
 			if ( count( $notifications ) > 0 ) {
+
+				$user = wp_get_current_user();
+
 				// Ideally there should be only one notification for this type.
 				// If there are multiple notification then we will read data about only the last one.
 				$setting = $this->notifier->read_settings( end( $notifications )->ID );
 
+				// Ensures the content type of the message.
+				if ( 'html' === $setting['email-formatting'] ) {
+					add_filter( 'wp_mail_content_type', array( $this, 'set_html_content_type' ) );
+				} else {
+					add_filter( 'wp_mail_content_type', array( $this, 'set_text_content_type' ) );
+				}
+
 				$email_text = $this->engine->handle_shortcodes( $setting['message'], $setting['notification'], $new_user_details['newemail'] );
 				$email_text = $this->engine->handle_global_user_shortcodes( $email_text, $new_user_details['newemail'] );
 				$email_text = str_replace( '[email_change_confirmation_link]', esc_url( admin_url( 'profile.php?newuseremail=' . $new_user_details['hash'] ) ), $email_text );
+				$email_text = str_replace( '[user_nicename]', $user->data->user_nicename, $email_text );
+				$email_text = str_replace( '[user_id]', $user->data->ID, $email_text );
+				$email_text = str_replace( '[user_login]', $user->data->user_login, $email_text );
+				$email_text = str_replace( '[user_email]', $user->data->user_email, $email_text );
+				$email_text = str_replace( '[user_url]', $user->data->user_url, $email_text );
+				$email_text = str_replace( '[user_registered]', $user->data->user_registered, $email_text );
+				$email_text = str_replace( '[user_display_name]', $user->data->display_name, $email_text );
+				$email_text = str_replace( '[user_firstname]', get_user_meta( $user->data->ID, 'first_name', true ), $email_text );
+				$email_text = str_replace( '[user_lastname]', get_user_meta( $user->data->ID, 'last_name', true ), $email_text );
+				$email_text = str_replace( '[user_nickname]', get_user_meta( $user->data->ID, 'nickname', true ), $email_text );
+				$email_text = str_replace( '[user_description]', get_user_meta( $user->data->ID, 'description', true ), $email_text );
+				$email_text = str_replace( '[user_wp_capabilities]', implode( ', ', $user->roles ), $email_text );
+				$email_text = str_replace( '[user_avatar]', get_avatar( $user->data->ID ), $email_text );
+				$email_text = str_replace( '[nickname]', $user->nickname, $email_text );
+				$email_text = str_replace( '[display_name]', $user->display_name, $email_text );
+				$email_text = str_replace( '[email_user_id]', $user->data->ID, $email_text );
+				$email_text = str_replace( '[email_user_login]', $user->data->user_login, $email_text );
+				$email_text = str_replace( '[email_user_nicename]', $user->data->user_nicename, $email_text );
+				$email_text = str_replace( '[email_user_email]', $user->data->user_email, $email_text );
+				$email_text = str_replace( '[email_user_url]', $user->data->user_url, $email_text );
+				$email_text = str_replace( '[email_user_registered]', $user->data->user_registered, $email_text );
+				$email_text = str_replace( '[email_user_display_name]', $user->data->display_name, $email_text );
+				$email_text = str_replace( '[email_user_firstname]', get_user_meta( $user->data->ID, 'first_name', true ), $email_text );
+				$email_text = str_replace( '[email_user_lastname]', get_user_meta( $user->data->ID, 'last_name', true ), $email_text );
+				$email_text = str_replace( '[email_user_nickname]', get_user_meta( $user->data->ID, 'nickname', true ), $email_text );
+				$email_text = str_replace( '[email_user_description]', get_user_meta( $user->data->ID, 'description', true ), $email_text );
+				$email_text = str_replace( '[email_user_wp_capabilities]', implode( ', ', $user->roles ), $email_text );
+				$email_text = str_replace( '[email_user_avatar]', get_avatar( $user->data->ID ), $email_text );
+				$email_text = str_replace( '[user_old_email]', $user->data->user_email, $email_text );
+				$email_text = str_replace( '[user_new_email]', $new_user_details['newemail'], $email_text );
+				$email_text = str_replace( '[user_role]', implode( ',', $user->roles ), $email_text );
+
+				$user_capabilities = bnfw_format_user_capabilities( $user->wp_capabilities );
+				if ( ! empty( $user_capabilities ) ) {
+					$email_text = str_replace( '[wp_capabilities]', $user_capabilities, $email_text );
+				}
+
+				if ( 'html' === $setting['email-formatting'] ) {
+					$email_text = wpautop( $email_text );
+				}
 			}
 
 			return $email_text;
@@ -889,13 +1012,19 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 *
 		 * @return array Modified Email Data.
 		 */
-		private function handle_filtered_data_notification( $notification_name,
-															$email_data, $extra_data ) {
+		private function handle_filtered_data_notification( $notification_name, $email_data, $extra_data ) {
 			$notifications = $this->notifier->get_notifications( $notification_name );
 			if ( count( $notifications ) > 0 ) {
 				// Ideally there should be only one notification for this type.
 				// If there are multiple notification then we will read data about only the last one.
 				$setting = $this->notifier->read_settings( end( $notifications )->ID );
+
+				// Ensures the content type of the message.
+				if ( 'html' === $setting['email-formatting'] ) {
+					add_filter( 'wp_mail_content_type', array( $this, 'set_html_content_type' ) );
+				} else {
+					add_filter( 'wp_mail_content_type', array( $this, 'set_text_content_type' ) );
+				}
 
 				$email_data = $this->engine->handle_filtered_data_notification( $email_data, $setting, $extra_data );
 			}
@@ -1181,7 +1310,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 			$_role = strtolower( $role );
 			$_role = preg_replace( '/[^a-z0-9_\-\s]/', '', $_role );
 
-			return apply_filters( array( $this, 'bnfw_members_sanitize_role' ), str_replace( ' ', '_', $_role ), $role );
+			return apply_filters( 'bnfw_members_sanitize_role', str_replace( ' ', '_', $_role ), $role );
 		}
 
 		/**

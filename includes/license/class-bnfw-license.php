@@ -123,7 +123,7 @@ if ( ! class_exists( 'BNFW_License', false ) ) {
 
 				// Are there any icons set for the plugin?
 				if ( isset( $plugin->icons ) ) {
-					$icons                                   = is_string( $plugin->icons ) ? unserialize( $plugin->icons ) : $plugin->icons;
+					$icons                                   = is_string( $plugin->icons ) ? unserialize( $plugin->icons ) : $plugin->icons; // phpcs:ignore
 					$transient->response[ $basename ]->icons = $icons;
 				}
 			}
@@ -204,13 +204,13 @@ if ( ! class_exists( 'BNFW_License', false ) ) {
 				return;
 			}
 
-			$license = sanitize_text_field( $_POST['bnfw_licenses'][ $this->item_shortname . '_license_key' ] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$license = sanitize_text_field( $_POST['bnfw_licenses'][ $this->item_shortname . '_license_key' ] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 			// Data to send to the API.
 			$api_params = array(
 				'edd_action' => 'activate_license',
 				'license'    => $license,
-				'item_name'  => urlencode( $this->item_name ),
+				'item_name'  => urlencode( $this->item_name ), // phpcs:ignore
 			);
 
 			if ( 'Multisite Add-on' === $this->item_name && is_multisite() ) {
@@ -260,7 +260,7 @@ if ( ! class_exists( 'BNFW_License', false ) ) {
 				$api_params = array(
 					'edd_action' => 'deactivate_license',
 					'license'    => $this->license,
-					'item_name'  => urlencode( $this->item_name ),
+					'item_name'  => urlencode( $this->item_name ), // phpcs:ignore
 				);
 
 				if ( 'Multisite Add-on' === $this->item_name && is_multisite() ) {
@@ -284,7 +284,7 @@ if ( ! class_exists( 'BNFW_License', false ) ) {
 				// Decode the license data.
 				$license_data = json_decode( wp_remote_retrieve_body( $response ) );
 
-				if ( 'deactivated' === (string) $license_data->license ) {
+				if ( 'deactivated' === $license_data->license ) {
 					delete_option( $this->item_shortname . '_license_active' );
 				}
 			}

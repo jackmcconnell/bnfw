@@ -299,7 +299,7 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 									value="private-post" <?php selected( 'private-post', $setting['notification'] ); ?>><?php esc_html_e( 'New Private Post', 'bnfw' ); ?></option>
 								<option
 									value="future-post" <?php selected( 'future-post', $setting['notification'] ); ?>><?php esc_html_e( 'Post Scheduled', 'bnfw' ); ?></option>
-									<option
+								<option
 									value="trash-post" <?php selected( 'trash-post', $setting['notification'] ); ?>><?php esc_html_e( 'Published Post Moved to Trash', 'bnfw' ); ?></option>
 								<option value="new-comment" <?php selected( 'new-comment', $setting['notification'] ); ?>>
 									<?php esc_html_e( 'New Comment', 'bnfw' ); ?>
@@ -343,6 +343,8 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 								</option>
 								<option
 									value="commentreply-page" <?php selected( 'commentreply-page', $setting['notification'] ); ?>><?php esc_html_e( 'Page - Comment Reply', 'bnfw' ); ?></option>
+								<option
+										value="trash-page" <?php selected( 'trash-page', $setting['notification'] ); ?>><?php esc_html_e( 'Page - Moved to Trash', 'bnfw' ); ?></option>
 								<?php do_action( 'bnfw_after_notification_options', 'page', 'Page', $setting ); ?>
 							</optgroup>
 							<?php do_action( 'bnfw_after_notification_options_optgroup', 'page', 'Page', $setting ); ?>
@@ -361,6 +363,16 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 									<?php esc_html_e( 'Media - New Comment Awaiting Moderation', 'bnfw' ); ?></option>
 								<option
 									value="commentreply-attachment" <?php selected( 'commentreply-attachment', $setting['notification'] ); ?>><?php esc_html_e( 'Media - Comment Reply', 'bnfw' ); ?></option>
+
+								<?php
+								if ( function_exists( 'constant' ) && constant( 'MEDIA_TRASH' ) ) {
+									?>
+									<option value="trash-attachment" <?php selected( 'trash-attachment', $setting['notification'] ); ?>><?php esc_html_e( 'Media - Moved to Trash', 'bnfw' ); ?></option>
+									<?php
+								}
+								?>
+
+
 								<?php do_action( 'bnfw_after_notification_options', 'media', 'Media', $setting ); ?>
 							</optgroup>
 							<?php do_action( 'bnfw_after_notification_options_optgroup', 'media', 'Media', $setting ); ?>
@@ -404,6 +416,8 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 										</option>
 										<option
 											value="commentreply-<?php echo esc_attr( $type ); ?>" <?php selected( 'commentreply-' . $type, $setting['notification'] ); ?>><?php echo "'" . esc_html( $label ) . "' ", esc_html__( 'Comment Reply', 'bnfw' ); ?></option>
+										<option
+											value="trash-<?php echo esc_attr( $type ); ?>" <?php selected( 'trash-' . $type, $setting['notification'] ); ?>><?php echo "'" . esc_html( $label ) . "' ", esc_html__( 'Post Moved to Trash', 'bnfw' ); ?></option>
 										<?php do_action( 'bnfw_after_notification_options', $type, $label, $setting ); ?>
 									</optgroup>
 									<?php do_action( 'bnfw_after_notification_options_optgroup', $type, $label, $setting ); ?>
@@ -794,7 +808,7 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 			$setting = array(
 				'notification'         => isset( $_POST['notification'] ) ? sanitize_text_field( wp_unslash( $_POST['notification'] ) ) : '',
 				'subject'              => $subject,
-				'message'              => isset( $_POST['notification_message'] ) ? wp_unslash( $_POST['notification_message'] ) : '', // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				'message'              => isset( $_POST['notification_message'] ) ? wp_kses_post( wp_unslash( $_POST['notification_message'] ) ) : '',
 				'disabled'             => isset( $_POST['disabled'] ) ? sanitize_text_field( wp_unslash( $_POST['disabled'] ) ) : 'false',
 				'email-formatting'     => isset( $_POST['email-formatting'] ) ? sanitize_text_field( wp_unslash( $_POST['email-formatting'] ) ) : 'html',
 				'disable-current-user' => isset( $_POST['disable-current-user'] ) ? sanitize_text_field( wp_unslash( $_POST['disable-current-user'] ) ) : 'false',
@@ -1606,36 +1620,34 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 
 			if ( ! empty( $_REQUEST['bulk_enable_notifications'] ) ) {// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				$enabled_count = intval( $_REQUEST['bulk_enable_notifications'] );// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				printf(
-					wp_kses_post(
-						'<div id="message" class="updated fade"><p>' .
-						/* translators: %s: enabled notification count */
-						_n(
-							'Enabled %s Notification.',
-							'Enabled %s Notifications.',
-							$enabled_count,
-							'bnfw'
-						) . '</p></div>',
-						$enabled_count
-					)
-				);
+				echo '<div id="message" class="updated fade"><p>' .
+				     sprintf(
+				        /* translators: %s: enabled notification count */
+					     _n(
+						     'Enabled %s Notification.',
+						     'Enabled %s Notifications.',
+						     $enabled_count,
+						     'bnfw'
+					     ),
+					     number_format_i18n( $enabled_count )
+				     ) .
+				     '</p></div>';
 			}
 
 			if ( ! empty( $_REQUEST['bulk_disable_notifications'] ) ) {// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				$disabled_count = intval( $_REQUEST['bulk_disable_notifications'] );// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				printf(
-					wp_kses_post(
-						'<div id="message" class="updated fade"><p>' .
-						/* translators: %s: disabled notification count */
-						_n(
-							'Disabled %s Notification.',
-							'Disabled %s Notifications.',
-							$disabled_count,
-							'bnfw'
-						) . '</p></div>',
-						$disabled_count
-					)
-				);
+				echo '<div id="message" class="updated fade"><p>' .
+				     sprintf(
+				        /* translators: %s: disabled notification count */
+					     _n(
+						     'Disabled %s Notification.',
+						     'Disabled %s Notifications.',
+						     $disabled_count,
+						     'bnfw'
+					     ),
+					     number_format_i18n( $disabled_count )
+				     ) .
+                     '</p></div>';
 			}
 
 			if ( ! PAnD::is_admin_notice_active( 'disable-bnfw-help-notice-forever' ) ) {

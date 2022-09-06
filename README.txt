@@ -3,9 +3,9 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, alert, message, notify, send, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 4.8
-Tested up to: 5.9
-Requires PHP: 7.0
-Stable tag: 1.8.11
+Tested up to: 6.0.2
+Requires PHP: 7.1
+Stable tag: 1.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Update URI: https://wordpress.org/plugins/bnfw/
@@ -241,6 +241,24 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 
 == Changelog ==
+
+= 1.9 - 6th September 2022 =
+* This is large bug fix and minor feature release whilst I gear up for the 2.0 release of the plugin which will feature a UI/UX overhaul.
+* New: Notifications - You can now send notification when posts/pages/custom post types/media items are sent to the Trash.
+* New: Shortcodes - You can now use `[password_url_raw]` and `[login_url_raw]` in the 'New User Registration - For User' notification to output these URLs as plain text (without the link wrapped around them).
+* New: Shortcode - `[user_ip_address]` can be used in any notification that supports the `[user_]` shortcode group and will show the IP address of the user who triggered the notification.
+* New: You can now send notifications to the comment author on the 'New Comment Awaiting Moderation', 'Page - New Comment Awaiting Moderation', and 'Media - New Comment Awaiting Moderation' notifications by ticking the checkbox labeled 'Send this Notification to the Comment Author'.
+* Added: The `email_user` and `user_` shortcodes are now available to use in the 'User Email Changed Confirmation - For User' notification.
+* Added: Support for the 'Send To' field in the 'User Login Reminder' notification (part of the [Reminders add-on](https://betternotificationsforwp.com/downloads/update-reminder/) and [Conditional Notifications](https://betternotificationsforwp.com/downloads/conditional-notifications/)).
+* Improved: Full PHP 8.0 compatibility.
+* Improved: The 'New Comment' notifications now work with the `wp_new_comment`, `wp_insert_comment`, and `rest_insert_comment` hooks.
+* Fixed: All BNFW screens are now translated using the language the user has set as opposed to the site language.
+* Fixed: The 'New Private Post' notification wasn't being triggered.
+* Fixed: 'Email Changed' notifications were sending in plain text instead of HTML, where set.
+* Fixed: PHP Fatal Error when sending notifications to new users who are assigned multiple user roles (props to @intuitart for the fix).
+* Fixed: PHP Fatal Error when disabling multiple notifications at the same time.
+* Fixed: PHP Notice showing on the User Profile screen when the [Subscriptions add-on](https://betternotificationsforwp.com/downloads/subscriptions-gdpr/) was enabled.
+* Fixed: Notifications weren't always showing their 'Notification Type' on the 'All Notifications' screen.
 
 = 1.8.11 - 15th February 2022 =
 * Fixed: An issue where add-on licenses couldn't be saved.

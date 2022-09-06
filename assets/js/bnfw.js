@@ -133,7 +133,7 @@ jQuery(document).ready(function($) {
 			toggle_fields();
 			toggle_users();
 			$( '#user-password-msg, #current-user, #post-author' ).hide();
-		} else if ('user-login' === notification){ 
+		} else if ('user-login' === notification){
 			$('#cc, #bcc, #users, #exclude-users, #current-user, #post-author').hide();
 			$('#toggle-fields').show();
 		} else {
@@ -214,7 +214,7 @@ jQuery(document).ready(function($) {
 			toggle_fields();
 			toggle_users();
 			$( '#user-password-msg, #current-user, #post-author' ).hide();
-		} else if ('user-login' === notification){ 
+		} else if ('user-login' === notification){
 			$('#cc, #bcc, #users, #exclude-users, #current-user, #post-author').hide();
 			$('#toggle-fields').show();
 		} else {
@@ -415,7 +415,7 @@ jQuery(document).ready(function($) {
 					'<br>' +
 					'If this is correct, please click on the following link to change it:' +
 					'<br>' +
-					'[global_site_url]/wp-admin/profile.php' +
+					'[email_change_confirmation_link]' +
 					'<br>' +
 					'You can safely ignore and delete this email if you do not want to take this action.' +
 					'<br>' +

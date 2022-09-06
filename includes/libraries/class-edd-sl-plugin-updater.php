@@ -91,7 +91,7 @@ if ( ! class_exists( 'EDD_SL_Plugin_Updater', false ) ) {
 			$this->version     = $_api_data['version'];
 			$this->wp_override = isset( $_api_data['wp_override'] ) ? (bool) $_api_data['wp_override'] : false;
 			$this->beta        = ! empty( $this->api_data['beta'] ) ? true : false;
-			$this->cache_key   = 'edd_sl_' . md5( serialize( $this->slug . $this->api_data['license'] . $this->beta ) );
+			$this->cache_key   = 'edd_sl_' . md5( serialize( $this->slug . $this->api_data['license'] . $this->beta ) );// phpcs:ignore
 
 			$edd_plugin_data[ $this->slug ] = $this->api_data;
 
@@ -144,7 +144,7 @@ if ( ! class_exists( 'EDD_SL_Plugin_Updater', false ) ) {
 			global $pagenow;
 
 			if ( ! is_object( $_transient_data ) ) {
-				$_transient_data = new stdClass();
+				$_transient_data = new stdClass; // phpcs:ignore
 			}
 
 			if ( 'plugins.php' === $pagenow && is_multisite() ) {
@@ -321,7 +321,7 @@ if ( ! class_exists( 'EDD_SL_Plugin_Updater', false ) ) {
 					);
 				}
 
-				do_action( "in_plugin_update_message-{$file}", $plugin, $version_info );// phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
+				do_action( "in_plugin_update_message-{$file}", $plugin, $version_info );// phpcs:ignore
 
 				echo '</div></td></tr>';
 			}
@@ -678,7 +678,7 @@ if ( ! class_exists( 'EDD_SL_Plugin_Updater', false ) ) {
 			update_option( $cache_key, $data, 'no' );
 
 			// Delete the duplicate option.
-			delete_option( 'edd_api_request_' . md5( serialize( $this->slug . $this->api_data['license'] . $this->beta ) ) );
+			delete_option( 'edd_api_request_' . md5( serialize( $this->slug . $this->api_data['license'] . $this->beta ) ) );// phpcs:ignore
 		}
 
 		/**

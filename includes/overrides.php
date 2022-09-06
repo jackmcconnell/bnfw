@@ -96,7 +96,7 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 			// Now insert the key, hashed, into the DB.
 			if ( empty( $wp_hasher ) ) {
 				require_once ABSPATH . WPINC . '/class-phpass.php';
-				$wp_hasher = new PasswordHash( 8, true ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				$wp_hasher = new PasswordHash( 8, true ); // phpcs:ignore
 			}
 			$hashed = time() . ':' . $wp_hasher->HashPassword( $key );
 
