@@ -247,7 +247,6 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 * New: Notifications - You can now send notification when posts/pages/custom post types/media items are sent to the Trash.
 * New: Shortcodes - You can now use `[password_url_raw]` and `[login_url_raw]` in the 'New User Registration - For User' notification to output these URLs as plain text (without the link wrapped around them).
 * New: Shortcode - `[user_ip_address]` can be used in any notification that supports the `[user_]` shortcode group and will show the IP address of the user who triggered the notification.
-* New: You can now send notifications to the comment author on the 'New Comment Awaiting Moderation', 'Page - New Comment Awaiting Moderation', and 'Media - New Comment Awaiting Moderation' notifications by ticking the checkbox labeled 'Send this Notification to the Comment Author'.
 * Added: The `email_user` and `user_` shortcodes are now available to use in the 'User Email Changed Confirmation - For User' notification.
 * Added: Support for the 'Send To' field in the 'User Login Reminder' notification (part of the [Reminders add-on](https://betternotificationsforwp.com/downloads/update-reminder/) and [Conditional Notifications](https://betternotificationsforwp.com/downloads/conditional-notifications/)).
 * Improved: Full PHP 8.0 compatibility.
