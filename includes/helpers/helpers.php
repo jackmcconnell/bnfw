@@ -244,3 +244,20 @@ if ( ! function_exists( 'bnfw_format_date' ) ) {
 		return date( $date_format . ' ' . $time_format, strtotime( $date ) );
 	}
 }
+
+if ( ! function_exists( 'str_contains' ) ) {
+	/**
+	 * Backward php version support `str_contains()` function added in PHP 8.0.
+	 *
+	 * Performs a case-sensitive check indicating if needle is
+	 * contained in haystack.
+	 *
+	 * @param string $haystack The string to search in.
+	 * @param string $needle   The substring to search for in the haystack.
+	 *
+	 * @return bool True if `$needle` is in `$haystack`, otherwise false.
+	 */
+	function str_contains( $haystack, $needle ) {
+		return ( '' === $needle || false !== strpos( $haystack, $needle ) );
+	}
+}

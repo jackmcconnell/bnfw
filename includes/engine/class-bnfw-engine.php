@@ -1212,9 +1212,11 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		 * @return array
 		 */
 		public function get_emails_from_users( $users, $exclude = null, $post_id = 0, $setting = array() ) {
-			$user_ids     = array();
-			$user_roles   = array();
-			$non_wp_users = array();
+			$user_ids               = array();
+			$user_roles             = array();
+			$non_wp_users           = array();
+			$user_shortcodes        = array();
+			$user_shortcodes_emails = array();
 
 			if ( empty( $users ) ) {
 				return array();
@@ -1228,6 +1230,8 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 					continue;
 				} elseif ( absint( $user ) > 0 ) {
 					$user_ids[] = absint( $user );
+				} elseif ( str_contains( $user, '[' ) ) {
+					$user_shortcodes[] = $user;
 				} else {
 					$non_wp_users[] = $user;
 				}
@@ -1245,7 +1249,20 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 				if ( bnfw_is_comment_notification( $setting['notification'] ) && $post_id ) {
 					$comment = get_comment( $post_id );
 					$post_id = $comment->comment_post_ID;
+
+					// Replace shortcode to actual value.
+					if ( ! empty( $user_shortcodes ) ) {
+						$user_shortcodes_emails = $this->handle_shortcodes( implode( ',', $user_shortcodes ), $setting['notification'], $comment->comment_ID );
+					}
+				} else if ( ! empty( $user_shortcodes ) ) {
+					// Replace shortcode to actual value.
+					$user_shortcodes_emails = $this->handle_shortcodes( implode( ',', $user_shortcodes ), $setting['notification'], $post_id );
 				}
+			}
+
+			// Merge all shortcode emails to non_wp_users variables.
+			if ( ! empty( $user_shortcodes_emails ) ) {
+				$non_wp_users = array_merge( $non_wp_users, explode( ',', $user_shortcodes_emails ) );
 			}
 
 			$non_wp_emails = apply_filters( 'bnfw_non_wp_emails', array(), $non_wp_users, $post_id );

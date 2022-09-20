@@ -5,7 +5,7 @@ Tags: notification, email, alert, message, notify, send, HTML, customize, bulk, 
 Requires at least: 4.8
 Tested up to: 6.0.2
 Requires PHP: 7.1
-Stable tag: 1.9
+Stable tag: 1.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Update URI: https://wordpress.org/plugins/bnfw/
@@ -241,6 +241,10 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 
 == Changelog ==
+
+= 1.9.1 - 20th September 2022 =
+* Fixed: A fatal error was shown when using PHP 7 and sending admin notifications.
+* Fixed: Notifications weren't being sent out when using a shortcode in the Send To field when using the [Send to Any Email add-on](https://betternotificationsforwp.com/downloads/send-to-any-email/).
 
 = 1.9 - 6th September 2022 =
 * This is large bug fix and minor feature release whilst I gear up for the 2.0 release of the plugin which will feature a UI/UX overhaul.
