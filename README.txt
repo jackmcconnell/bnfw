@@ -3,7 +3,7 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, alert, message, notify, send, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 4.8
-Tested up to: 6.0.2
+Tested up to: 6.1.1
 Requires PHP: 7.1
 Stable tag: 1.9.1
 License: GPLv2 or later
@@ -14,7 +14,7 @@ Supercharge your WordPress email notifications using a WYSIWYG editor and shortc
 
 == Description ==
 
-Better Notifications for WP is a simple but powerful plugin for beginners to advanced users that allows you to customise the email notifications that WordPress sends using the WYSIWYG editor and shortcodes. All of the default WordPress email notifications are available to customise as well as lots of new ones. You can choose to send notifications to individual users, multiple users, all users in a user role, multiple roles - you name it! You can also power-up your notifications with [Premium Add-ons](https://betternotificationsforwp.com/downloads/). Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using an appropriate 3rd party plugin should you wish.
+Better Notifications for WP is a simple but powerful plugin for beginners to advanced users that allows you to customise the email notifications that WordPress sends using a WYSIWYG editor and shortcodes. All of the default WordPress email notifications are available to customise as well as lots of new ones. You can choose to send notifications to individual users, multiple users, all users in a user role, multiple roles - you name it! You can also power-up your notifications with [Premium Add-ons](https://betternotificationsforwp.com/downloads/). Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using an appropriate 3rd party plugin should you wish. If you want to let users create their own email notifications, check out my other plugin: [Content Notify](https://contentnotify.com).
 
 Here's a quick walkthrough of the plugin in action:
 [youtube https://www.youtube.com/watch?v=MxPUyRZPJ1Q]
