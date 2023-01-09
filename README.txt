@@ -14,7 +14,8 @@ Supercharge your WordPress email notifications using a WYSIWYG editor and shortc
 
 == Description ==
 
-Better Notifications for WP is a simple but powerful plugin for beginners to advanced users that allows you to customise the email notifications that WordPress sends using a WYSIWYG editor and shortcodes. All of the default WordPress email notifications are available to customise as well as lots of new ones. You can choose to send notifications to individual users, multiple users, all users in a user role, multiple roles - you name it! You can also power-up your notifications with [Premium Add-ons](https://betternotificationsforwp.com/downloads/). Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using an appropriate 3rd party plugin should you wish. If you want to let users create their own email notifications, check out my other plugin: [Content Notify](https://contentnotify.com).
+Better Notifications for WP is a simple but powerful plugin for that allows you to customise the email notifications that WordPress sends using a WYSIWYG editor and shortcodes. All of the default WordPress email notifications are available to customise as well as lots of new ones. You can choose to send notifications to individual users, multiple users, all users in a user role, multiple roles - you name it! You can also power-up your notifications with [Premium Add-ons](https://betternotificationsforwp.com/downloads/). Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using a  3rd party plugin should you wish.
+If you want to let users create their own email notifications/subscriptions/alerts, check out my other plugin: [Content Notify](https://contentnotify.com).
 
 Here's a quick walkthrough of the plugin in action:
 [youtube https://www.youtube.com/watch?v=MxPUyRZPJ1Q]
@@ -30,7 +31,7 @@ Power-up your notifications using add-ons:
 [Notification Add-on Bundles](https://betternotificationsforwp.com/add-on-bundles/) - Everything you need for your WordPress notifications. Save big when you buy an add-on bundle. Instant access.
 
 [Subscriptions (GDPR)](https://betternotificationsforwp.com/downloads/subscriptions-gdpr/) - Allow users to manage their subscriptions for BNFW notifications.
-If you want to let users create their own email notifications, check out my other plugin: [Content Notify](https://contentnotify.com).
+If you want to let users create their own email notifications/subscriptions/alerts, check out my other plugin: [Content Notify](https://contentnotify.com).
 
 [Conditional Notifications](https://betternotificationsforwp.com/downloads/conditional-notifications/) - Limit certain notifications depending on which categories, tags, post formats, or terms you choose.
 
@@ -150,7 +151,7 @@ The notifications that are currently available to use are:
 
 If you'd like to see a notification in the list above, please drop me a line in the forum and I'll see what I can do to add it.
 
-If you want to let users create their own email notifications, check out my other plugin: [Content Notify](https://contentnotify.com).
+If you want to let users create their own email notifications/subscriptions/alerts, check out my other plugin: [Content Notify](https://contentnotify.com).
 
 > Like this plugin? Please leave it [a great review](https://wordpress.org/support/plugin/bnfw/reviews/?rate=5#new-post)! Don't think the plugin is worthy of 5 stars? Having problems? Let me know in the [forum](https://wordpress.org/support/plugin/bnfw/) and I'll do my best to help.
 
@@ -204,7 +205,7 @@ Yes! Full support for WordPress Multisite was added in 1.6.13, alongside the rel
 
 = Can users create their own email notifications? =
 
-Not using BNFW. If you want to let users create their own email notifications, check out my other plugin: [Content Notify](https://contentnotify.com).
+Not using BNFW. If you want to let users create their own email notifications/subscriptions/alerts, check out my other plugin: [Content Notify](https://contentnotify.com).
 
 = Notifications aren't coming through! =
 
