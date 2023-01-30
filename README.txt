@@ -4,8 +4,8 @@ Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, alert, message, notify, send, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 4.8
 Tested up to: 6.1.1
-Requires PHP: 7.1
-Stable tag: 1.9.1
+Requires PHP: 7.4
+Stable tag: 1.9.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Update URI: https://wordpress.org/plugins/bnfw/
@@ -242,6 +242,9 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 
 == Changelog ==
+
+= 1.9.2 - 30th January 2023 =
+* Fixed: An issue where the plugin was using the site language but not the user's language for translations
 
 = 1.9.1 - 20th September 2022 =
 * Fixed: A fatal error was shown when using PHP 7 and sending admin notifications.
