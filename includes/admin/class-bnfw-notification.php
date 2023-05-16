@@ -48,6 +48,7 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 			add_action( 'admin_notices', array( $this, 'show_help_notice' ) );
 
 			add_action( 'admin_print_scripts', array( $this, 'gutenberg_flag' ) );
+			add_filter( 'removable_query_args', array( $this, 'removable_query_vars' ) );
 		}
 
 		/**
@@ -808,7 +809,7 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 			$setting = array(
 				'notification'         => isset( $_POST['notification'] ) ? sanitize_text_field( wp_unslash( $_POST['notification'] ) ) : '',
 				'subject'              => $subject,
-				'message'              => isset( $_POST['notification_message'] ) ? wp_kses_post( wp_unslash( $_POST['notification_message'] ) ) : '',
+				'message'              => isset( $_POST['notification_message'] ) ? $this->bnfw_kses_message_field( wp_unslash( $_POST['notification_message'] ) ) : '',
 				'disabled'             => isset( $_POST['disabled'] ) ? sanitize_text_field( wp_unslash( $_POST['disabled'] ) ) : 'false',
 				'email-formatting'     => isset( $_POST['email-formatting'] ) ? sanitize_text_field( wp_unslash( $_POST['email-formatting'] ) ) : 'html',
 				'disable-current-user' => isset( $_POST['disable-current-user'] ) ? sanitize_text_field( wp_unslash( $_POST['disable-current-user'] ) ) : 'false',
@@ -1543,6 +1544,7 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 						array(
 							'notification_id' => $post->ID,
 							'bnfw_action'     => 'enable_notification',
+							'bnfw_nonce'      => wp_create_nonce( self::POST_TYPE . '-row-action-enable_notification-' . $post->ID )
 						)
 					);
 					$actions['enable_notification'] = '<a href="' . esc_url( $url ) . '">' . __( 'Enable Notification', 'bnfw' ) . '</a>';
@@ -1551,6 +1553,7 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 						array(
 							'notification_id' => $post->ID,
 							'bnfw_action'     => 'disable_notification',
+							'bnfw_nonce'      => wp_create_nonce( self::POST_TYPE . '-row-action-disable_notification-' . $post->ID )
 						)
 					);
 					$actions['disable_notification'] = '<a href="' . esc_url( $url ) . '">' . __( 'Disable Notification', 'bnfw' ) . '</a>';
@@ -1564,23 +1567,41 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 		 * Handle custom actions.
 		 */
 		public function handle_actions() {
-			if ( ! isset( $_GET['bnfw_action'] ) || ! isset( $_GET['notification_id'] ) ) {// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				return;
-			}
+			if (
+				isset( $_GET['bnfw_action'] ) &&
+				isset( $_GET['notification_id'] ) &&
+				! empty( $_GET[ 'bnfw_nonce' ] )
+			) {
 
-			$post_id = absint( $_GET['notification_id'] );// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			if ( 0 === $post_id ) {
-				return;
-			}
+				$post_id = absint( $_GET['notification_id'] );
 
-			$action = sanitize_text_field( $_GET['bnfw_action'] );// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+				// Verify nonce.
+				if ( wp_verify_nonce( $_GET[ 'bnfw_nonce' ], self::POST_TYPE . '-row-action-' . $_GET['bnfw_action'] . '-' . $post_id ) ) {
 
-			if ( 'enable_notification' === $action ) {
-				update_post_meta( $post_id, self::META_KEY_PREFIX . 'disabled', 'false' );
-			}
+					if ( current_user_can( 'bnfw' ) ) {
 
-			if ( 'disable_notification' === $action ) {
-				update_post_meta( $post_id, self::META_KEY_PREFIX . 'disabled', 'true' );
+						$action = sanitize_text_field( $_GET['bnfw_action'] );
+
+						$message = '';
+						if ( 'enable_notification' === $action ) {
+							update_post_meta( $post_id, self::META_KEY_PREFIX . 'disabled', 'false' );
+							$message = __( 'Enabled 1 Notification.', 'bnfw' );
+						}
+
+						if ( 'disable_notification' === $action ) {
+							update_post_meta( $post_id, self::META_KEY_PREFIX . 'disabled', 'true' );
+							$message = __( 'Disabled 1 Notification.', 'bnfw' );
+						}
+
+						set_transient( 'bnfw-row-action-success-notice', $message );
+
+					} else {
+						set_transient( 'bnfw-row-action-error-notice', __( 'You don\'t have permission to perform this action.', 'bnfw' ) );
+					}
+
+				} else {
+					set_transient( 'bnfw-row-action-error-notice', __( 'Nonce expired. Please try again.', 'bnfw' ) );
+				}
 			}
 		}
 
@@ -1610,12 +1631,16 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 				return;
 			}
 
-			if ( ! empty( $_REQUEST['bnfw_action'] ) && 'enable_notification' === $_REQUEST['bnfw_action'] ) {// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				echo wp_kses_post( '<div id="message" class="updated fade"><p>' . __( 'Enabled 1 Notification.', 'bnfw' ) . '</p></div>' );
+			$success_notice = get_transient( 'bnfw-row-action-success-notice');
+			if ( ! empty( $success_notice ) ) {
+				echo wp_kses_post( '<div id="message" class="updated fade"><p>' . $success_notice . '</p></div>' );
+				delete_transient( 'bnfw-row-action-success-notice');
 			}
 
-			if ( ! empty( $_REQUEST['bnfw_action'] ) && 'disable_notification' === $_REQUEST['bnfw_action'] ) {// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				echo wp_kses_post( '<div id="message" class="updated fade"><p>' . __( 'Disabled 1 Notification.', 'bnfw' ) . '</p></div>' );
+			$error_notice = get_transient( 'bnfw-row-action-error-notice');
+			if ( ! empty( $error_notice ) ) {
+				echo wp_kses_post( '<div id="message" class="error fade"><p>' . $error_notice . '</p></div>' );
+				delete_transient( 'bnfw-row-action-error-notice');
 			}
 
 			if ( ! empty( $_REQUEST['bulk_enable_notifications'] ) ) {// phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -1686,6 +1711,59 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 			}
 
 			return false;
+		}
+
+		/**
+		 * Filters out the same tags as wp_kses_post, but allows some extra tags.
+		 *
+		 * @since 2.0
+		 *
+		 * @param string $message Content to filter through kses.
+		 *
+		 * @return string
+		 */
+		public function bnfw_kses_message_field( $message ) {
+			$allowed_tags = array_replace_recursive(
+				wp_kses_allowed_html( 'post' ),
+				array(
+					'html'    => array(
+						'lang'  => true,
+						'xmlns' => true,
+					),
+					'meta'    => array(
+						'name'    => true,
+						'charset' => true,
+						'content' => true,
+					),
+					'style'   => true,
+					'head'    => true,
+					'body'    => array(
+						'style' => true,
+					),
+				)
+			);
+
+			/**
+			 * Kses message allowed tags.
+			 *
+			 * @since 2.0
+			 *
+			 * @param array[]|string $allowed_tags An array of allowed HTML elements and attributes, or a context name such as 'post'.
+			 */
+			return wp_kses( $message, apply_filters( 'bnfw_kses_message_allowed_tags', $allowed_tags ) );
+		}
+
+		/**
+		 * The list of query variable names to remove.
+		 *
+		 * @since 1.9.2
+		 *
+		 * @param array $args An array of query variable names to remove from a URL.
+		 *
+		 * @return array
+		 */
+		public function removable_query_vars( $args ) {
+			return array_merge( $args, array( 'notification_id', 'bnfw_action', 'bnfw_nonce', 'bulk_disable_notifications', 'bulk_enable_notifications' ) );
 		}
 	}
 }

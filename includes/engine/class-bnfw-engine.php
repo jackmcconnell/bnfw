@@ -1065,7 +1065,7 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			$message = str_replace( '[name]', $term_info->name, $message );
 			$message = str_replace( '[description]', $term_info->description, $message );
 
-			return $message;
+			return apply_filters( 'bnfw_shortcodes_taxonomy', $message, $taxonomy, $term_id );
 		}
 
 		/**

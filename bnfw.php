@@ -3,9 +3,9 @@
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.9.2
+ * Version: 1.9.3
  * Requires at least: 4.8
- * Requires PHP: 7.4
+ * Requires PHP: 7.1
  * Author: Made with Fuel
  * Author URI: https://madewithfuel.com/
  * License: GPLv2 or later
@@ -39,7 +39,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 *
 		 * @var string
 		 */
-		public $bnfw_version = '1.9.2';
+		public $bnfw_version = '1.9.3';
 		/**
 		 * Class Constructor.
 		 *
@@ -47,7 +47,6 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 */
 		public function __construct() {
 			$this->bnfw_define_constants();
-			$this->load_textdomain();
 			$this->includes();
 			$this->hooks();
 			/**
@@ -143,6 +142,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 
 			register_activation_hook( __FILE__, array( $this, 'activate' ) );
 
+			add_action( 'init', array( $this, 'bnfw_init' ) );
 			add_action( 'admin_init', array( 'PAnD', 'init' ) );
 			add_action( 'admin_init', array( $this, 'add_capability_to_admin' ) );
 
@@ -233,6 +233,16 @@ if ( ! class_exists( 'BNFW', false ) ) {
 			add_action( 'shutdown', array( $this, 'on_shutdown' ) );
 
 		}
+
+		/**
+	     * Loads the plugin language files
+	     *
+	     * @since  1.8.7
+	     */
+	    public function bnfw_init() {
+	        // Load localization domain
+	        $this->load_textdomain();
+	    }
 
 		/**
 		 * Changed the subject when use request to change the email.
