@@ -3,11 +3,11 @@
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.9.3
+ * Version: 1.9.4
  * Requires at least: 4.8
- * Requires PHP: 7.1
+ * Requires PHP: 8.0
  * Author: Made with Fuel
- * Author URI: https://madewithfuel.com/
+ * Author URI: https://betternotificationsforwp.com/
  * License: GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: bnfw
@@ -17,7 +17,7 @@
  */
 
 /**
- * Copyright © 2023 Made with Fuel Ltd. (hello@betternotificationsforwp.com)
+ * Copyright © 2024 Made with Fuel Ltd. (hello@betternotificationsforwp.com)
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
  * published by the Free Software Foundation.
@@ -33,13 +33,14 @@ if ( ! class_exists( 'BNFW', false ) ) {
 	/**
 	 * BNFW main class.
 	 */
+	#[\AllowDynamicProperties]
 	class BNFW {
 		/**
 		 * BNFW version.
 		 *
 		 * @var string
 		 */
-		public $bnfw_version = '1.9.3';
+		public $bnfw_version = '1.9.4';
 		/**
 		 * Class Constructor.
 		 *
@@ -49,6 +50,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 			$this->bnfw_define_constants();
 			$this->includes();
 			$this->hooks();
+
 			/**
 			 * BNFW Notification.
 			 *
@@ -252,8 +254,9 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 * @return mixed
 		 */
 		public function bnfw_update_email_changing_subject( $args ) {
-			$notification_name = 'email-changed';
+			$notification_name = 'email-changing';
 			$notifications     = $this->notifier->get_notifications( $notification_name );
+
 			if ( count( $notifications ) > 0 ) {
 				$setting = $this->notifier->read_settings( end( $notifications )->ID );
 				if ( str_contains( $args['message'], '/profile.php?newuseremail=' ) ) {
@@ -904,6 +907,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 					$email_data['message'] = wpautop( $email_data['message'] );
 				}
 			}
+			$email_data['subject'] = $email['subject'];
 
 			return $email_data;
 		}

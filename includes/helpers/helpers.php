@@ -44,6 +44,7 @@ if ( ! function_exists( 'bnfw_expanded_alowed_tags' ) ) {
 			'selected' => array(),
 			'value'    => array(),
 		);
+
 		return $allowed_html;
 	}
 }
@@ -52,9 +53,10 @@ if ( ! function_exists( 'bnfw_render_users_dropdown' ) ) {
 	/**
 	 * Render users dropdown.
 	 *
+	 * @param array $selected_users Selected users.
+	 *
 	 * @since 1.3.6
 	 *
-	 * @param array $selected_users Selected users.
 	 */
 	function bnfw_render_users_dropdown( $selected_users ) {
 		global $wp_roles;
@@ -90,41 +92,41 @@ if ( ! function_exists( 'bnfw_render_users_dropdown' ) ) {
 		</optgroup>
 
 		<optgroup label="<?php esc_attr_e( 'Users', 'bnfw' ); ?>">
-		<?php
-		$args = array(
-			'order_by' => 'email',
-			'fields'   => array( 'ID', 'user_login' ),
-			'number'   => 200,
-		);
+			<?php
+			$args = array(
+				'order_by' => 'email',
+				'fields'   => array( 'ID', 'user_login' ),
+				'number'   => 200,
+			);
 
-		// if there are more than 200 users then use AJAX to load them dynamically.
-		// So just get only the selected users.
-		if ( $user_count['total_users'] > 200 ) {
-			$selected_user_ids = array();
-			foreach ( $selected_users as $selected_user ) {
-				if ( absint( $selected_user ) > 0 ) {
-					$selected_user_ids[] = $selected_user;
+			// if there are more than 200 users then use AJAX to load them dynamically.
+			// So just get only the selected users.
+			if ( $user_count['total_users'] > 200 ) {
+				$selected_user_ids = array();
+				foreach ( $selected_users as $selected_user ) {
+					if ( absint( $selected_user ) > 0 ) {
+						$selected_user_ids[] = $selected_user;
+					}
+				}
+
+				if ( $selected_user_ids > 0 ) {
+					$args['include'] = $selected_user_ids;
 				}
 			}
 
-			if ( $selected_user_ids > 0 ) {
-				$args['include'] = $selected_user_ids;
-			}
-		}
+			$users = get_users( $args );
 
-		$users = get_users( $args );
+			foreach ( $users as $user ) {
+				$selected = selected( true, in_array( $user->ID, $selected_users, true ), false );
 
-		foreach ( $users as $user ) {
-			$selected = selected( true, in_array( $user->ID, $selected_users, true ), false );
+				if ( ! empty( $selected ) ) {
+					$non_wp_users = array_diff( $non_wp_users, array( $user->ID ) );
+				}
 
-			if ( ! empty( $selected ) ) {
-				$non_wp_users = array_diff( $non_wp_users, array( $user->ID ) );
+				echo wp_kses( '<option value="' . esc_attr( $user->ID ) . '" ' . $selected . '>' . esc_html( $user->user_login ) . '</option>', $allowed_html );
 			}
 
-			echo wp_kses( '<option value="' . esc_attr( $user->ID ) . '" ' . $selected . '>' . esc_html( $user->user_login ) . '</option>', $allowed_html );
-		}
-
-		?>
+			?>
 		</optgroup>
 
 		<?php if ( ! empty( $non_wp_users ) ) { ?>
@@ -144,7 +146,7 @@ if ( ! function_exists( 'bnfw_is_comment_notification' ) ) {
 	/**
 	 * Find whether the notification name is a comment notification.
 	 *
-	 * @param  string $notification_name Notification Name.
+	 * @param string $notification_name Notification Name.
 	 *
 	 * @return bool                      True if it is a comment notification, False otherwise.
 	 */
@@ -172,6 +174,8 @@ if ( ! function_exists( 'bnfw_is_comment_notification' ) ) {
 }
 
 if ( ! function_exists( 'bnfw_format_user_capabilities' ) ) {
+
+
 	/**
 	 * Format user capabilities.
 	 *
@@ -216,6 +220,7 @@ if ( ! function_exists( 'bnfw_get_post_id_from_comment' ) ) {
 	 * Get post id from comment id.
 	 *
 	 * @param int $comment_id Comment ID for which we need Post ID.
+	 *
 	 * @return int Post ID. 0 if invalid comment id.
 	 */
 	function bnfw_get_post_id_from_comment( $comment_id ) {
@@ -260,4 +265,32 @@ if ( ! function_exists( 'str_contains' ) ) {
 	function str_contains( $haystack, $needle ) {
 		return ( '' === $needle || false !== strpos( $haystack, $needle ) );
 	}
+}
+
+/**
+ * Find whether the comment author needs notification.
+ *
+ * @param  string $notification_name Notification Name.
+ *
+ * @return bool                      True if comment author needs notification, False otherwise.
+ */
+function bnfw_is_comment_author_needs_notification( $notification_name ) {
+	$is_comment_author_needs_notification = false;
+
+	switch ( $notification_name ) {
+		case 'moderate-post-comment':
+		case 'moderate-page-comment':
+		case 'moderate-attachment-comment':
+			$is_comment_author_needs_notification = true;
+			break;
+
+		default:
+			$is_comment_author_needs_notification = false;
+			$type                                 = substr( $notification_name, 0, 9 );
+			if ( 'moderate-' === $type ) {
+				$is_comment_author_needs_notification = true;
+			}
+			break;
+	}
+	return $is_comment_author_needs_notification;
 }

@@ -66,7 +66,6 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 			<?php
 		}
 
-
 		/**
 		 * Register bnfw_notification custom post type.
 		 *
@@ -815,6 +814,7 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 				'disable-current-user' => isset( $_POST['disable-current-user'] ) ? sanitize_text_field( wp_unslash( $_POST['disable-current-user'] ) ) : 'false',
 				'disable-autop'        => isset( $_POST['disable-autop'] ) ? sanitize_text_field( wp_unslash( $_POST['disable-autop'] ) ) : 'false',
 				'only-post-author'     => isset( $_POST['only-post-author'] ) ? sanitize_text_field( wp_unslash( $_POST['only-post-author'] ) ) : 'false',
+				'comment-author'     => isset( $_POST['comment-author'] ) ? sanitize_text_field( $_POST['comment-author'] ) : 'false',
 				'users'                => array(),
 				'exclude-users'        => array(),
 			);
@@ -848,6 +848,12 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 					BNFW::factory()->engine->send_test_email( $setting );
 					add_filter( 'redirect_post_location', array( $this, 'test_mail_sent' ) );
 				}
+			}
+
+			if ( isset( $_POST['bnfw-tab-admin-status'] ) ) {
+				update_post_meta( $post_id, 'bnfw-tab-addon-status', $_POST['bnfw-tab-admin-status'] );
+			} else {
+				delete_post_meta( $post_id, 'bnfw-tab-addon-status' );
 			}
 		}
 
@@ -923,6 +929,7 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 				'disable-autop'        => 'false',
 				'only-post-author'     => 'false',
 				'disabled'             => 'false',
+				'comment-author'       => '',
 			);
 
 			$default = apply_filters( 'bnfw_notification_setting_fields', $default );

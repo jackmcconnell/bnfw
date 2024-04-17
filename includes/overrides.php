@@ -131,7 +131,7 @@ if ( ! function_exists( 'wp_new_user_notification' ) ) {
 			}
 		} else {
 
-			// for WordPress below 4.3,.
+			// for WordPress below 4.3.
 			$plaintext_pass = $deprecated;
 
 			// The blogname option is escaped with esc_html on the way into the database in sanitize_option

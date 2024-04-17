@@ -3,9 +3,9 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, alert, message, notify, send, HTML, customize, bulk, trigger, CC, BCC
 Requires at least: 4.8
-Tested up to: 6.2
-Requires PHP: 7.1
-Stable tag: 1.9.3
+Tested up to: 6.5
+Requires PHP: 8.0
+Stable tag: "1.9.4"
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Update URI: https://wordpress.org/plugins/bnfw/
@@ -14,7 +14,8 @@ Supercharge your WordPress email notifications using a WYSIWYG editor and shortc
 
 == Description ==
 
-Better Notifications for WP is a simple but powerful plugin for beginners to advanced users that allows you to customise the email notifications that WordPress sends using the WYSIWYG editor and shortcodes. All of the default WordPress email notifications are available to customise as well as lots of new ones. You can choose to send notifications to individual users, multiple users, all users in a user role, multiple roles - you name it! You can also power-up your notifications with [Premium Add-ons](https://betternotificationsforwp.com/downloads/). Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using an appropriate 3rd party plugin should you wish.
+Better Notifications for WP is a simple but powerful plugin for that allows you to customise the email notifications that WordPress sends using a WYSIWYG editor and shortcodes. All of the default WordPress email notifications are available to customise as well as lots of new ones. You can choose to send notifications to individual users, multiple users, all users in a user role, multiple roles - you name it! You can also power-up your notifications with [Premium Add-ons](https://betternotificationsforwp.com/downloads/). Emails are sent out via your WordPress website (using `wp_mail`) but can be sent via SMTP using a  3rd party plugin should you wish.
+If you want to let users create their own email notifications/subscriptions/alerts, check out my other plugin: [Content Notify](https://contentnotify.com).
 
 Here's a quick walkthrough of the plugin in action:
 [youtube https://www.youtube.com/watch?v=MxPUyRZPJ1Q]
@@ -30,7 +31,7 @@ Power-up your notifications using add-ons:
 [Notification Add-on Bundles](https://betternotificationsforwp.com/add-on-bundles/) - Everything you need for your WordPress notifications. Save big when you buy an add-on bundle. Instant access.
 
 [Subscriptions (GDPR)](https://betternotificationsforwp.com/downloads/subscriptions-gdpr/) - Allow users to manage their subscriptions for BNFW notifications.
-If you want to let users create their own email notifications, check out my other plugin: [Content Notify](https://contentnotify.com).
+If you want to let users create their own email notifications/subscriptions/alerts, check out my other plugin: [Content Notify](https://contentnotify.com).
 
 [Conditional Notifications](https://betternotificationsforwp.com/downloads/conditional-notifications/) - Limit certain notifications depending on which categories, tags, post formats, or terms you choose.
 
@@ -150,7 +151,7 @@ The notifications that are currently available to use are:
 
 If you'd like to see a notification in the list above, please drop me a line in the forum and I'll see what I can do to add it.
 
-If you want to let users create their own email notifications, check out my other plugin: [Content Notify](https://contentnotify.com).
+If you want to let users create their own email notifications/subscriptions/alerts, check out my other plugin: [Content Notify](https://contentnotify.com).
 
 > Like this plugin? Please leave it [a great review](https://wordpress.org/support/plugin/bnfw/reviews/?rate=5#new-post)! Don't think the plugin is worthy of 5 stars? Having problems? Let me know in the [forum](https://wordpress.org/support/plugin/bnfw/) and I'll do my best to help.
 
@@ -204,7 +205,7 @@ Yes! Full support for WordPress Multisite was added in 1.6.13, alongside the rel
 
 = Can users create their own email notifications? =
 
-Not using BNFW. If you want to let users create their own email notifications, check out my other plugin: [Content Notify](https://contentnotify.com).
+Not using BNFW. If you want to let users create their own email notifications/subscriptions/alerts, check out my other plugin: [Content Notify](https://contentnotify.com).
 
 = Notifications aren't coming through! =
 
@@ -230,6 +231,9 @@ This is most likely because it's `public` setting is set to `false`. Try changin
 
 Yes, of course! The plugin is completely translation-friendly and if you send me your .po file, I'll make sure to include it in the plugin and credit you in the changelog.
 
+= Where do I report security bugs found in this plugin? =
+
+Please report security bugs found in the source code of the Better Notification for WP plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/bnfw). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
 
 
 == Screenshots ==
@@ -242,19 +246,36 @@ Yes, of course! The plugin is completely translation-friendly and if you send me
 
 == Changelog ==
 
+= 1.9.4 – 17th April 2024 =
+* This is a large release containing lots of bug fixes (both big and small), compatibility fixes, and updates with the most recent versions of WordPress. This includes:
+* PHP 8.0, 8.1, and 8.2 compatibility.
+* BNFW now requires at least PHP 8.0.
+* Various performance improvements.
+* Added: Some post notifications, such as Post Updated, can now be triggered via a Quick Action.
+* Fixed: Subject of Email Changed notification when triggered using WooCommerce.
+* Fixed: Some notifications weren't using the correct subjects.
+* Fixed: BNFW was stripping some additional HTML from the notification than what WordPress allows.
+* Various fixes for the [Custom Fields add-on](https://betternotificationsforwp.com/downloads/custom-fields/).
+* Various fixes for the [Conditional Notifications add-on](https://betternotificationsforwp.com/downloads/conditional-notifications/).
+* Various fixes for the [Subscriptions Fields add-on](https://betternotificationsforwp.com/downloads/subscriptions-gdpr/).
+* Various fixes for the [Global Override Fields add-on](https://betternotificationsforwp.com/downloads/per-post-override/).
+* Various fixes for the [Digest add-on](https://betternotificationsforwp.com/downloads/digest/).
+* Various fixes for the [Multisite add-on](https://betternotificationsforwp.com/downloads/multisite/).
+
+
 = 1.9.3 – 16th May 2023 =
 * IMPORTANT! It is recommended that you update this plugin to the latest version.
 * Fixed: A minor security issue relating to enabling/disabling notifications.
 
 = 1.9.2 – 30th January 2023 =
-* Fixed: An issue where the plugin was using the site language but not the user’s language for translations
+* Fixed: An issue where the plugin was using the site language but not the user's language for translations
 
 = 1.9.1 - 20th September 2022 =
 * Fixed: A fatal error was shown when using PHP 7 and sending admin notifications.
 * Fixed: Notifications weren't being sent out when using a shortcode in the Send To field when using the [Send to Any Email add-on](https://betternotificationsforwp.com/downloads/send-to-any-email/).
 
 = 1.9 - 6th September 2022 =
-* This is large bug fix and minor feature release whilst I gear up for the 2.0 release of the plugin which will feature a UI/UX overhaul.
+* This is large bug fix and minor feature release.
 * New: Notifications - You can now send notification when posts/pages/custom post types/media items are sent to the Trash.
 * New: Shortcodes - You can now use `[password_url_raw]` and `[login_url_raw]` in the 'New User Registration - For User' notification to output these URLs as plain text (without the link wrapped around them).
 * New: Shortcode - `[user_ip_address]` can be used in any notification that supports the `[user_]` shortcode group and will show the IP address of the user who triggered the notification.

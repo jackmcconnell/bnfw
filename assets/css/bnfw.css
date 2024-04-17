@@ -1,10 +1,10 @@
 /* Generic classes */
 .hidden {
-    display: none;
+	display: none;
 }
 
 .show {
-    display: block;
+	display: block;
 }
 
 #user-password-msg {
@@ -12,8 +12,8 @@
 }
 
 #user-password-msg div {
-    background: #FFFFE1;
-    padding: 15px;
+	background: #FFFFE1;
+	padding: 15px;
 }
 
 #users-count-msg div {
@@ -26,7 +26,7 @@
 }
 
 .manage-column.column-disabled {
-    width: 8% !important;
+	width: 8% !important;
 }
 
 /* Fix 'jump' when hovering over 'x' in select2 box */
@@ -45,9 +45,8 @@
 }
 
 ul.select2-selection__rendered {
-    line-height: 1.3;
+	line-height: 1.3;
 }
-
 
 /* Help Tip Positioning */
 .bnfw-help-tip-container,
@@ -58,10 +57,21 @@ body.post-type-bnfw_notification #poststuff td,
 	position: relative;
 }
 
-	#bnfw-post-notification th[scope="row"],
-	.bnfw-form th[scope="row"] {
-		padding-right: 24px;
-	}
+#bnfw-post-notification th[scope="row"],
+.bnfw-form th[scope="row"] {
+	padding-right: 24px;
+}
+
+.post-type-bnfw_notification .select2-dropdown {
+	margin-top: 0px;
+	border-color: unset !important;
+	box-shadow: unset;
+	border: 1px solid #aaa !important;
+}
+
+.post-type-bnfw_notification .select2-dropdown .select2-results__option {
+	margin-bottom: 6px;
+}
 
 /* Inline Help Tips */
 .bnfw-help-tip {
@@ -78,89 +88,89 @@ body.post-type-bnfw_notification #poststuff td,
 	cursor: default;
 }
 
-	.bnfw-help-tip-container .bnfw-help-tip {
-		top: 8px;
-	}
+.bnfw-help-tip-container .bnfw-help-tip {
+	top: 8px;
+}
 
-		/* Left Align Elements on Right of Screen */
-		#bnfw_override_optout .bnfw-help-tip p,
-		#bnfw_submitdiv .bnfw-help-tip p {
-			left: auto;
-			right: -8px;
-		}
+/* Left Align Elements on Right of Screen */
+#bnfw_override_optout .bnfw-help-tip p,
+#bnfw_submitdiv .bnfw-help-tip p {
+	left: auto;
+	right: -8px;
+}
 
-			#bnfw_override_optout .bnfw-help-tip p:before,
-			#bnfw_submitdiv .bnfw-help-tip p:before {
-				left: auto;
-				right: 10px;
-				top: -12px;
-			}
+#bnfw_override_optout .bnfw-help-tip p:before,
+#bnfw_submitdiv .bnfw-help-tip p:before {
+	left: auto;
+	right: 10px;
+	top: -12px;
+}
 
 
-	.bnfw-help-tip:hover:before {
-		color: #444;
-	}
+.bnfw-help-tip:hover:before {
+	color: #444;
+}
 
-	.bnfw-help-tip:before {
-		content: '?';
-		font-weight: bold;
-		color: #fff;
-	}
+.bnfw-help-tip:before {
+	content: '?';
+	font-weight: bold;
+	color: #fff;
+}
 
-	.bnfw-help-tip:hover p {
-		display: block;
-		transform-origin: 100% 0%;
-		-webkit-animation: fadeIn 0.3s ease-in-out;
-		animation: fadeIn 0.3s ease-in-out;
-	}
+.bnfw-help-tip:hover p {
+	display: block;
+	transform-origin: 100% 0%;
+	-webkit-animation: fadeIn 0.3s ease-in-out;
+	animation: fadeIn 0.3s ease-in-out;
+}
 
-	.bnfw-help-tip p {
-		display: none;
-		position: absolute;
-		left: -8px;
-		z-index: 9991;
-		width: 300px;
-		box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
-		border-radius: 3px;
-		background-color: #1E2021;
-		padding: 20px;
-		font-size: 13px;
-		line-height: 1.4;
-		color: #FFF;
-		text-align: left;
-	}
+.bnfw-help-tip p {
+	display: none;
+	position: absolute;
+	left: -8px;
+	z-index: 9991;
+	width: 300px;
+	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+	border-radius: 3px;
+	background-color: #1E2021;
+	padding: 20px;
+	font-size: 13px;
+	line-height: 1.4;
+	color: #FFF;
+	text-align: left;
+}
 
-		.bnfw-help-tip p:before {
-			position: absolute;
-			content: '';
-			width: 0;
-			height: 0;
-			border: 6px solid transparent;
-			border-bottom-color: #1E2021;
-			left: 10px;
-			top: -12px;
-		}
+.bnfw-help-tip p:before {
+	position: absolute;
+	content: '';
+	width: 0;
+	height: 0;
+	border: 6px solid transparent;
+	border-bottom-color: #1E2021;
+	left: 10px;
+	top: -12px;
+}
 
-		.bnfw-help-tip p:after {
-			content: '';
-			position: absolute;
-			top: -40px;
-			left: 0;
-			width: 100%;
-			height: 40px;
-		}
+.bnfw-help-tip p:after {
+	content: '';
+	position: absolute;
+	top: -40px;
+	left: 0;
+	width: 100%;
+	height: 40px;
+}
 
-		.bnfw-help-tip p a {
-			color: #73daeb;
-		}
+.bnfw-help-tip p a {
+	color: #73daeb;
+}
 
-			.bnfw-help-tip p a:hover {
-				color: #a0e6f1;
-			}
+.bnfw-help-tip p a:hover {
+	color: #a0e6f1;
+}
 
-	.bnfw-help-tip + .wp-ui-text-highlight {
-		color: #1fbfd9;
-	}
+.bnfw-help-tip + .wp-ui-text-highlight {
+	color: #1fbfd9;
+}
 
 @-webkit-keyframes fadeIn {
 	0% {
@@ -169,12 +179,16 @@ body.post-type-bnfw_notification #poststuff td,
 	}
 
 	100% {
-		opacity:1 00%;
+		opacity: 1 00%;
 		transform: scale(1);
 	}
 }
 
 @keyframes fadeIn {
-	0% { opacity: 0; }
-	100% { opacity: 100%; }
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 100%;
+	}
 }

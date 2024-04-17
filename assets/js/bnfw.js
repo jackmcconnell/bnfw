@@ -13,9 +13,14 @@ jQuery(document).ready(function($) {
 		'multisite-new-user-invited'
 	];
 
-    function toggle_fields() {
-    	var show_fields = $('#show-fields').is(":checked");
-        var notification = $( "#notification" ).val();
+	function toggle_fields() {
+		var show_fields = $( '#show-fields' ).is( ':checked' );
+		var notification = $( '#notification' ).val();
+		if ( notification.startsWith('moderate-') || 'moderate-post-comment' === notification || 'moderate-page-comment' === notification || 'moderate-attachment-comment' === notification ) {
+			$('#comment-author').show();
+		} else {
+			$('#comment-author').hide();
+		}
         if('user-login' === notification){
     	if ( show_fields ) {
 			$('#email, #reply').show();
@@ -32,35 +37,35 @@ jQuery(document).ready(function($) {
 	    $( '#subject-wrapper' ).show();
     }
 
-    function toggle_users() {
-    	if ( $( '#only-post-author' ).is( ':checked' ) ) {
-    		$( '#current-user' ).hide();
-    	} else {
-    		$( '#current-user' ).show();
-    	}
+	function toggle_users() {
+		if ( $( '#only-post-author' ).is( ':checked' ) ) {
+			$( '#current-user' ).hide();
+		} else {
+			$( '#current-user' ).show();
+		}
 
-	    var notification = $( '#notification' ).val();
-        var check_comment = notification.split('-');
-	    if ( 'new-comment' === notification || 'approve' === check_comment[0] || 'moderate-comment' === notification ) {
-		    $( '#current-user' ).show();
-	    }
-    }
+		var notification = $( '#notification' ).val();
+		var check_comment = notification.split( '-' );
+		if ( 'new-comment' === notification || 'approve' === check_comment[ 0 ] || 'moderate-comment' === notification ) {
+			$( '#current-user' ).show();
+		}
+	}
 
 	function init() {
-		var notification = $('#notification').val();
+		var notification = $( '#notification' ).val();
 
-		$("#notification, .bnfw-select2").select2();
+		$( '#notification, .bnfw-select2' ).select2();
 
-		$(".user-select2").select2({
+		$( '.user-select2' ).select2( {
 			tags: BNFW.enableTags,
-            tokenSeparators: BNFW.enabletokenSeparators
+			tokenSeparators: BNFW.enabletokenSeparators
 		} );
 
-		$(".user-ajax-select2").select2( {
+		$( '.user-ajax-select2' ).select2( {
 			ajax: {
 				url: ajaxurl,
 				dataType: 'json',
-				data: function( params ) {
+				data: function ( params ) {
 					return {
 						action: 'bnfw_search_users',
 						query: params.term,
@@ -68,7 +73,7 @@ jQuery(document).ready(function($) {
 						page: params.page
 					};
 				},
-				processResults: function( data, page ) {
+				processResults: function ( data, page ) {
 					return {
 						results: data
 					};
@@ -84,47 +89,47 @@ jQuery(document).ready(function($) {
 
 		toggle_fields();
 
-        var check_comment = notification.split('-');
+		var check_comment = notification.split( '-' );
 
 		if ( 'reply-comment' === notification || notification.startsWith( 'commentreply-' ) ||
-				'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
-				'password-changed' === notification || 'email-changed' === notification || 'email-changing' === notification || 'user-role' === notification ||
-				'ca-export-data' === notification || 'ca-erase-data' === notification ||
-				'uc-export-data' === notification || 'uc-erase-data' === notification ||
-				'data-export' === notification || 'data-erased' === notification ||
-				'multisite-new-user-invited' === notification || 'multisite-new-user-created' === notification || 'multisite-new-user-welcome' === notification ||
-				'multisite-site-registered' === notification || 'multisite-site-welcome' === notification ||
-				'multisite-site-created' === notification || 'multisite-site-deleted' === notification ||
-				'multisite-site-admin-email-change-attempted' === notification || 'multisite-site-admin-email-changed' === notification ||
-				'multisite-network-admin-email-change-attempted' === notification || 'multisite-network-admin-email-changed' === notification) {
+			'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
+			'password-changed' === notification || 'email-changed' === notification || 'email-changing' === notification || 'user-role' === notification ||
+			'ca-export-data' === notification || 'ca-erase-data' === notification ||
+			'uc-export-data' === notification || 'uc-erase-data' === notification ||
+			'data-export' === notification || 'data-erased' === notification ||
+			'multisite-new-user-invited' === notification || 'multisite-new-user-created' === notification || 'multisite-new-user-welcome' === notification ||
+			'multisite-site-registered' === notification || 'multisite-site-welcome' === notification ||
+			'multisite-site-created' === notification || 'multisite-site-deleted' === notification ||
+			'multisite-site-admin-email-change-attempted' === notification || 'multisite-site-admin-email-changed' === notification ||
+			'multisite-network-admin-email-change-attempted' === notification || 'multisite-network-admin-email-changed' === notification ) {
 
-			$('#toggle-fields, #email, #cc, #bcc, #reply, #users, #exclude-users, #current-user, #post-author').hide();
-			$('#user-password-msg, #disable-autop, #email-formatting').show();
+			$( '#toggle-fields, #email, #cc, #bcc, #reply, #users, #exclude-users, #current-user, #post-author' ).hide();
+			$( '#user-password-msg, #disable-autop, #email-formatting' ).show();
 
 			$( '#subject-wrapper' ).show();
 			if ( 'multisite-new-user-created' === notification || 'multisite-site-created' === notification || 'multisite-site-deleted' === notification ||
-					'multisite-site-admin-email-change-attempted' === notification  || 'multisite-network-admin-email-change-attempted' === notification ||
-					'uc-export-data' === notification || 'uc-erase-data' === notification || 'data-export' === notification ||
-					'ca-export-data' === notification || 'ca-erase-data' === notification || 'email-changing' === notification ) {
+				'multisite-site-admin-email-change-attempted' === notification || 'multisite-network-admin-email-change-attempted' === notification ||
+				'uc-export-data' === notification || 'uc-erase-data' === notification || 'data-export' === notification ||
+				'ca-export-data' === notification || 'ca-erase-data' === notification ) {
 
 				$( '#subject-wrapper' ).hide();
 			}
 
 			if ( 'uc-export-data' === notification || 'uc-erase-data' === notification || 'data-export' === notification ||
-				'ca-export-data' === notification || 'ca-erase-data' === notification || 'data-erased' === notification || ( -1 !== multisiteNotifications.indexOf( notification ) ) ) {
+				'ca-export-data' === notification || 'ca-erase-data' === notification || 'data-erased' === notification || (-1 !== multisiteNotifications.indexOf( notification )) ) {
 
 				$( '#email-formatting' ).hide();
 			}
-		} else if ( 'new-comment' === notification || 'approve' === check_comment[0] || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ||
-				'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
+		} else if ( 'new-comment' === notification || 'approve' === check_comment[ 0 ] || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ||
+			'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
 
-			if ( 'new-comment' === notification || 'approve' === check_comment[0] || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ) {
-				$('#post-author').show();
+			if ( 'new-comment' === notification || 'approve' === check_comment[ 0 ] || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ) {
+				$( '#post-author' ).show();
 			} else {
-				$('#post-author').hide();
+				$( '#post-author' ).hide();
 			}
 
-			$('#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user').show();
+			$( '#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user' ).show();
 			toggle_fields();
 			toggle_users();
 			$( '#user-password-msg' ).hide();
@@ -133,14 +138,14 @@ jQuery(document).ready(function($) {
 			toggle_fields();
 			toggle_users();
 			$( '#user-password-msg, #current-user, #post-author' ).hide();
-		} else if ('user-login' === notification){
-			$('#cc, #bcc, #users, #exclude-users, #current-user, #post-author').hide();
-			$('#toggle-fields').show();
+		} else if ( 'user-login' === notification ) {
+			$( '#cc, #bcc, #users, #exclude-users, #current-user, #post-author' ).hide();
+			$( '#toggle-fields' ).show();
 		} else {
-			$('#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user, #post-author').show();
+			$( '#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user, #post-author' ).show();
 			toggle_fields();
 			toggle_users();
-			$('#user-password-msg').hide();
+			$( '#user-password-msg' ).hide();
 		}
 	}
 
@@ -160,11 +165,11 @@ jQuery(document).ready(function($) {
 		}
 	} );
 
-    $('#notification').on('change', function() {
-		var $this = $(this),
+	$( '#notification' ).on( 'change', function () {
+		var $this = $( this ),
 			notification = $this.val();
 
-        var check_comment = notification.split('-');
+		var check_comment = notification.split( '-' );
 
 		if ( 'reply-comment' === notification || notification.startsWith( 'commentreply-' ) ||
 			'new-user' === notification || 'welcome-email' === notification || 'user-password' === notification ||
@@ -176,37 +181,37 @@ jQuery(document).ready(function($) {
 			'multisite-site-registered' === notification || 'multisite-site-welcome' === notification ||
 			'multisite-site-created' === notification || 'multisite-site-deleted' === notification ||
 			'multisite-site-admin-email-change-attempted' === notification || 'multisite-site-admin-email-changed' === notification ||
-			'multisite-network-admin-email-change-attempted' === notification || 'multisite-network-admin-email-changed' === notification) {
+			'multisite-network-admin-email-change-attempted' === notification || 'multisite-network-admin-email-changed' === notification ) {
 
-			$('#toggle-fields, #email, #cc, #bcc, #reply, #users, #exclude-users, #current-user, #post-author').hide();
-			$('#user-password-msg, #disable-autop, #email-formatting').show();
+			$( '#toggle-fields, #email, #cc, #bcc, #reply, #users, #exclude-users, #current-user, #post-author' ).hide();
+			$( '#user-password-msg, #disable-autop, #email-formatting' ).show();
 
 			$( '#subject-wrapper' ).show();
 			if ( 'multisite-new-user-created' === notification || 'multisite-site-created' === notification || 'multisite-site-deleted' === notification ||
-					'multisite-site-admin-email-change-attempted' === notification  || 'multisite-network-admin-email-change-attempted' === notification ||
-					'uc-export-data' === notification || 'uc-erase-data' === notification || 'data-export' === notification ||
-					'ca-export-data' === notification || 'ca-erase-data' === notification || 'email-changing' === notification ) {
+				'multisite-site-admin-email-change-attempted' === notification || 'multisite-network-admin-email-change-attempted' === notification ||
+				'uc-export-data' === notification || 'uc-erase-data' === notification || 'data-export' === notification ||
+				'ca-export-data' === notification || 'ca-erase-data' === notification || 'email-changing' === notification ) {
 
 				$( '#subject-wrapper' ).hide();
 			}
 
 			if ( 'uc-export-data' === notification || 'uc-erase-data' === notification || 'data-export' === notification ||
-				'ca-export-data' === notification || 'ca-erase-data' === notification || 'data-erased' === notification || ( -1 !== multisiteNotifications.indexOf( notification ) ) ) {
+				'ca-export-data' === notification || 'ca-erase-data' === notification || 'data-erased' === notification || (-1 !== multisiteNotifications.indexOf( notification )) ) {
 
 				$( '#email-formatting' ).hide();
 			}
-		} else if ( 'new-comment' === notification || 'approve' === check_comment[0] ||
-					notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ||
-					'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
+		} else if ( 'new-comment' === notification || 'approve' === check_comment[ 0 ] ||
+			notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ||
+			'admin-password' === notification || 'admin-user' === notification || 'admin-role' === notification ) {
 
-			if ( 'new-comment' === notification || 'approve' === check_comment[0] || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ) {
-				$('#post-author').show();
+			if ( 'new-comment' === notification || 'approve' === check_comment[ 0 ] || notification.startsWith( 'moderate-comment-' ) || 'new-trackback' === notification || 'new-pingback' === notification ) {
+				$( '#post-author' ).show();
 			} else {
-				$('#post-author').hide();
+				$( '#post-author' ).hide();
 			}
 
-			$('#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user').show();
-			$('#user-password-msg').hide();
+			$( '#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user' ).show();
+			$( '#user-password-msg' ).hide();
 			toggle_fields();
 			toggle_users();
 		} else if ( 'admin-password-changed' === notification || 'admin-email-changed' === notification || 'core-updated' === notification ) {
@@ -214,49 +219,49 @@ jQuery(document).ready(function($) {
 			toggle_fields();
 			toggle_users();
 			$( '#user-password-msg, #current-user, #post-author' ).hide();
-		} else if ('user-login' === notification){
-			$('#cc, #bcc, #users, #exclude-users, #current-user, #post-author').hide();
-			$('#toggle-fields').show();
+		} else if ( 'user-login' === notification ) {
+			$( '#cc, #bcc, #users, #exclude-users, #current-user, #post-author' ).hide();
+			$( '#toggle-fields' ).show();
 		} else {
-			$('#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user, #post-author').show();
-			$('#user-password-msg').hide();
+			$( '#toggle-fields, #users, #exclude-users, #email-formatting, #disable-autop, #current-user, #post-author' ).show();
+			$( '#user-password-msg' ).hide();
 			toggle_fields();
 			toggle_users();
 		}
-    });
+	} );
 
-    $('#show-fields').change(function() {
-    	toggle_fields();
-    });
+	$( '#show-fields' ).change( function () {
+		toggle_fields();
+	} );
 
-    $( '#only-post-author' ).change(function() {
+	$( '#only-post-author' ).change( function () {
 		toggle_users();
 	} );
 
 	// send test email
-	$( '#test-email' ).click(function() {
+	$( '#test-email' ).click( function () {
 		$( '#send-test-email' ).val( 'true' );
-	});
+	} );
 
 	// Validate before saving notification
-	$( '#publish' ).click(function() {
-		if ( $('#users').is(':visible') ) {
-			if ( null === $(BNFW.validation_element).val() && $('#only-post-author:checked').length <= 0 ) {
-				$('#bnfw_error').remove();
-				$('.wrap h1').after('<div class="error" id="bnfw_error"><p>' + BNFW.empty_user + '</p></div>');
+	$( '#publish' ).click( function () {
+		if ( $( '#users' ).is( ':visible' ) ) {
+			if ( null === $( BNFW.validation_element ).val() && $( '#only-post-author:checked' ).length <= 0 ) {
+				$( '#bnfw_error' ).remove();
+				$( '.wrap h1' ).after( '<div class="error" id="bnfw_error"><p>' + BNFW.empty_user + '</p></div>' );
 				return false;
 			}
 		}
 
 		return true;
-	});
+	} );
 
-	$( '#shortcode-help' ).on( 'click', function() {
+	$( '#shortcode-help' ).on( 'click', function () {
 		var notification = $( '#notification' ).val(),
 			notification_slug = '',
 			splited;
 
-		switch( notification ) {
+		switch ( notification ) {
 			case 'new-comment':
 			case 'new-trackback':
 			case 'new-pingback':
@@ -291,7 +296,7 @@ jQuery(document).ready(function($) {
 
 			default:
 				splited = notification.split( '-' );
-				switch( splited[0] ) {
+				switch ( splited[ 0 ] ) {
 					case 'new':
 						notification_slug = 'new-post';
 						break;
@@ -310,7 +315,7 @@ jQuery(document).ready(function($) {
 					case 'comment':
 						notification_slug = 'new-comment';
 						break;
-                    case 'approve':
+					case 'approve':
 						notification_slug = 'approve-comment';
 						break;
 					case 'moderate':
@@ -338,13 +343,13 @@ jQuery(document).ready(function($) {
 				break;
 		}
 
-		$(this).attr( 'href', 'https://betternotificationsforwp.com/documentation/notifications/shortcodes/?notification=' + notification_slug + '&utm_source=WP%20Admin%20Notification%20Editor%20-%20"Shortcode%20Help"&utm_medium=referral' );
-	});
+		$( this ).attr( 'href', 'https://betternotificationsforwp.com/documentation/notifications/shortcodes/?notification=' + notification_slug + '&utm_source=WP%20Admin%20Notification%20Editor%20-%20"Shortcode%20Help"&utm_medium=referral' );
+	} );
 
 	/**
 	 * Insert Default Message for notification.
 	 */
-	$( '#insert-default-msg' ).on( 'click', function() {
+	$( '#insert-default-msg' ).on( 'click', function () {
 		var notification = $( '#notification' ).val(),
 			subject = '',
 			body = '';
@@ -359,7 +364,7 @@ jQuery(document).ready(function($) {
 				body = 'New comment on your post "[post_title]"<br>' +
 					'Author: [comment_author] (IP address: [comment_author_IP]) <br>' +
 					'Email: [comment_author_email] <br>' +
-				    'URL: [comment_author_url] <br>' +
+					'URL: [comment_author_url] <br>' +
 					'Comment: <br> ' +
 					'[comment_content] <br>' +
 					'<br>' +
@@ -463,31 +468,31 @@ jQuery(document).ready(function($) {
 				body = 'Howdy,' +
 					'<br>' +
 					'<br>' +
-				'A request has been made to perform the following action on your account:' +
+					'A request has been made to perform the following action on your account:' +
 					'<br>' +
 					'<br>' +
-				'[data_request_type]' +
+					'[data_request_type]' +
 					'<br>' +
 					'<br>' +
-				'To confirm this, please click on the following link:' +
+					'To confirm this, please click on the following link:' +
 					'<br>' +
 					'<br>' +
-				'[request_confirmation_link]' +
+					'[request_confirmation_link]' +
 					'<br>' +
 					'<br>' +
-				'You can safely ignore and delete this email if you do not want to' +
+					'You can safely ignore and delete this email if you do not want to' +
 					'<br>' +
-				'take this action.' +
-					'<br>' +
-					'<br>' +
-				'This email has been sent to [global_user_email].' +
+					'take this action.' +
 					'<br>' +
 					'<br>' +
-				'Regards,' +
+					'This email has been sent to [global_user_email].' +
+					'<br>' +
+					'<br>' +
+					'Regards,' +
 					'<br>' +
 					'All at [global_site_title]' +
 					'<br>' +
-				'[global_site_url]';
+					'[global_site_url]';
 
 				break;
 
@@ -624,7 +629,7 @@ jQuery(document).ready(function($) {
 					'[global_site_url]';
 				break;
 			default:
-				alert( "This is a new notification that is not available in WordPress by default and has been added by Better Notifications for WP. As such, it doesn't have any default content." );
+				alert( 'This is a new notification that is not available in WordPress by default and has been added by Better Notifications for WP. As such, it doesn\'t have any default content.' );
 				break;
 		}
 
@@ -633,11 +638,12 @@ jQuery(document).ready(function($) {
 		}
 
 		if ( body !== '' ) {
-			if ( tinyMCE && tinyMCE.editors && tinyMCE.editors['notification_message'] ) {
-				tinyMCE.editors['notification_message'].selection.setContent( body );
+			if ( tinyMCE && tinyMCE.editors && tinyMCE.editors[ 'notification_message' ] ) {
+				tinyMCE.editors[ 'notification_message' ].selection.setContent( body );
 			}
 		}
 
 		return false;
 	} );
-});
+
+} );

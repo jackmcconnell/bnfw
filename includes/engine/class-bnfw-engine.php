@@ -17,9 +17,10 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Send test email.
 		 *
+		 * @param array $setting Settings.
+		 *
 		 * @since 1.2
 		 *
-		 * @param array $setting Settings.
 		 */
 		public function send_test_email( $setting ) {
 			$subject = __( 'Test Email:', 'bnfw' ) . ' ' . $setting['subject'];
@@ -46,20 +47,32 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Send the notification email.
 		 *
-		 * @since 1.0
 		 * @param array $setting Setting options.
-		 * @param int   $id Id.
+		 * @param int $id Id.
+		 *
+		 * @since 1.0
 		 */
 		public function send_notification( $setting, $id ) {
+			$bnfw = BNFW::Factory();
 			/**
 			 * BNFW - Whether notification is disabled?
 			 *
 			 * @since 1.3.6
 			 */
-
 			$notification_disabled = apply_filters( 'bnfw_notification_disabled', ( 'true' === $setting['disabled'] ), $id, $setting );
 
 			if ( ! $notification_disabled ) {
+
+				// Check the update post and custom field notification are registered then avoid post update notification.
+				if ( $bnfw->notifier->starts_with( $setting['notification'], 'update-' ) ) {
+					$notification_type = str_replace( 'update-', 'customfield-', $setting['notification'] );
+					$is_registered     = get_post_meta( $id, '_bnfw_' . $notification_type, true );
+
+					if ( $is_registered ) {
+						return;
+					}
+				}
+
 
 				$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $id );
 				$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $id );
@@ -99,10 +112,11 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Send new user registration notification email.
 		 *
-		 * @since 1.1
-		 * @param array  $setting  Notification setting.
-		 * @param object $user     User object.
+		 * @param array $setting Notification setting.
+		 * @param object $user User object.
 		 * @param string $password_url Plain text password in WP < 4.3 and password url in WP > 4.3.
+		 *
+		 * @since 1.1
 		 */
 		public function send_registration_email( $setting, $user, $password_url = '' ) {
 			/**
@@ -156,9 +170,10 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Send user login notification email.
 		 *
+		 * @param array $setting Notification setting.
+		 * @param object $user User object.
+		 *
 		 * @since 1.1
-		 * @param array  $setting  Notification setting.
-		 * @param object $user     User object.
 		 */
 		public function send_user_login_email( $setting, $user ) {
 
@@ -195,9 +210,10 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Send user login notification email for admin.
 		 *
+		 * @param array $setting Notification setting.
+		 * @param object $user User object.
+		 *
 		 * @since 1.1
-		 * @param array  $setting  Notification setting.
-		 * @param object $user     User object.
 		 */
 		public function send_user_login_email_for_admin( $setting, $user ) {
 
@@ -206,18 +222,18 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			if ( ! $trigger_notification ) {
 				return;
 			}
-			$user_id = $user->ID;
 
-			$this->send_notification( $setting, $user_id );
+			$this->send_notification( $setting, $user->ID );
 		}
 
 		/**
 		 * Send comment reply notification email.
 		 *
-		 * @since 1.3
-		 * @param array  $setting        Notification setting.
-		 * @param object $comment        Comment object.
+		 * @param array $setting Notification setting.
+		 * @param object $comment Comment object.
 		 * @param object $parent_comment Parent comment object.
+		 *
+		 * @since 1.3
 		 */
 		public function send_comment_reply_email( $setting, $comment, $parent_comment ) {
 			$comment_id = $comment->comment_ID;
@@ -252,12 +268,13 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Send user role changed email.
 		 *
-		 * @since 1.3.9
-		 *
 		 * @param array $setting Notification setting.
-		 * @param int   $user_id User ID.
+		 * @param int $user_id User ID.
 		 * @param array $old_role Old User Role.
 		 * @param array $new_role New User Role.
+		 *
+		 * @since 1.3.9
+		 *
 		 */
 		public function send_user_role_changed_email( $setting, $user_id, $old_role, $new_role ) {
 			$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $user_id );
@@ -286,12 +303,13 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Send user role added support User Role Editor by Members Plugin.
 		 *
-		 * @since 1.3.9
-		 *
 		 * @param array $setting Notification setting.
-		 * @param int   $user_id User ID.
+		 * @param int $user_id User ID.
 		 * @param array $old_role Old User Role.
 		 * @param array $new_role New User Role.
+		 *
+		 * @since 1.3.9
+		 *
 		 */
 		public function send_user_role_added_email( $setting, $user_id, $old_role, $new_role ) {
 			$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $user_id );
@@ -322,9 +340,9 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Handle User Role shortcodes.
 		 *
-		 * @param string $message  String that needs shortcode processing.
-		 * @param array  $old_role Old User Role.
-		 * @param array  $new_role New User Role.
+		 * @param string $message String that needs shortcode processing.
+		 * @param array $old_role Old User Role.
+		 * @param array $new_role New User Role.
 		 *
 		 * @return string Processed string.
 		 */
@@ -351,9 +369,9 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Handle User Added Role shortcodes.
 		 *
-		 * @param string $message  String that needs shortcode processing.
-		 * @param array  $old_roles Old User Role.
-		 * @param array  $new_roles New User Role.
+		 * @param string $message String that needs shortcode processing.
+		 * @param array $old_roles Old User Role.
+		 * @param array $new_roles New User Role.
 		 *
 		 * @return string Processed string.
 		 */
@@ -382,13 +400,13 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Handle shortcodes for filtered data notifications like `password_changed` and `email_changed`.
 		 *
-		 * @since 1.6
-		 *
-		 * @param array      $email_data Email data.
-		 * @param array      $setting    Notification settings.
+		 * @param array $email_data Email data.
+		 * @param array $setting Notification settings.
 		 * @param string|int $extra_data Extra data.
 		 *
 		 * @return array Modified email data.
+		 * @since 1.6
+		 *
 		 */
 		public function handle_filtered_data_notification( $email_data, $setting, $extra_data ) {
 			$email_data['message'] = $this->handle_shortcodes( $setting['message'], $setting['notification'], $extra_data );
@@ -404,6 +422,9 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 				$headers[] = 'Content-type: text/html';
 			} else {
 				$headers[] = 'Content-type: text/plain';
+				if ( 'text' === $setting['email-formatting'] ) {
+					$email_data['message'] = wp_strip_all_tags( $email_data['message'] );
+				}
 			}
 			$email_data['headers'] = $headers;
 
@@ -413,13 +434,13 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Handle shortcodes for core updated notification.
 		 *
-		 * @since    1.6
-		 *
-		 * @param array  $email_data Email data.
-		 * @param array  $setting    Notification settings.
-		 * @param string $type       Result of update.
+		 * @param array $email_data Email data.
+		 * @param array $setting Notification settings.
+		 * @param string $type Result of update.
 		 *
 		 * @return array Modified email data.
+		 * @since    1.6
+		 *
 		 */
 		public function handle_core_updated_notification( $email_data, $setting, $type ) {
 			$email_data['body']    = $this->handle_shortcodes( $setting['message'], $setting['notification'], $type );
@@ -440,7 +461,7 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			} else {
 				$headers[] = 'Content-type: text/plain';
 				if ( 'text' === $setting['email-formatting'] ) {
-					$message = wp_strip_all_tags( $message );
+					$email_data['message'] = wp_strip_all_tags( $email_data['message'] );
 				}
 			}
 
@@ -452,14 +473,14 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Handle shortcode for password reset email message.
 		 *
-		 * @since 1.1
-		 *
-		 * @param string  $setting Notification settings.
-		 * @param string  $key The activation key.
-		 * @param string  $user_login The username for the user.
-		 * @param WP_User $user_data  WP_User object.
+		 * @param string $setting Notification settings.
+		 * @param string $key The activation key.
+		 * @param string $user_login The username for the user.
+		 * @param WP_User $user_data WP_User object.
 		 *
 		 * @return mixed|string
+		 * @since 1.1
+		 *
 		 */
 		public function handle_password_reset_shortcodes( $setting, $key, $user_login, $user_data ) {
 			$message = '';
@@ -479,8 +500,8 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Send Password Changed email.
 		 *
-		 * @param array   $setting Notification Setting.
-		 * @param WP_User $user    User for whom the password has changed.
+		 * @param array $setting Notification Setting.
+		 * @param WP_User $user User for whom the password has changed.
 		 */
 		public function send_password_changed_email( $setting, $user ) {
 			$user_id = $user->ID;
@@ -507,14 +528,14 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Generate message for notification.
 		 *
+		 * @param string $message String may have shortcode.
+		 * @param string $notification Notification name.
+		 * @param string|int $extra_data Additional data for shortcode.
+		 *
+		 * @return string Processed string.
 		 * @since 1.0
 		 * public since @since 1.6
 		 *
-		 * @param string     $message      String may have shortcode.
-		 * @param string     $notification Notification name.
-		 * @param string|int $extra_data   Additional data for shortcode.
-		 *
-		 * @return string Processed string.
 		 */
 		public function handle_shortcodes( $message, $notification, $extra_data ) {
 
@@ -535,10 +556,12 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 				case 'admin-password':
 				case 'admin-password-changed':
 				case 'admin-email-changed':
-				case 'admin-user':
 				case 'welcome-email':
 				case 'user-login':
 					$message = $this->user_shortcodes( $message, $extra_data );
+				case 'admin-user':
+					$message = $this->user_shortcodes( $message, $extra_data );
+					$message = $this->user_shortcodes( $message, $extra_data, 'email_' );
 					break;
 				case 'admin-user-login':
 					$message = $this->user_shortcodes( $message, $extra_data );
@@ -637,17 +660,18 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			$message = $this->global_shortcodes( $message );
 
 			$message = apply_filters( 'bnfw_shortcodes', $message, $notification, $extra_data, $this );
+
 			return $message;
 		}
 
 		/**
 		 * Handle Global shortcodes.
 		 *
-		 * @since 1.5
-		 *
 		 * @param string $message String with shortcodes.
 		 *
 		 * @return string String after processing global shortcodes.
+		 * @since 1.5
+		 *
 		 */
 		private function global_shortcodes( $message ) {
 			$message = str_replace( '[global_site_title]', get_bloginfo( 'name' ), $message );
@@ -665,7 +689,7 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		 * Handle Global shortcodes.
 		 *
 		 * @param string $message Message.
-		 * @param string $email   Email.
+		 * @param string $email Email.
 		 *
 		 * @return string
 		 */
@@ -679,7 +703,7 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		 * Handle Global User Shortcodes.
 		 *
 		 * @param string $message String to be processed.
-		 * @param string $email   Email of the user.
+		 * @param string $email Email of the user.
 		 *
 		 * @return string Processed string.
 		 */
@@ -708,10 +732,11 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Handle media post shortcodes.
 		 *
-		 * @since 1.0
-		 * @param string  $message Message.
+		 * @param string $message Message.
 		 * @param WP_Post $post post object.
+		 *
 		 * @return string
+		 * @since 1.0
 		 */
 		public function media_post_shortcodes( $message, $post ) {
 			$post_content     = $this->may_be_strip_shortcode( $post->post_content );
@@ -743,10 +768,11 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Handle post shortcodes.
 		 *
-		 * @since 1.0
 		 * @param string $message String to be processed.
-		 * @param int    $post_id Post id.
+		 * @param int $post_id Post id.
+		 *
 		 * @return string
+		 * @since 1.0
 		 */
 		public function post_shortcodes( $message, $post_id ) {
 			$post = get_post( $post_id );
@@ -868,15 +894,16 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		 * Can be used within the WordPress loop or outside of it. Can be used with
 		 * pages, posts, attachments, and revisions.
 		 *
-		 * @param int|WP_Post $id      Optional. Post ID or post object. Default is the global `$post`.
-		 * @param string      $context Optional. How to output the '&' character. Default '&amp;'.
+		 * @param int|WP_Post $id Optional. Post ID or post object. Default is the global `$post`.
+		 * @param string $context Optional. How to output the '&' character. Default '&amp;'.
+		 *
 		 * @return string|null The edit post link for the given post. null if the post type is invalid or does
 		 *                     not allow an editing UI.
 		 */
 		public function get_edit_post_link( $id = 0, $context = 'display' ) {
 			$post = get_post( $id );
 			if ( ! $post ) {
-				return;
+				return '';
 			}
 
 			if ( 'revision' === $post->post_type ) {
@@ -889,7 +916,7 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 
 			$post_type_object = get_post_type_object( $post->post_type );
 			if ( ! $post_type_object ) {
-				return;
+				return '';
 			}
 
 			if ( $post_type_object->_edit_link ) {
@@ -901,12 +928,13 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			/**
 			 * Filters the post edit link.
 			 *
-			 * @since 2.3.0
-			 *
-			 * @param string $link    The edit link.
-			 * @param int    $post_id Post ID.
+			 * @param string $link The edit link.
+			 * @param int $post_id Post ID.
 			 * @param string $context The link context. If set to 'display' then ampersands
 			 *                        are encoded.
+			 *
+			 * @since 2.3.0
+			 *
 			 */
 			return apply_filters( 'get_edit_post_link', $link, $post->ID, $context );
 		}
@@ -956,12 +984,12 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Handle comment shortcodes.
 		 *
-		 * @since 1.0
-		 *
 		 * @param string $message String to be processed.
-		 * @param int    $comment_id Comment id.
+		 * @param int $comment_id Comment id.
 		 *
 		 * @return string Processed string.
+		 * @since 1.0
+		 *
 		 */
 		private function comment_shortcodes( $message, $comment_id ) {
 			$comment = get_comment( $comment_id );
@@ -976,7 +1004,11 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			$message = str_replace( '[comment_date_gmt]', bnfw_format_date( $comment->comment_date_gmt ), $message );
 			$message = str_replace( '[comment_content]', get_comment_text( $comment->comment_ID ), $message );
 			$message = str_replace( '[comment_karma]', $comment->comment_karma, $message );
-			$message = str_replace( '[comment_approved]', str_replace( array( '0', '1', 'spam' ), array( 'Awaiting Moderation', 'Approved', 'Spam' ), $comment->comment_approved ), $message );
+			$message = str_replace( '[comment_approved]', str_replace( array(
+				'0',
+				'1',
+				'spam'
+			), array( 'Awaiting Moderation', 'Approved', 'Spam' ), $comment->comment_approved ), $message );
 			$message = str_replace( '[comment_agent]', $comment->comment_agent, $message );
 			$message = str_replace( '[comment_type]', $comment->comment_type, $message );
 			$message = str_replace( '[comment_parent]', $comment->comment_parent, $message );
@@ -998,13 +1030,13 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Handle user shortcodes.
 		 *
-		 * @since 1.0
-		 *
 		 * @param string $message String to be processed.
-		 * @param int    $user_id User id.
-		 * @param string    $prefix Prefix.
+		 * @param int $user_id User id.
+		 * @param string $prefix Prefix.
 		 *
 		 * @return string Processed string.
+		 * @since 1.0
+		 *
 		 */
 		public function user_shortcodes( $message, $user_id, $prefix = '' ) {
 			global $wp_roles;
@@ -1044,6 +1076,7 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			}
 
 			$message = apply_filters( 'bnfw_shortcodes_user', $message, $user_id, $prefix );
+
 			return $message;
 		}
 
@@ -1051,12 +1084,14 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		 * Handle taxonomy shortcodes.
 		 *
 		 * @access private
-		 * @since 1.1
 		 *
 		 * @param string $message String to be processed.
 		 * @param string $taxonomy Taxonomy name that `$term` is part of.
-		 * @param int    $term_id Term ID.
+		 * @param int $term_id Term ID.
+		 *
 		 * @return string
+		 * @since 1.1
+		 *
 		 */
 		private function taxonomy_shortcodes( $message, $taxonomy, $term_id ) {
 			$term_info = get_term( $term_id, $taxonomy );
@@ -1071,31 +1106,30 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Handle Core Updated Shortcodes.
 		 *
-		 * @since 1.6
-		 *
 		 * @param string $message Original message with shortcodes.
-		 * @param string $type    The type of email being sent. Can be one of
+		 * @param string $type The type of email being sent. Can be one of
 		 *                        'success', 'fail', 'manual', 'critical'.
 		 *
 		 * @return string Modified content.
+		 * @since 1.6
+		 *
 		 */
 		private function core_updated_shortcodes( $message, $type ) {
-			$message = str_replace( '[core_update_status]', $type, $message );
+			return str_replace( '[core_update_status]', $type, $message );
 
-			return $message;
 		}
 
 		/**
 		 * Get the list of emails from the notification settings.
 		 *
-		 * @since 1.0
-		 *
 		 * @param array $setting Notification settings.
-		 * @param int   $id ID to be processed.
-		 * @param bool  $process_post_authors If post author needs to be get notification.
-		 * @param bool  $process_exclude_current_user If current user needs to be excluded.
+		 * @param int $id ID to be processed.
+		 * @param bool $process_post_authors If post author needs to be get notification.
+		 * @param bool $process_exclude_current_user If current user needs to be excluded.
 		 *
 		 * @return array Emails
+		 * @since 1.0
+		 *
 		 */
 		public function get_emails( $setting, $id, $process_post_authors = true, $process_exclude_current_user = true ) {
 			global $current_user;
@@ -1194,6 +1228,21 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 					$emails['bcc'] = array_diff( $emails['bcc'], $excluded_emails );
 				}
 			}
+
+			/**
+			 * BNFW get comment author email.
+			 */
+			if ( 'true' === $setting['comment-author'] ) {
+				if ( bnfw_is_comment_author_needs_notification( $setting['notification'] ) ) {
+					$comment = get_comment( $id );
+					if ( ! empty( $comment ) ) {
+						if ( ! in_array( $comment->comment_author_email, $emails['to'], true ) ) {
+							$emails['to'][] = $comment->comment_author_email;
+						}
+					}
+				}
+			}
+
 			$emails['to'] = apply_filters( 'bnfw_to_emails', $emails['to'], $setting, $id );
 
 			return $emails;
@@ -1202,14 +1251,14 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Get emails from users.
 		 *
-		 * @since    1.2
-		 *
-		 * @param array $users   Users Array.
-		 * @param int   $exclude User id to exclude.
-		 * @param int   $post_id Post id.
+		 * @param array $users Users Array.
+		 * @param int $exclude User id to exclude.
+		 * @param int $post_id Post id.
 		 * @param array $setting Notification setting.
 		 *
 		 * @return array
+		 * @since    1.2
+		 *
 		 */
 		public function get_emails_from_users( $users, $exclude = null, $post_id = 0, $setting = array() ) {
 			$user_ids               = array();
@@ -1273,11 +1322,11 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Get user emails by user ids.
 		 *
-		 * @since 1.0
-		 *
 		 * @param array $user_ids An array of user IDs.
 		 *
 		 * @return array Emails.
+		 * @since 1.0
+		 *
 		 */
 		private function get_emails_from_id( $user_ids ) {
 			$email_list = array();
@@ -1287,16 +1336,18 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 					$email_list[] = $user->user_email;
 				}
 			}
+
 			return $email_list;
 		}
 
 		/**
 		 * Get emails of users based on role.
 		 *
-		 * @since 1.0
 		 * @param array $roles User Roles.
-		 * @param int   $exclude User id to exclude.
+		 * @param int $exclude User id to exclude.
+		 *
 		 * @return array Email ids
+		 * @since 1.0
 		 */
 		private function get_emails_from_role( $roles, $exclude = null ) {
 			if ( ! is_array( $roles ) ) {
@@ -1332,16 +1383,16 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Find if a string starts with another string.
 		 *
-		 * @since 1.2
-		 *
 		 * @param string $haystack The string to search in.
 		 * @param string $needle The substring to search for in the haystack.
 		 *
 		 * @return bool
+		 * @since 1.2
+		 *
 		 */
 		private function starts_with( $haystack, $needle ) {
 			// search backwards starting from haystack length characters from the end.
-			return '' === $needle || strrpos( $haystack, $needle, -strlen( $haystack ) ) !== false;
+			return '' === $needle || strrpos( $haystack, $needle, - strlen( $haystack ) ) !== false;
 		}
 
 		/**
@@ -1391,14 +1442,17 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			if ( preg_match_all( '/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $post_content, $matches ) ) {
 				return $matches[1][0];
 			}
+
+			return '';
 		}
 
 		/**
 		 * Generate email headers based on the emails.
 		 *
-		 * @since 1.0
 		 * @param array $emails Emails.
+		 *
 		 * @return array
+		 * @since 1.0
 		 */
 		public function get_headers( $emails ) {
 			$headers = array();
@@ -1426,12 +1480,14 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			 */
 			return apply_filters( 'bnfw_mail_headers', $headers, $emails );
 		}
+
 		/**
 		 * Handles user shortcode.
 		 *
 		 * @param string $message String to be processed.
-		 * @param array  $setting Notification settings.
-		 * @param array  $email_data Email data.
+		 * @param array $setting Notification settings.
+		 * @param array $email_data Email data.
+		 *
 		 * @return string
 		 */
 		public function handle_user_request_email_shortcodes( $message, $setting, $email_data ) {
@@ -1439,12 +1495,14 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 
 			return $message;
 		}
+
 		/**
 		 * Handles user confiemd action shortcode.
 		 *
 		 * @param string $message String to be processed.
-		 * @param array  $setting Notification settings.
-		 * @param array  $email_data Email data.
+		 * @param array $setting Notification settings.
+		 * @param array $email_data Email data.
+		 *
 		 * @return string
 		 */
 		public function handle_user_confirmed_action_email_shortcodes( $message, $setting, $email_data ) {
@@ -1452,23 +1510,28 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 
 			return $message;
 		}
+
 		/**
 		 * Handles user export shortcode.
 		 *
 		 * @param string $message String to be processed.
-		 * @param array  $setting Notification settings.
-		 * @param int    $request_id Request ID.
+		 * @param array $setting Notification settings.
+		 * @param int $request_id Request ID.
+		 *
 		 * @return string
 		 */
 		public function handle_data_export_email_shortcodes( $message, $setting, $request_id ) {
 			$message = $this->handle_shortcodes( $message, $setting['notification'], $request_id );
+
 			return $message;
 		}
+
 		/**
 		 * Handles user export shortcode.
 		 *
 		 * @param string $message String to be processed.
-		 * @param array  $extra_data Extra data.
+		 * @param array $extra_data Extra data.
+		 *
 		 * @return string
 		 */
 		protected function confirm_action_shortcodes( $message, $extra_data ) {
@@ -1484,11 +1547,13 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 
 			return $message;
 		}
+
 		/**
 		 * Handles user export shortcode.
 		 *
 		 * @param string $message String to be processed.
-		 * @param array  $extra_data Extra data.
+		 * @param array $extra_data Extra data.
+		 *
 		 * @return string
 		 */
 		protected function confirmed_action_shortcodes( $message, $extra_data ) {
@@ -1498,11 +1563,13 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 
 			return $message;
 		}
+
 		/**
 		 * Handles data request shortcode.
 		 *
 		 * @param string $message String to be processed.
-		 * @param array  $extra_data Extra data.
+		 * @param array $extra_data Extra data.
+		 *
 		 * @return string
 		 */
 		protected function data_request_shortcodes( $message, $extra_data ) {
@@ -1510,11 +1577,13 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 
 			return $message;
 		}
+
 		/**
 		 * Handles data export shortcode.
 		 *
 		 * @param string $message String to be processed.
-		 * @param int    $request_id Resuest ID.
+		 * @param int $request_id Resuest ID.
+		 *
 		 * @return string
 		 */
 		protected function data_export_shortcodes( $message, $request_id ) {
@@ -1530,11 +1599,13 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 
 			return $message;
 		}
+
 		/**
 		 * Handles data erased shortcode.
 		 *
 		 * @param string $message String to be processed.
-		 * @param array  $extra_data Extra data.
+		 * @param array $extra_data Extra data.
+		 *
 		 * @return string
 		 */
 		protected function data_erased_shortcodes( $message, $extra_data ) {
@@ -1545,11 +1616,12 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 
 			return $message;
 		}
+
 		/**
 		 * Process shortcodes in email.
 		 *
 		 * @param array $email Emails.
-		 * @param int   $post_id Post ID.
+		 * @param int $post_id Post ID.
 		 * @param array $setting Notification settings.
 		 * @param array $to_emails Array of to emails.
 		 *
@@ -1588,8 +1660,8 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Check email content type.
 		 *
-		 * @param string $setting   Setting.
-		 * @param string $content   Content.
+		 * @param string $setting Setting.
+		 * @param string $content Content.
 		 *
 		 * @return string Content .
 		 */
@@ -1629,9 +1701,10 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Get user's download URL from data export request.
 		 *
-		 * @since 1.8.4
 		 * @param int $request_id Request ID.
+		 *
 		 * @return string $download_url | string error message
+		 * @since 1.8.4
 		 */
 		public function get_export_downloadable_url( $request_id = null ) {
 			if ( ! $request_id ) {
@@ -1653,6 +1726,95 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			} else {
 				return __( 'Error: Download link is not available please contact support' );
 			}
+		}
+		/**
+		 * Basic HTML Email Template
+		 *
+		 * @since 1.9
+		 * @param string $subject Email Subject.
+		 * @param string $message Email Message.
+		 * @return string $message_formatted
+		 */
+		public function bnfw_email_template_html( $subject, $message ) {
+			$message_formatted = '
+			<!DOCTYPE html>
+			<html ' . get_language_attributes() . ' xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office">
+
+				<head>
+					<meta charset="utf-8">
+					<meta name="viewport" content="width=device-width,initial-scale=1">
+					<meta name="x-apple-disable-message-reformatting">
+					<title>' . $subject . '</title>
+
+					<!--[if mso]>
+						<style>
+							div {margin:0 !important; padding:0;}
+						</style>
+
+						<noscript>
+							<xml>
+								<o:OfficeDocumentSettings>
+								<o:PixelsPerInch>96</o:PixelsPerInch>
+								</o:OfficeDocumentSettings>
+							</xml>
+						</noscript>
+					<![endif]-->
+
+					<style>
+						* {
+							box-sizing: border-box;
+						}
+						table,
+						td,
+						div,
+						h1,
+						p,
+						a {
+							font-family: Arial, sans-serif;
+							line-height: 1.4;
+						}
+
+						body {
+							margin: 0;
+							padding: 0;
+							word-spacing: normal;
+							background-color: #fff;
+						}
+
+						p {
+							margin-bottom: 20px;
+						}
+
+							p:last-of-type {
+								margin-bottom; 0;
+							}
+
+						div[role="article"] {
+							max-width: 600px;
+							margin: 20px auto;
+							padding: 20px 50px;
+							background-color: #F0F0F0;
+							-webkit-text-size-adjust: 100%;
+							-ms-text-size-adjust: 100%;
+							text-size-adjust: 100%;
+						}
+
+						a.more-link {
+							display: block;
+							margin-top: 20px;
+						}
+					</style>
+				</head>
+
+				<body>
+					<div role="article" aria-roledescription="email" ' . get_language_attributes() . '>
+						' . wpautop( $message ) . '
+					</div>
+				</body>
+
+			</html>';
+
+			return $message_formatted;
 		}
 
 	}
