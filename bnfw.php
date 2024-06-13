@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.9.4
+ * Version: 1.9.5
  * Requires at least: 4.8
  * Requires PHP: 8.0
  * Author: Made with Fuel
@@ -40,7 +40,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 *
 		 * @var string
 		 */
-		public $bnfw_version = '1.9.4';
+		public $bnfw_version = '1.9.5';
 		/**
 		 * Class Constructor.
 		 *
@@ -1561,9 +1561,39 @@ if ( ! class_exists( 'BNFW', false ) ) {
 				return;
 			}
 
+			// Get all notifications.
 			$transient = get_transient( 'bnfw-async-notifications' );
-			if ( is_array( $transient ) ) {
+
+			// Check if the add-on is activated.
+			$is_keep_notifications = class_exists( 'BNFW_Per_Post_Override' ) && ! $this->is_metabox_request();
+			if ( $is_keep_notifications && is_array( $transient ) ) {
+				$keep_notifications = array();
+				$send_notifications = array();
+				foreach ( $transient as $id_pairs ) {
+
+					// Keep the notifications which are start with '-update'.
+					if ( $this->notifier->starts_with( $id_pairs['notification_type'], 'update-' ) ) {
+						$keep_notifications[] = $id_pairs;
+
+						// Send other notifications.
+					} else {
+						$send_notifications[] = $id_pairs;
+					}
+				}
+
+				// Unset the variable.
+				unset( $transient );
+
+				// Set the latest notifications to send immediately.
+				$transient = $send_notifications;
+
+				// Save again notification to send after the save metabox values.
+				set_transient( 'bnfw-async-notifications', $keep_notifications, 600 );
+			} else {
 				delete_transient( 'bnfw-async-notifications' );
+			}
+
+			if ( is_array( $transient ) ) {
 				foreach ( $transient as $id_pairs ) {
 					$this->engine->send_notification( $this->notifier->read_settings( $id_pairs['notification_id'] ), $id_pairs['ref_id'] );
 				}
