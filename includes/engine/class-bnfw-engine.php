@@ -677,6 +677,8 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			$message = str_replace( '[global_site_title]', get_bloginfo( 'name' ), $message );
 			$message = str_replace( '[global_site_tagline]', get_bloginfo( 'description' ), $message );
 			$message = str_replace( '[global_site_url]', get_bloginfo( 'url' ), $message );
+			$message = str_replace( '[user_ip_address]', bnfw_get_the_user_ip(), $message );
+			$message = str_replace( '[email_user_ip_address]', bnfw_get_the_user_ip(), $message );
 
 			$message = str_replace( '[current_time]', current_time( get_option( 'time_format' ) ), $message );
 			$message = str_replace( '[current_date]', date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ), $message );

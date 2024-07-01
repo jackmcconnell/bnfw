@@ -294,3 +294,22 @@ function bnfw_is_comment_author_needs_notification( $notification_name ) {
 	}
 	return $is_comment_author_needs_notification;
 }
+
+/**
+ * Get visitor IP address.
+ *
+ * @since 1.9
+ * @return string|null
+ */
+function bnfw_get_the_user_ip() {
+	if ( isset( $_SERVER['HTTP_X_REAL_IP'] ) ) {
+		return sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_REAL_IP'] ) );
+	} elseif ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+		// Proxy servers can send through this header like this: X-Forwarded-For: client1, proxy1, proxy2
+		// Make sure we always only send through the first IP in the list which should always be the client IP.
+		return (string) rest_is_ip_address( trim( current( preg_split( '/,/', sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) ) ) ) );
+	} elseif ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
+		return sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
+	}
+	return '';
+}

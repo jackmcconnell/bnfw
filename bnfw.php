@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.9.5
+ * Version: 1.9.6
  * Requires at least: 4.8
  * Requires PHP: 8.0
  * Author: Made with Fuel
@@ -40,7 +40,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 *
 		 * @var string
 		 */
-		public $bnfw_version = '1.9.5';
+		public $bnfw_version = '1.9.6';
 		/**
 		 * Class Constructor.
 		 *
@@ -1571,8 +1571,11 @@ if ( ! class_exists( 'BNFW', false ) ) {
 				$send_notifications = array();
 				foreach ( $transient as $id_pairs ) {
 
-					// Keep the notifications which are start with '-update'.
-					if ( $this->notifier->starts_with( $id_pairs['notification_type'], 'update-' ) ) {
+					// Keep the notifications which are start with '-update' and check the block editor is enabled for this post/page.
+					if (
+						$this->is_block_editor_page( $id_pairs['ref_id'] ) &&
+						$this->notifier->starts_with( $id_pairs['notification_type'], 'update-' )
+					) {
 						$keep_notifications[] = $id_pairs;
 
 						// Send other notifications.
@@ -1688,6 +1691,25 @@ if ( ! class_exists( 'BNFW', false ) ) {
 			$use_block_editor = ( get_option( 'classic-editor-replace' ) === 'no-replace' );
 
 			return $use_block_editor;
+		}
+
+		/**
+		 * Check is block editor enabled for a particular post/page.
+		 *
+		 * @since 1.9.6
+		 *
+		 * @param int $ID ID of page/post.
+		 *
+		 * @return bool
+		 */
+		public function is_block_editor_page( $ID ) {
+
+			// In case, WordPress is lower than version 5.0.
+			if ( ! function_exists( 'use_block_editor_for_post' ) ) {
+				return false;
+			}
+
+			return use_block_editor_for_post( $ID );
 		}
 
 	}

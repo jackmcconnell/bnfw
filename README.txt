@@ -5,7 +5,7 @@ Tags: notification, email, alert, message, notify
 Requires at least: 4.8
 Tested up to: 6.5
 Requires PHP: 8.0
-Stable tag: "1.9.5"
+Stable tag: "1.9.6"
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Update URI: https://wordpress.org/plugins/bnfw/
@@ -249,6 +249,10 @@ Please report security bugs found in the source code of the Better Notification 
 
 == Changelog ==
 
+= 1.9.6 - 1st July 2024 =
+* Added: You can now use `[user_ip_address]` and `[email_user_ip_address]` in notifications that can use the User shortcodes.
+* Fixed: An issue with the [Global Override add-on](https://betternotificationsforwp.com/downloads/per-post-override/) where notifications couldn't be overridden when using the Classic Editor.
+
 = 1.9.5 - 13th June 2024 =
 * Fixed: An issue with the [Global Override add-on](https://betternotificationsforwp.com/downloads/per-post-override/) where notifications couldn't be overridden when using the Block Editor.
 
@@ -296,7 +300,7 @@ Please report security bugs found in the source code of the Better Notification 
 * Fixed: PHP Notice showing on the User Profile screen when the [Subscriptions add-on](https://betternotificationsforwp.com/downloads/subscriptions-gdpr/) was enabled.
 * Fixed: Notifications weren't always showing their 'Notification Type' on the 'All Notifications' screen.
 
-* The rest of the changelog can be found [here](https://betternotificationsforwp.com/changelog/).
+The rest of the changelog can be found [here](https://betternotificationsforwp.com/changelog/).
 
 == Upgrade Notice ==
 
