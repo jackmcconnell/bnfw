@@ -5,7 +5,7 @@
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
  * Version: 1.9.6
  * Requires at least: 4.8
- * Requires PHP: 8.0
+ * Requires PHP: 7.4
  * Author: Made with Fuel
  * Author URI: https://betternotificationsforwp.com/
  * License: GPLv2 or later
