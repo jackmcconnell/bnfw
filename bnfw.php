@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.9.6
+ * Version: 1.9.8
  * Requires at least: 4.8
  * Requires PHP: 7.4
  * Author: Made with Fuel
@@ -40,7 +40,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 *
 		 * @var string
 		 */
-		public $bnfw_version = '1.9.6';
+		public $bnfw_version = '1.9.8';
 		/**
 		 * Class Constructor.
 		 *
@@ -861,7 +861,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 					// Ideally there should be only one notification for this type.
 					// If there are multiple notification then we will read data about only the last one.
 					$setting               = $bnfw->notifier->read_settings( end( $notifications )->ID );
-					$notification_disabled = apply_filters( 'bnfw_notification_disabled', ( 'true' === $setting['disabled'] ), $id, $setting );
+					$notification_disabled = apply_filters( 'bnfw_notification_disabled', ( 'true' === $setting['disabled'] ), $user_old_data['ID'], $setting );
 
 					if ( ! $notification_disabled ) {
 
@@ -1362,7 +1362,10 @@ if ( ! class_exists( 'BNFW', false ) ) {
 					'notification_type' => $type,
 				);
 
-				if ( ! in_array( $notification_data, $transient, true ) ) {
+				if (
+					! in_array( $notification_data, $transient, true ) &&
+					apply_filters( 'bnfw_is_send_only_once_notification', true, $notification_data )
+				) {
 					$transient[] = $notification_data;
 					set_transient( 'bnfw-async-notifications', $transient, 600 );
 				}

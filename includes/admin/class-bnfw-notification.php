@@ -587,7 +587,7 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 						<label>
 							<input type="checkbox" name="disable-current-user"
 								value="true" <?php checked( 'true', $setting['disable-current-user'] ); ?>>
-							<?php esc_html_e( 'Do not send this Notification to the User that triggered it', 'bnfw' ); ?>
+							<?php esc_html_e( 'Do not send this notification to the User that triggered it', 'bnfw' ); ?>
 						</label>
 					</td>
 				</tr>

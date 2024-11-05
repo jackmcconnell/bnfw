@@ -5,7 +5,7 @@ Tags: notification, email, alert, message, notify
 Requires at least: 4.8
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: "1.9.6"
+Stable tag: "1.9.8"
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Update URI: https://wordpress.org/plugins/bnfw/
@@ -248,6 +248,13 @@ Please report security bugs found in the source code of the Better Notification 
 
 
 == Changelog ==
+
+= 1.9.8 - 5th November 2024 =
+* Added: Support for the new 'Send Notification Only Once' feature in the [Digest add-on](https://betternotificationsforwp.com/downloads/digest/).
+* Fixed: Various PHP warnings.
+
+= 1.9.7 - 16th September 2024 =
+* Resolved: Due to user feedback, I've downgraded the PHP requirements for the plugin to PHP 7.4.
 
 = 1.9.6 - 1st July 2024 =
 * Added: You can now use `[user_ip_address]` and `[email_user_ip_address]` in notifications that can use the User shortcodes.
