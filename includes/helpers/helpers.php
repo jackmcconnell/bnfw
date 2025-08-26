@@ -246,7 +246,7 @@ if ( ! function_exists( 'bnfw_format_date' ) ) {
 		$date_format = get_option( 'date_format' );
 		$time_format = get_option( 'time_format' );
 
-		return date( $date_format . ' ' . $time_format, strtotime( $date ) );
+		return date_i18n( $date_format . ' ' . $time_format, strtotime( $date ) );
 	}
 }
 

@@ -73,7 +73,6 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 					}
 				}
 
-
 				$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $id );
 				$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $id );
 				$emails  = $this->get_emails( $setting, $id );
@@ -103,7 +102,26 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 
 				if ( isset( $emails['to'] ) && is_array( $emails['to'] ) ) {
 					foreach ( $emails['to'] as $email ) {
-						wp_mail( $email, stripslashes( $this->handle_global_user_shortcodes( $subject, $email ) ), $this->handle_global_user_shortcodes( $message, $email ), $headers );
+
+						$subject = wp_specialchars_decode( stripslashes( $this->handle_global_user_shortcodes( $subject, $email ) ) );
+						$message = $this->handle_global_user_shortcodes( $message, $email );
+
+						/**
+						 * Filter to apply before send notification to user.
+						 *
+						 * @param bool $is_send Boolean. Default true.
+						 * @param int $id ID.
+						 * @param string $email Email of user.
+						 * @param array $setting Notification settings.
+						 * @param string $subject Notification subject.
+						 * @param string $message Notification content.
+						 * @param string|string[] $headers Additional headers.
+						 *
+						 * @since 1.9.9
+						 */
+						if ( apply_filters( 'bnfw_can_send_user_locale_email', true, $id, $email, $setting, $subject, $message, $headers ) ) {
+							wp_mail( $email, $subject, $message, $headers );
+						}
 					}
 				}
 			}
@@ -123,8 +141,9 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			 * Whether to trigger welcome email notification or not.
 			 *
 			 * @since 1.7
+			 * @since 1.9.9 Added `$password_url` parameter.
 			 */
-			$trigger_notification = apply_filters( 'bnfw_trigger_welcome-email_notification', true, $setting, $user );
+			$trigger_notification = apply_filters( 'bnfw_trigger_welcome-email_notification', true, $setting, $user, $password_url );
 
 			if ( ! $trigger_notification ) {
 				return;
@@ -164,7 +183,7 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 
 			$subject = $this->handle_global_user_shortcodes( $subject, $user->user_email );
 			$message = $this->handle_global_user_shortcodes( $message, $user->user_email );
-			wp_mail( $user->user_email, stripslashes( $subject ), $message, $headers );
+			wp_mail( $user->user_email, wp_specialchars_decode( stripslashes( $subject ) ), $message, $headers );
 		}
 
 		/**
@@ -204,7 +223,7 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			$subject = $this->handle_global_user_shortcodes( $subject, $user->user_email );
 			$message = $this->handle_global_user_shortcodes( $message, $user->user_email );
 
-			wp_mail( $user->user_email, stripslashes( $subject ), $message, $headers );
+			wp_mail( $user->user_email, wp_specialchars_decode( stripslashes( $subject ) ), $message, $headers );
 		}
 
 		/**
@@ -245,7 +264,17 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			 */
 			$notification_disabled = apply_filters( 'bnfw_notification_disabled', false, $comment_id, $setting );
 
-			if ( ! $notification_disabled ) {
+			/**
+			 * Filter to apply before send notification to user.
+			 *
+			 * @param bool $is_send Boolean. Default true.
+			 * @param int $comment_id Comment ID.
+			 * @param array $setting Notification settings.
+			 * @param object $parent_comment Parent comment object.
+			 *
+			 * @since 1.9.9
+			 */
+			if ( ! $notification_disabled && apply_filters( 'bnfw_trigger_comments_reply_notification', true, $comment_id, $setting, $parent_comment ) ) {
 				$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $comment_id );
 				$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $comment_id );
 				$headers = array();
@@ -261,7 +290,7 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 
 				$subject = $this->handle_global_user_shortcodes( $subject, $parent_comment->comment_author_email );
 				$message = $this->handle_global_user_shortcodes( $message, $parent_comment->comment_author_email );
-				wp_mail( $parent_comment->comment_author_email, stripslashes( $subject ), $message, $headers );
+				wp_mail( $parent_comment->comment_author_email, wp_specialchars_decode( stripslashes( $subject ) ), $message, $headers );
 			}
 		}
 
@@ -297,7 +326,7 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			$user    = get_user_by( 'id', $user_id );
 			$subject = $this->handle_global_user_shortcodes( $subject, $user->user_email );
 			$message = $this->handle_global_user_shortcodes( $message, $user->user_email );
-			wp_mail( $user->user_email, stripslashes( $subject ), $message, $headers );
+			wp_mail( $user->user_email, wp_specialchars_decode( stripslashes( $subject ) ), $message, $headers );
 		}
 
 		/**
@@ -334,7 +363,7 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 
 			$subject = $this->handle_global_user_shortcodes( $subject, $user->user_email );
 			$message = $this->handle_global_user_shortcodes( $message, $user->user_email );
-			wp_mail( $user->user_email, stripslashes( $subject ), $message, $headers );
+			wp_mail( $user->user_email, wp_specialchars_decode( stripslashes( $subject ) ), $message, $headers );
 		}
 
 		/**
@@ -443,11 +472,24 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		 *
 		 */
 		public function handle_core_updated_notification( $email_data, $setting, $type ) {
-			$email_data['body']    = $this->handle_shortcodes( $setting['message'], $setting['notification'], $type );
-			$email_data['subject'] = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $type );
 
 			$emails  = $this->get_emails( $setting, $type );
 			$headers = $this->get_headers( $emails );
+
+			/**
+			 * Filters the contents of the email sent when core updated.
+			 *
+			 * @param array $setting Notification settings.
+			 * @param array $email_data Used to build wp_mail().
+			 * @param array $emails Email addresses to send email.
+			 * @param string $type Result of update.
+			 *
+			 * @since 1.9.9
+			 */
+			$setting = apply_filters( 'bnfw_handle_core_updated_notification', $setting, $email_data, $emails, $type );
+
+			$email_data['body']    = $this->handle_shortcodes( $setting['message'], $setting['notification'], $type );
+			$email_data['subject'] = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $type );
 
 			$email_data['body']    = $this->handle_global_user_shortcodes( $email_data['body'], $emails['to'][0] );
 			$email_data['subject'] = $this->handle_global_user_shortcodes( $email_data['subject'], $emails['to'][0] );
@@ -473,14 +515,13 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		/**
 		 * Handle shortcode for password reset email message.
 		 *
-		 * @param string $setting Notification settings.
-		 * @param string $key The activation key.
-		 * @param string $user_login The username for the user.
+		 * @param array   $setting Notification settings.
+		 * @param string  $key The activation key.
+		 * @param string  $user_login The username for the user.
 		 * @param WP_User $user_data WP_User object.
 		 *
 		 * @return mixed|string
 		 * @since 1.1
-		 *
 		 */
 		public function handle_password_reset_shortcodes( $setting, $key, $user_login, $user_data ) {
 			$message = '';
@@ -506,6 +547,16 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 		public function send_password_changed_email( $setting, $user ) {
 			$user_id = $user->ID;
 
+			/**
+			 * Filters the Send Password Changed email.
+			 *
+			 * @param array $setting Notification settings.
+			 * @param WP_User $user WP_User object.
+			 *
+			 * @since 1.9.9
+			 */
+			$setting = apply_filters( 'bnfw_user_send_password_changed_email', $setting, $user );
+
 			$subject = $this->handle_shortcodes( $setting['subject'], $setting['notification'], $user_id );
 			$message = $this->handle_shortcodes( $setting['message'], $setting['notification'], $user_id );
 
@@ -522,7 +573,7 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 
 			$subject = $this->handle_global_user_shortcodes( $subject, $user->user_email );
 			$message = $this->handle_global_user_shortcodes( $message, $user->user_email );
-			wp_mail( $user->user_email, stripslashes( $subject ), $message, $headers );
+			wp_mail( $user->user_email, wp_specialchars_decode( stripslashes( $subject ) ), $message, $headers );
 		}
 
 		/**
@@ -843,7 +894,7 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 
 			$message = str_replace( '[post_category]', implode( ', ', wp_list_pluck( $categories, 'name' ) ), $message );
 
-			if ( count( $categories ) > 0 ) {
+			if ( ! is_wp_error( $categories ) && count( $categories ) > 0 ) {
 				$message = str_replace(
 					array(
 						'[post_category_slug]',

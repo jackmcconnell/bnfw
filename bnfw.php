@@ -3,7 +3,7 @@
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.9.8
+ * Version: 1.9.9
  * Requires at least: 4.8
  * Requires PHP: 7.4
  * Author: Made with Fuel
@@ -17,7 +17,7 @@
  */
 
 /**
- * Copyright © 2024 Made with Fuel Ltd. (hello@betternotificationsforwp.com)
+ * Copyright © 2025 Made with Fuel Ltd. (hello@betternotificationsforwp.com)
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
  * published by the Free Software Foundation.
@@ -40,7 +40,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 *
 		 * @var string
 		 */
-		public $bnfw_version = '1.9.8';
+		public $bnfw_version = '1.9.9';
 		/**
 		 * Class Constructor.
 		 *
@@ -268,6 +268,16 @@ if ( ! class_exists( 'BNFW', false ) ) {
 					$subject         = str_replace( '[[global_site_title]]', get_bloginfo( 'name' ), $subject );
 					$args['subject'] = $subject;
 				}
+
+				/**
+				 * Filters the subject of the email sent when a change of user email address is attempted.
+				 *
+				 * @param array $args An array of email TO, Subject, Message and Header.
+				 * @param array $setting Notification settings.
+				 *
+				 * @since 1.9.9
+				 */
+				$args = apply_filters( 'bnfw_user_on_email_change_request_subject', $args, $setting );
 			}
 
 			return $args;
@@ -732,9 +742,9 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 *
 		 * @since 1.1
 		 *
-		 * @param string $title Email subject.
-		 * @param string $user_login The username for the user.
-		 * @param string $user_data WP_User object.
+		 * @param string  $title Email subject.
+		 * @param string  $user_login The username for the user.
+		 * @param WP_User $user_data WP_User object.
 		 *
 		 * @return string
 		 */
@@ -744,12 +754,21 @@ if ( ! class_exists( 'BNFW', false ) ) {
 				// Ideally there should be only one notification for this type.
 				// If there are multiple notification then we will read data about only the last one.
 				$setting = $this->notifier->read_settings( end( $notifications )->ID );
+				$user_id = ! empty( $user_data->ID ) ? $user_data->ID : 0;
 
-				if ( '' === $user_data ) {
-					return $this->engine->handle_shortcodes( $setting['subject'], 'user-password', $user_data->ID );
-				} else {
-					return $this->engine->handle_shortcodes( $setting['subject'], 'user-password', $user_data->ID );
-				}
+				$title = $this->engine->handle_shortcodes( $setting['subject'], 'user-password', $user_id );
+
+				/**
+				 * Filters the subject of the password reset email.
+				 *
+				 * @since 1.9.9
+				 *
+				 * @param string  $title      Email subject.
+				 * @param array   $setting    Notification settings.
+				 * @param string  $user_login The username for the user.
+				 * @param WP_User $user_data  WP_User object.
+				 */
+				$title = apply_filters( 'bnfw_user_retrieve_password_title', $title, $setting, $user_login, $user_data );
 			}
 
 			return $title;
@@ -760,10 +779,10 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 *
 		 * @since 1.1
 		 *
-		 * @param string $message Email message.
-		 * @param string $key The activation key.
-		 * @param string $user_login The username for the user.
-		 * @param string $user_data WP_User object.
+		 * @param string  $message Email message.
+		 * @param string  $key The activation key.
+		 * @param string  $user_login The username for the user.
+		 * @param WP_User $user_data WP_User object.
 		 *
 		 * @return string
 		 */
@@ -773,6 +792,16 @@ if ( ! class_exists( 'BNFW', false ) ) {
 				// Ideally there should be only one notification for this type.
 				// If there are multiple notification then we will read data about only the last one.
 				$setting = $this->notifier->read_settings( end( $notifications )->ID );
+
+				/**
+				 * Filters the override the notification settings.
+				 *
+				 * @param array   $setting    Notification settings.
+				 * @param WP_User $user_data  WP_User object.
+				 *
+				 * @since 1.9.9
+				 */
+				$setting = apply_filters( 'bnfw_change_password_email_message_notification_settings', $setting, $user_data );
 
 				$message = $this->engine->handle_password_reset_shortcodes( $setting, $key, $user_login, $user_data );
 
@@ -911,6 +940,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 
 			return $email_data;
 		}
+
 		/**
 		 * Filters the text of the email sent when a change of user email address is attempted.
 		 *
@@ -934,6 +964,22 @@ if ( ! class_exists( 'BNFW', false ) ) {
 				// If there are multiple notification then we will read data about only the last one.
 				$setting = $this->notifier->read_settings( end( $notifications )->ID );
 
+				/**
+				 * Filters the override notification settings.
+				 *
+				 * @param array $setting Notification settings.
+				 * @param WP_User $user Current WP_User instance.
+				 * @param array $new_user_details {
+				 *      Data relating to the new user email address.
+				 *
+				 *      @type string $hash The secure hash used in the confirmation link URL.
+				 *      @type string $newemail The proposed new email address.
+				 *  }
+				 *
+				 * @since 1.9.9
+				 */
+				$setting = apply_filters( 'bnfw_user_on_email_changing_notification_settings', $setting, $user, $new_user_details );
+
 				// Ensures the content type of the message.
 				if ( 'html' === $setting['email-formatting'] ) {
 					add_filter( 'wp_mail_content_type', array( $this, 'set_html_content_type' ) );
@@ -943,7 +989,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 
 				$email_text = $this->engine->handle_shortcodes( $setting['message'], $setting['notification'], $new_user_details['newemail'] );
 				$email_text = $this->engine->handle_global_user_shortcodes( $email_text, $new_user_details['newemail'] );
-				$email_text = str_replace( '[email_change_confirmation_link]', esc_url( admin_url( 'profile.php?newuseremail=' . $new_user_details['hash'] ) ), $email_text );
+				$email_text = str_replace( '[email_change_confirmation_link]', esc_url( self_admin_url( 'profile.php?newuseremail=' . $new_user_details['hash'] ) ), $email_text );
 				$email_text = str_replace( '[user_nicename]', $user->data->user_nicename, $email_text );
 				$email_text = str_replace( '[user_id]', $user->data->ID, $email_text );
 				$email_text = str_replace( '[user_login]', $user->data->user_login, $email_text );
@@ -1032,6 +1078,17 @@ if ( ! class_exists( 'BNFW', false ) ) {
 				// Ideally there should be only one notification for this type.
 				// If there are multiple notification then we will read data about only the last one.
 				$setting = $this->notifier->read_settings( end( $notifications )->ID );
+
+				/**
+				 * Filters the override the notification settings.
+				 *
+				 * @param array $setting Notification settings.
+				 * @param array $email_data Email Data.
+				 * @param string|int $extra_data Extra data like ID of user.
+				 *
+				 * @since 1.9.9
+				 */
+				$setting = apply_filters( 'bnfw_handle_filtered_data_notification_settings', $setting, $email_data, $extra_data );
 
 				// Ensures the content type of the message.
 				if ( 'html' === $setting['email-formatting'] ) {
@@ -1152,8 +1209,9 @@ if ( ! class_exists( 'BNFW', false ) ) {
 					 * Trigger User Role Changed - For User notification.
 					 *
 					 * @since 1.6.5
+					 * @since 1.9.9 Added `$user_id` parameter.
 					 */
-					if ( apply_filters( 'bnfw_trigger_user-role_notification', true, $notification, $new_role, $old_roles ) ) {
+					if ( apply_filters( 'bnfw_trigger_user-role_notification', true, $notification, $new_role, $old_roles, $user_id ) ) {
 						$this->engine->send_user_role_changed_email( $this->notifier->read_settings( $notification->ID ), $user_id, $old_roles[0], $new_role );
 					}
 				}
@@ -1164,8 +1222,9 @@ if ( ! class_exists( 'BNFW', false ) ) {
 					 * Trigger User Role Changed - For User notification.
 					 *
 					 * @since 1.6.5
+					 * @since 1.9.9 Added `$user_id` parameter.
 					 */
-					if ( apply_filters( 'bnfw_trigger_admin-role_notification', true, $notification, $new_role, $old_roles ) ) {
+					if ( apply_filters( 'bnfw_trigger_admin-role_notification', true, $notification, $new_role, $old_roles, $user_id ) ) {
 						$setting            = $this->notifier->read_settings( $notification->ID );
 						$setting['message'] = $this->engine->handle_user_role_shortcodes( $setting['message'], $old_roles[0], $new_role );
 						$setting['subject'] = $this->engine->handle_user_role_shortcodes( $setting['subject'], $old_roles[0], $new_role );
@@ -1198,14 +1257,14 @@ if ( ! class_exists( 'BNFW', false ) ) {
 			$notifications = $this->notifier->get_notifications( 'user-role' );
 
 			foreach ( $notifications as $notification ) {
-				if ( apply_filters( 'bnfw_trigger_user-role_notification', true, $notification, $new_role, null ) ) {
+				if ( apply_filters( 'bnfw_trigger_user-role_notification', true, $notification, $new_role, null, $user_id ) ) {
 					$this->engine->send_user_role_changed_email( $this->notifier->read_settings( $notification->ID ), $user_id, null, $new_role );
 				}
 			}
 
 			$notifications_admin = $this->notifier->get_notifications( 'admin-role' );
 			foreach ( $notifications_admin as $notification ) {
-				if ( apply_filters( 'bnfw_trigger_admin-role_notification', true, $notification, $new_role, null ) ) {
+				if ( apply_filters( 'bnfw_trigger_admin-role_notification', true, $notification, $new_role, null, $user_id ) ) {
 					$setting            = $this->notifier->read_settings( $notification->ID );
 					$setting['message'] = $this->engine->handle_user_role_shortcodes( $setting['message'], null, $new_role );
 					$setting['subject'] = $this->engine->handle_user_role_shortcodes( $setting['subject'], null, $new_role );
@@ -1237,14 +1296,14 @@ if ( ! class_exists( 'BNFW', false ) ) {
 			$notifications = $this->notifier->get_notifications( 'user-role' );
 
 			foreach ( $notifications as $notification ) {
-				if ( apply_filters( 'bnfw_trigger_user-role_notification', true, $notification, null, array( $old_role ) ) ) {
+				if ( apply_filters( 'bnfw_trigger_user-role_notification', true, $notification, null, array( $old_role ), $user_id ) ) {
 					$this->engine->send_user_role_changed_email( $this->notifier->read_settings( $notification->ID ), $user_id, $old_role, null );
 				}
 			}
 
 			$notifications_admin = $this->notifier->get_notifications( 'admin-role' );
 			foreach ( $notifications_admin as $notification ) {
-				if ( apply_filters( 'bnfw_trigger_admin-role_notification', true, $notification, null, array( $old_role ) ) ) {
+				if ( apply_filters( 'bnfw_trigger_admin-role_notification', true, $notification, null, array( $old_role ), $user_id ) ) {
 					$setting            = $this->notifier->read_settings( $notification->ID );
 					$setting['message'] = $this->engine->handle_user_role_shortcodes( $setting['message'], $old_role, null );
 					$setting['subject'] = $this->engine->handle_user_role_shortcodes( $setting['subject'], $old_role, null );
@@ -1284,8 +1343,9 @@ if ( ! class_exists( 'BNFW', false ) ) {
 						 * Trigger User Role Changed - For User notification.
 						 *
 						 * @since 1.6.5
+						 * @since 1.9.9 Added `$user_id` parameter.
 						 */
-						if ( apply_filters( 'bnfw_trigger_user-role-added_notification', true, $notification, $new_roles, $old_roles ) ) {
+						if ( apply_filters( 'bnfw_trigger_user-role-added_notification', true, $notification, $new_roles, $old_roles, $user_id ) ) {
 							$this->engine->send_user_role_added_email( $this->notifier->read_settings( $notification->ID ), $user_id, $old_roles, $new_roles );
 						}
 					}
@@ -1297,8 +1357,9 @@ if ( ! class_exists( 'BNFW', false ) ) {
 						 * Trigger User Role Changed - For User notification.
 						 *
 						 * @since 1.6.5
+						 * @since 1.9.9 Added `$user_id` parameter.
 						 */
-						if ( apply_filters( 'bnfw_trigger_user-role-added_notification', true, $notification, $new_roles, $old_roles ) ) {
+						if ( apply_filters( 'bnfw_trigger_admin-role-added_notification', true, $notification, $new_roles, $old_roles, $user_id ) ) {
 							$setting            = $this->notifier->read_settings( $notification->ID );
 							$setting['message'] = $this->engine->handle_user_added_role_shortcodes( $setting['message'], $old_roles, $new_roles );
 							$setting['subject'] = $this->engine->handle_user_added_role_shortcodes( $setting['subject'], $old_roles, $new_roles );
@@ -1499,6 +1560,16 @@ if ( ! class_exists( 'BNFW', false ) ) {
 				// If there are multiple notification then we will read data about only the last one.
 				$setting = $this->notifier->read_settings( end( $notifications )->ID );
 
+				/**
+				 * Filters the text of the email sent with a personal data export file.
+				 *
+				 * @param array $setting Setting of the notification.
+				 * @param array $email_data Data relating to the account action email.
+				 *
+				 * @since 1.9.9
+				 */
+				$setting = apply_filters( 'bnfw_handle_data_export_email_content_settings', $setting, $email_data );
+
 				$new_content = $this->engine->handle_data_export_email_shortcodes( $setting[ $field ], $setting, $request_id );
 				$new_content = $this->engine->handle_global_user_shortcodes( $new_content, $email_data['message_recipient'] );
 			}
@@ -1546,7 +1617,18 @@ if ( ! class_exists( 'BNFW', false ) ) {
 			if ( count( $notifications ) > 0 ) {
 				// Ideally there should be only one notification for this type.
 				// If there are multiple notification then we will read data about only the last one.
-				$setting     = $this->notifier->read_settings( end( $notifications )->ID );
+				$setting = $this->notifier->read_settings( end( $notifications )->ID );
+
+				/**
+				 * Filters the subject of the email sent when an erasure request is completed.
+				 *
+				 * @param array $setting Setting of the notification.
+				 * @param array $email_data Data relating to the account action email.
+				 *
+				 * @since 1.9.9
+				 */
+				$setting = apply_filters( 'bnfw_handle_erasure_complete_email_notification_settings', $setting, $email_data );
+
 				$new_content = $this->engine->handle_shortcodes( $setting[ $field ], $notification_name, $email_data );
 			}
 			if ( ! empty( $new_content ) ) {
@@ -1622,6 +1704,16 @@ if ( ! class_exists( 'BNFW', false ) ) {
 				// If there are multiple notification then we will read data about only the last one.
 				$setting = $this->notifier->read_settings( end( $notifications )->ID );
 
+				/**
+				 * Filters the text of the email sent when an account action is attempted.
+				 *
+				 * @param array $setting Setting of the notification.
+				 * @param array $email_data Data relating to the account action email.
+				 *
+				 * @since 1.9.9
+				 */
+				$setting = apply_filters( 'bnfw_handle_user_request_notification_settings', $setting, $email_data );
+
 				return $this->engine->handle_user_request_email_shortcodes( $setting[ $field ], $setting, $email_data );
 			}
 
@@ -1643,6 +1735,16 @@ if ( ! class_exists( 'BNFW', false ) ) {
 				// Ideally there should be only one notification for this type.
 				// If there are multiple notification then we will read data about only the last one.
 				$setting = $this->notifier->read_settings( end( $notifications )->ID );
+
+				/**
+				 * Filters the body of the user request confirmation email.
+				 *
+				 * @param array $setting Setting of the notification.
+				 * @param array $email_data Data relating to the account action email.
+				 *
+				 * @since 1.9.9
+				 */
+				$setting = apply_filters( 'bnfw_handle_user_confirmed_action_notification_settings', $setting, $email_data );
 
 				return $this->engine->handle_user_confirmed_action_email_shortcodes( $setting[ $field ], $setting, $email_data );
 			}

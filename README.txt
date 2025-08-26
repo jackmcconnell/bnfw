@@ -1,11 +1,11 @@
 === Customize WordPress Emails and Alerts - Better Notifications for WP ===
-Contributors: voltronik
+Contributors: voltronik, bnfwsupport
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, alert, message, notify
 Requires at least: 4.8
-Tested up to: 6.6
+Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: "1.9.8"
+Stable tag: "1.9.9"
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Update URI: https://wordpress.org/plugins/bnfw/
@@ -248,6 +248,13 @@ Please report security bugs found in the source code of the Better Notification 
 
 
 == Changelog ==
+
+= 1.9.9 - 26th August 2025 =
+* Fixed: The `[email_change_confirmation_link]` shortcode link now respects being overridden correctly.
+* Fixed: Escaping in various shortcodes.
+* Fixed: Issue where non-English dates added via shortcodes still showed in English.
+* Fixed: Issue where a category or taxonomy term associated with a notification had been deleted.
+* Added: Support for the upcoming Multi-language Add-on.
 
 = 1.9.8 - 5th November 2024 =
 * Added: Support for the new 'Send Notification Only Once' feature in the [Digest add-on](https://betternotificationsforwp.com/downloads/digest/).

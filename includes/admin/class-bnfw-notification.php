@@ -709,6 +709,14 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 				</tbody>
 			</table>
 			<?php
+			/**
+			 * Fires after render all notification setting fields.
+			 *
+			 * @param array $setting Notification settings.
+			 *
+			 * @since 1.9.9
+			 */
+			do_action( 'bnfw_after_setting_fields', $setting );
 		}
 
 		/**
@@ -1014,8 +1022,16 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 						</label>
 					</div>
 
-					<br>
-					<br>
+					<?php
+					/**
+					 * Fires after notification meta setting fields.
+					 *
+					 * @param array $setting Notification settings.
+					 *
+					 * @since 1.9.9
+					 */
+					do_action( 'bnfw_after_notification_disabled_field', $setting );
+					?>
 
 					<?php if ( 'publish' === $post->post_status ) { ?>
 						<div class="bnfw-help-tip-container">
@@ -1187,7 +1203,14 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 			$columns['users']    = esc_html__( 'User Roles / Users', 'bnfw' );
 			$columns['excluded'] = esc_html__( 'Excluded User Roles / Users', 'bnfw' );
 
-			return $columns;
+			/**
+			 * Invoked while displaying a custom column in the notification table.
+			 *
+			 * @param array $column Array of column names.
+			 *
+			 * @since 1.9.9
+			 */
+			return apply_filters( 'bnfw_notification_table_columns', $columns );
 		}
 
 		/**
