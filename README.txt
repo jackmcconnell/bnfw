@@ -5,7 +5,7 @@ Tags: notification, email, alert, message, notify
 Requires at least: 4.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: "1.9.9"
+Stable tag: "1.9.9.1"
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Update URI: https://wordpress.org/plugins/bnfw/
@@ -248,6 +248,9 @@ Please report security bugs found in the source code of the Better Notification 
 
 
 == Changelog ==
+
+= 1.9.9.1 - 31st August 2025 =
+* Fixed: User shortcodes in the last update weren't using the correct data.
 
 = 1.9.9 - 26th August 2025 =
 * Fixed: The `[email_change_confirmation_link]` shortcode link now respects being overridden correctly.

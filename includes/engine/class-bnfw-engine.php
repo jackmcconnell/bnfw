@@ -103,8 +103,10 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 				if ( isset( $emails['to'] ) && is_array( $emails['to'] ) ) {
 					foreach ( $emails['to'] as $email ) {
 
-						$subject = wp_specialchars_decode( stripslashes( $this->handle_global_user_shortcodes( $subject, $email ) ) );
-						$message = $this->handle_global_user_shortcodes( $message, $email );
+						$prepare_subject = $subject; // Assign original content.
+						$prepare_message = $message; // Assign original content.
+						$prepare_subject = wp_specialchars_decode( stripslashes( $this->handle_global_user_shortcodes( $prepare_subject, $email ) ) );
+						$prepare_message = $this->handle_global_user_shortcodes( $prepare_message, $email );
 
 						/**
 						 * Filter to apply before send notification to user.
@@ -113,14 +115,14 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 						 * @param int $id ID.
 						 * @param string $email Email of user.
 						 * @param array $setting Notification settings.
-						 * @param string $subject Notification subject.
-						 * @param string $message Notification content.
+						 * @param string $prepare_subject Notification subject.
+						 * @param string $prepare_message Notification content.
 						 * @param string|string[] $headers Additional headers.
 						 *
 						 * @since 1.9.9
 						 */
-						if ( apply_filters( 'bnfw_can_send_user_locale_email', true, $id, $email, $setting, $subject, $message, $headers ) ) {
-							wp_mail( $email, $subject, $message, $headers );
+						if ( apply_filters( 'bnfw_can_send_user_locale_email', true, $id, $email, $setting, $prepare_subject, $prepare_message, $headers ) ) {
+							wp_mail( $email, $prepare_subject, $prepare_message, $headers );
 						}
 					}
 				}
