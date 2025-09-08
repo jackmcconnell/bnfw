@@ -1,5 +1,5 @@
 === Customize WordPress Emails and Alerts - Better Notifications for WP ===
-Contributors: voltronik, bnfwsupport
+Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, alert, message, notify
 Requires at least: 4.8
