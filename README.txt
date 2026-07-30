@@ -3,9 +3,9 @@ Contributors: voltronik
 Donate link: https://betternotificationsforwp.com/donate/
 Tags: notification, email, alert, message, notify
 Requires at least: 4.8
-Tested up to: 6.8
+Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: "1.9.9.1"
+Stable tag: "1.9.9.2"
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Update URI: https://wordpress.org/plugins/bnfw/
@@ -248,6 +248,9 @@ Please report security bugs found in the source code of the Better Notification 
 
 
 == Changelog ==
+
+= 1.9.9.2 - 30th July 2026 =
+* Updated: 3rd party select2 library to latest stable version.
 
 = 1.9.9.1 - 31st August 2025 =
 * Fixed: User shortcodes in the last update weren't using the correct data.
