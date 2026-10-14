@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Better Notifications for WP 1.3.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/bnfw\n"
-"POT-Creation-Date: 2020-11-27 21:34+0800\n"
+"POT-Creation-Date: 2026-09-10T12:52:44+00:00\n"
 "PO-Revision-Date: 2020-11-28 00:03+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -15,453 +15,411 @@ msgstr ""
 "X-Generator: Poedit 2.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: bnfw.php:283 includes/admin/bnfw-settings.php:15
+#. Plugin Name of the plugin
+msgid "Better Notifications for WP"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://wordpress.org/plugins/bnfw/"
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"Supercharge your WordPress notifications using a WYSIWYG editor and "
+"shortcodes. Default and new notifications available. Add more power with Add-"
+"ons."
+msgstr ""
+
+#. Author of the plugin
+msgid "Made with Fuel"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://betternotificationsforwp.com/"
+msgstr ""
+
+#: bnfw.php:375 includes/admin/class-bnfw-settings.php:33
 msgid "Settings"
 msgstr "Instellingen"
 
-#: includes/admin/bnfw-settings.php:14
-#: includes/admin/class-bnfw-notification.php:129
-msgid "Notification Settings"
-msgstr "Meldingen instellingen"
-
-#: includes/admin/bnfw-settings.php:38
-msgid "BNFW Settings"
-msgstr "BNFW instellingen"
-
-#: includes/admin/bnfw-settings.php:46
-msgid "Save Settings"
-msgstr "Instellingen opslaan"
-
-#: includes/admin/bnfw-settings.php:73
-msgid "Documentation"
-msgstr ""
-
-#: includes/admin/bnfw-settings.php:80
-msgid "Premium Add-ons"
-msgstr ""
-
-#: includes/admin/bnfw-settings.php:87
-msgid "Priority Support"
-msgstr ""
-
-#: includes/admin/bnfw-settings.php:150
-msgid "Suppress SPAM comment notification"
-msgstr "SPAM bericht melding onderdrukken"
-
-#: includes/admin/bnfw-settings.php:150
-msgid ""
-"Comments that are correctly marked as SPAM by a 3rd party plugin (such as "
-"Akismet) will not generate a notification if this is ticked."
-msgstr ""
-
-#: includes/admin/bnfw-settings.php:155
-msgid "Don't send notifications for comments marked as SPAM"
-msgstr "Stuur geen meldingen voor opmerkingen die als SPAM zijn gemarkeerd"
-
-#: includes/admin/bnfw-settings.php:167
-msgid "Default Email Format"
-msgstr "Standaard e-mail indeling"
-
-#: includes/admin/bnfw-settings.php:167
-msgid ""
-"This will apply to all emails sent out via WordPress, even those from other "
-"plugins. For more details, please see the "
-msgstr ""
-"Dit is van toepassing op alle e-mails die via WordPress worden verzonden, "
-"zelfs die van andere plug-ins. Zie het"
-
-#: includes/admin/bnfw-settings.php:181
-msgid "Enable Content Shortcodes?"
-msgstr ""
-
-#: includes/admin/bnfw-settings.php:181
-msgid "Shortcodes in the post/page content are disabled by default."
-msgstr ""
-
-#: includes/admin/bnfw-settings.php:186
-msgid "Enable shortcode output in the page/post content"
-msgstr ""
-
-#: includes/admin/bnfw-settings.php:198
-msgid "Allow Usage Tracking?"
-msgstr ""
-
-#: includes/admin/bnfw-settings.php:203
-msgid ""
-"Allow Better Notifications for WP to anonymously track how this plugin is "
-"used and help make the plugin better."
-msgstr ""
-
-#: includes/admin/bnfw-settings.php:251
-#: includes/admin/class-bnfw-notification.php:433
-msgid "HTML Formatting"
-msgstr "HTML-opmaak"
-
-#: includes/admin/bnfw-settings.php:256
-#: includes/admin/class-bnfw-notification.php:439
-msgid "Plain Text"
-msgstr "Platte tekst"
-
-#: includes/admin/class-bnfw-notification.php:52
-#: includes/admin/class-bnfw-notification.php:55
-#: includes/admin/class-bnfw-notification.php:56
+#: includes/admin/class-bnfw-notification.php:79
+#: includes/admin/class-bnfw-notification.php:82
+#: includes/admin/class-bnfw-notification.php:83
 msgid "Notifications"
 msgstr "Meldingen"
 
-#: includes/admin/class-bnfw-notification.php:53
+#: includes/admin/class-bnfw-notification.php:80
 msgid "Notification"
 msgstr "Melding"
 
-#: includes/admin/class-bnfw-notification.php:54
+#: includes/admin/class-bnfw-notification.php:81
 msgid "Add New"
 msgstr "Nieuwe toevoegen"
 
-#: includes/admin/class-bnfw-notification.php:57
+#: includes/admin/class-bnfw-notification.php:84
 msgid "Add New Notification"
 msgstr "Nieuwe melding toevoegen"
 
-#: includes/admin/class-bnfw-notification.php:58
+#: includes/admin/class-bnfw-notification.php:85
 msgid "Edit Notification"
 msgstr "Bewerk melding"
 
-#: includes/admin/class-bnfw-notification.php:59
+#: includes/admin/class-bnfw-notification.php:86
 msgid "New Notification"
 msgstr "Nieuwe melding"
 
-#: includes/admin/class-bnfw-notification.php:60
+#: includes/admin/class-bnfw-notification.php:87
 msgid "View Notification"
 msgstr "Bekijk melding"
 
-#: includes/admin/class-bnfw-notification.php:61
+#: includes/admin/class-bnfw-notification.php:88
 msgid "Search Notifications"
 msgstr "Zoek meldigen"
 
-#: includes/admin/class-bnfw-notification.php:62
+#: includes/admin/class-bnfw-notification.php:89
 msgid "No Notifications found"
 msgstr "Geen meldingen gevonden"
 
-#: includes/admin/class-bnfw-notification.php:63
+#: includes/admin/class-bnfw-notification.php:90
 msgid "No Notifications found in trash"
 msgstr "Geen meldingen gevonden in prullenmand"
 
-#: includes/admin/class-bnfw-notification.php:64
+#: includes/admin/class-bnfw-notification.php:91
 msgid "All Notifications"
 msgstr "Alle meldingen"
 
-#: includes/admin/class-bnfw-notification.php:138
+#: includes/admin/class-bnfw-notification.php:155
+#: includes/admin/class-bnfw-settings.php:32
+msgid "Notification Settings"
+msgstr "Meldingen instellingen"
+
+#: includes/admin/class-bnfw-notification.php:164
 msgid "Save Notification"
 msgstr "Melding opslaan"
 
-#: includes/admin/class-bnfw-notification.php:186
+#: includes/admin/class-bnfw-notification.php:212
 msgid "Notification For"
 msgstr "Melding voor"
 
-#: includes/admin/class-bnfw-notification.php:187
+#: includes/admin/class-bnfw-notification.php:213
 msgid ""
 "E.g. If you select \"New Post Published\" from the list on the right, this "
 "notification will be sent when a new post is published."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:191
+#: includes/admin/class-bnfw-notification.php:217
 msgid "Select the notification type"
 msgstr "Selecteer het meldingstype"
 
-#: includes/admin/class-bnfw-notification.php:192
+#: includes/admin/class-bnfw-notification.php:218
 msgid "Admin"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:194
-#: includes/admin/class-bnfw-notification.php:1302
+#: includes/admin/class-bnfw-notification.php:220
+#: includes/admin/class-bnfw-notification.php:1381
 msgid "New User Registration - For Admin"
 msgstr "[%s] Registratie nieuwe gebruiker"
 
-#: includes/admin/class-bnfw-notification.php:196
-#: includes/admin/class-bnfw-notification.php:1269
+#: includes/admin/class-bnfw-notification.php:222
+#: includes/admin/class-bnfw-notification.php:1348
 msgid "User Lost Password - For Admin"
 msgstr "Gebruiker wachtwoord verloren - voor admin"
 
-#: includes/admin/class-bnfw-notification.php:198
-#: includes/admin/class-bnfw-notification.php:1272
+#: includes/admin/class-bnfw-notification.php:224
+#: includes/admin/class-bnfw-notification.php:1351
 msgid "Password Changed - For Admin"
 msgstr "Wachtwoord gewijzigd - voor Admin"
 
-#: includes/admin/class-bnfw-notification.php:200
-#: includes/admin/class-bnfw-notification.php:1275
+#: includes/admin/class-bnfw-notification.php:226
+#: includes/admin/class-bnfw-notification.php:1354
 msgid "User Email Changed - For Admin"
 msgstr "E-mailadres van gebruiker gewijzigd - voor admin"
 
-#: includes/admin/class-bnfw-notification.php:202
-#: includes/admin/class-bnfw-notification.php:1308
+#: includes/admin/class-bnfw-notification.php:228
+#: includes/admin/class-bnfw-notification.php:1387
 msgid "User Role Changed - For Admin"
 msgstr "Gebruikersrol gewijzigd - voor Admin"
 
-#: includes/admin/class-bnfw-notification.php:204
-#: includes/admin/class-bnfw-notification.php:1296
+#: includes/admin/class-bnfw-notification.php:230
+#: includes/admin/class-bnfw-notification.php:1375
 msgid "User Logged In - For Admin"
 msgstr "Gebruiker aangemeld - voor admin"
 
-#: includes/admin/class-bnfw-notification.php:206
-#: includes/admin/class-bnfw-notification.php:1287
+#: includes/admin/class-bnfw-notification.php:232
+#: includes/admin/class-bnfw-notification.php:1366
 msgid "WordPress Core Automatic Background Updates"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:210
-#: includes/admin/class-bnfw-notification.php:1344
+#: includes/admin/class-bnfw-notification.php:236
+#: includes/admin/class-bnfw-notification.php:1423
 msgid "Privacy - Confirm Action: Export Data Request - For Admin"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:214
-#: includes/admin/class-bnfw-notification.php:1347
+#: includes/admin/class-bnfw-notification.php:240
+#: includes/admin/class-bnfw-notification.php:1426
 msgid "Privacy - Confirm Action: Erase Data Request - For Admin"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:222
+#: includes/admin/class-bnfw-notification.php:248
 msgid "Transactional"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:224
-#: includes/admin/class-bnfw-notification.php:1290
+#: includes/admin/class-bnfw-notification.php:250
+#: includes/admin/class-bnfw-notification.php:1369
 msgid "New User Registration - For User"
 msgstr "Nieuwe gebruikersregistratie: %s"
 
-#: includes/admin/class-bnfw-notification.php:226
-#: includes/admin/class-bnfw-notification.php:1299
+#: includes/admin/class-bnfw-notification.php:252
+#: includes/admin/class-bnfw-notification.php:1378
 msgid "New User - Post-registration Email"
 msgstr "Nieuwe gebruiker - E-mail na registratie"
 
-#: includes/admin/class-bnfw-notification.php:228
-#: includes/admin/class-bnfw-notification.php:1266
+#: includes/admin/class-bnfw-notification.php:254
+#: includes/admin/class-bnfw-notification.php:1345
 msgid "User Lost Password - For User"
 msgstr "Wachtwoord verloren gebruiker - voor gebruiker"
 
-#: includes/admin/class-bnfw-notification.php:230
-#: includes/admin/class-bnfw-notification.php:1278
+#: includes/admin/class-bnfw-notification.php:256
+#: includes/admin/class-bnfw-notification.php:1357
 msgid "Password Changed - For User"
 msgstr "Wachtwoord gewijzigd - voor gebruiker"
 
-#: includes/admin/class-bnfw-notification.php:232
-#: includes/admin/class-bnfw-notification.php:1281
+#: includes/admin/class-bnfw-notification.php:258
+#: includes/admin/class-bnfw-notification.php:1360
 msgid "User Email Changed Confirmation - For User"
 msgstr "Bevestiging e-mail gebruiker gewijzigd - voor gebruiker"
 
-#: includes/admin/class-bnfw-notification.php:235
-#: includes/admin/class-bnfw-notification.php:1284
+#: includes/admin/class-bnfw-notification.php:261
+#: includes/admin/class-bnfw-notification.php:1363
 msgid "User Email Changed - For User"
 msgstr "E-mailadres van gebruiker gewijzigd - voor gebruiker"
 
-#: includes/admin/class-bnfw-notification.php:237
-#: includes/admin/class-bnfw-notification.php:1305
+#: includes/admin/class-bnfw-notification.php:263
+#: includes/admin/class-bnfw-notification.php:1384
 msgid "User Role Changed - For User"
 msgstr "Gebruikersrol gewijzigd - voor gebruiker"
 
-#: includes/admin/class-bnfw-notification.php:239
-#: includes/admin/class-bnfw-notification.php:1293
+#: includes/admin/class-bnfw-notification.php:265
+#: includes/admin/class-bnfw-notification.php:1372
 msgid "User Logged In - For User"
 msgstr "Gebruiker aangemeld - voor gebruiker"
 
-#: includes/admin/class-bnfw-notification.php:241
-#: includes/admin/class-bnfw-notification.php:375
-#: includes/admin/class-bnfw-notification.php:1263
+#: includes/admin/class-bnfw-notification.php:267
+#: includes/admin/class-bnfw-notification.php:418
+#: includes/admin/class-bnfw-notification.php:1342
 msgid "Comment Reply"
 msgstr "Deze reactie beantwoorden"
 
-#: includes/admin/class-bnfw-notification.php:245
+#: includes/admin/class-bnfw-notification.php:271
 msgid "Privacy - Confirm Action: Export Data Request - For User"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:249
+#: includes/admin/class-bnfw-notification.php:275
 msgid "Privacy - Confirm Action: Erase Data Request - For User"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:253
-#: includes/admin/class-bnfw-notification.php:1350
+#: includes/admin/class-bnfw-notification.php:279
+#: includes/admin/class-bnfw-notification.php:1429
 msgid "Privacy - Data Export - For User"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:257
-#: includes/admin/class-bnfw-notification.php:1353
+#: includes/admin/class-bnfw-notification.php:283
+#: includes/admin/class-bnfw-notification.php:1432
 msgid "Privacy - Data Erased - For User"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:267
-#: includes/admin/class-bnfw-notification.php:1311
+#: includes/admin/class-bnfw-notification.php:293
+#: includes/admin/class-bnfw-notification.php:1390
 msgid "New Post Published"
 msgstr "Nieuw bericht gepubliceerd"
 
-#: includes/admin/class-bnfw-notification.php:269
-#: includes/admin/class-bnfw-notification.php:1314
+#: includes/admin/class-bnfw-notification.php:295
+#: includes/admin/class-bnfw-notification.php:1393
 msgid "Post Updated"
 msgstr "Bericht bijgewerkt."
 
-#: includes/admin/class-bnfw-notification.php:271
-#: includes/admin/class-bnfw-notification.php:1317
+#: includes/admin/class-bnfw-notification.php:297
+#: includes/admin/class-bnfw-notification.php:1396
 msgid "Post Pending Review"
 msgstr "Wachtend op review"
 
-#: includes/admin/class-bnfw-notification.php:273
-#: includes/admin/class-bnfw-notification.php:1320
+#: includes/admin/class-bnfw-notification.php:299
+#: includes/admin/class-bnfw-notification.php:1399
 msgid "New Private Post"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:275
-#: includes/admin/class-bnfw-notification.php:1323
+#: includes/admin/class-bnfw-notification.php:301
+#: includes/admin/class-bnfw-notification.php:1402
 msgid "Post Scheduled"
 msgstr "Bericht gepland"
 
-#: includes/admin/class-bnfw-notification.php:277
-#: includes/admin/class-bnfw-notification.php:1326
+#: includes/admin/class-bnfw-notification.php:303
+#: includes/admin/class-bnfw-notification.php:1405
 msgid "Published Post Moved to Trash"
 msgstr "Gepubliceerde post naar prullenbak verplaatst"
 
-#: includes/admin/class-bnfw-notification.php:279
-#: includes/admin/class-bnfw-notification.php:367
-#: includes/admin/class-bnfw-notification.php:1248
+#: includes/admin/class-bnfw-notification.php:305
+#: includes/admin/class-bnfw-notification.php:410
+#: includes/admin/class-bnfw-notification.php:1327
 msgid "New Comment"
 msgstr "Nieuwe reactie toevoegen"
 
-#: includes/admin/class-bnfw-notification.php:282
-#: includes/admin/class-bnfw-notification.php:369
-#: includes/admin/class-bnfw-notification.php:1254
-#: includes/admin/class-bnfw-notification.php:1407
+#: includes/admin/class-bnfw-notification.php:308
+#: includes/admin/class-bnfw-notification.php:412
+#: includes/admin/class-bnfw-notification.php:1333
+#: includes/admin/class-bnfw-notification.php:1484
 msgid "New Comment Awaiting Moderation"
 msgstr "Nieuwe reactie wacht op moderatie"
 
-#: includes/admin/class-bnfw-notification.php:285
-#: includes/admin/class-bnfw-notification.php:1251
+#: includes/admin/class-bnfw-notification.php:311
+#: includes/admin/class-bnfw-notification.php:1330
 msgid "Post - Comment Approved"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:288
-#: includes/admin/class-bnfw-notification.php:1332
+#: includes/admin/class-bnfw-notification.php:314
+#: includes/admin/class-bnfw-notification.php:1411
 msgid "New Category"
 msgstr "Nieuwe categorie toevoegen"
 
-#: includes/admin/class-bnfw-notification.php:290
-#: includes/admin/class-bnfw-notification.php:1335
+#: includes/admin/class-bnfw-notification.php:316
+#: includes/admin/class-bnfw-notification.php:1414
 msgid "New Tag"
 msgstr "Nieuwe tag toevoegen"
 
-#: includes/admin/class-bnfw-notification.php:292
-#: includes/admin/class-bnfw-notification.php:1257
+#: includes/admin/class-bnfw-notification.php:318
+#: includes/admin/class-bnfw-notification.php:1336
 msgid "New Trackback"
 msgstr "Nieuwe trackback op je bericht \"%s\""
 
-#: includes/admin/class-bnfw-notification.php:294
-#: includes/admin/class-bnfw-notification.php:1260
+#: includes/admin/class-bnfw-notification.php:320
+#: includes/admin/class-bnfw-notification.php:1339
 msgid "New Pingback"
 msgstr "Nieuwe pingback op bericht \"%s\""
 
-#: includes/admin/class-bnfw-notification.php:301
-#: includes/admin/class-bnfw-notification.php:1329
+#: includes/admin/class-bnfw-notification.php:327
+#: includes/admin/class-bnfw-notification.php:1408
 msgid "New Page Published"
 msgstr "Nieuwe pagina gepubliceerd"
 
-#: includes/admin/class-bnfw-notification.php:303
+#: includes/admin/class-bnfw-notification.php:329
 msgid "Page Updated"
 msgstr "Pagina bijgewerkt."
 
-#: includes/admin/class-bnfw-notification.php:305
+#: includes/admin/class-bnfw-notification.php:331
 msgid "Page Pending Review"
 msgstr "Pagina wacht op review"
 
-#: includes/admin/class-bnfw-notification.php:307
+#: includes/admin/class-bnfw-notification.php:333
 msgid "New Private Page"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:309
+#: includes/admin/class-bnfw-notification.php:335
 msgid "Page Scheduled"
 msgstr "Pagina gepland "
 
-#: includes/admin/class-bnfw-notification.php:311
+#: includes/admin/class-bnfw-notification.php:337
 msgid "Page - New Comment"
 msgstr "Nieuwe reactie toevoegen"
 
-#: includes/admin/class-bnfw-notification.php:313
+#: includes/admin/class-bnfw-notification.php:339
 msgid "Page - New Comment Awaiting Moderation"
 msgstr "Pagina - Nieuwe reactie wacht op moderatie"
 
-#: includes/admin/class-bnfw-notification.php:316
-#: includes/admin/class-bnfw-notification.php:1365
+#: includes/admin/class-bnfw-notification.php:342
+#: includes/admin/class-bnfw-notification.php:1444
 msgid "Page - Comment Approved"
 msgstr "Pagina - Reactie goedgekeurd"
 
-#: includes/admin/class-bnfw-notification.php:319
+#: includes/admin/class-bnfw-notification.php:345
 msgid "Page - Comment Reply"
 msgstr "Pagina - Reactie Reageren"
 
-#: includes/admin/class-bnfw-notification.php:326
-#: includes/admin/class-bnfw-notification.php:1356
+#: includes/admin/class-bnfw-notification.php:347
+msgid "Page - Moved to Trash"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:354
+#: includes/admin/class-bnfw-notification.php:1435
 msgid "New Media Published"
 msgstr "Nieuwe media gepubliceerd"
 
-#: includes/admin/class-bnfw-notification.php:328
-#: includes/admin/class-bnfw-notification.php:1359
+#: includes/admin/class-bnfw-notification.php:356
+#: includes/admin/class-bnfw-notification.php:1438
 msgid "Media Updated"
 msgstr "Pagina bijgewerkt."
 
-#: includes/admin/class-bnfw-notification.php:330
-#: includes/admin/class-bnfw-notification.php:1362
+#: includes/admin/class-bnfw-notification.php:358
+#: includes/admin/class-bnfw-notification.php:1441
 msgid "Media - New Comment"
 msgstr "Media - Nieuwe reactie"
 
-#: includes/admin/class-bnfw-notification.php:332
-#: includes/admin/class-bnfw-notification.php:1368
+#: includes/admin/class-bnfw-notification.php:360
+#: includes/admin/class-bnfw-notification.php:1447
 msgid "Media - Comment Approved"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:335
-#: includes/admin/class-bnfw-notification.php:1371
+#: includes/admin/class-bnfw-notification.php:363
+#: includes/admin/class-bnfw-notification.php:1450
 msgid "Media - New Comment Awaiting Moderation"
 msgstr "Media - Nieuwe reactie wacht op moderatie"
 
-#: includes/admin/class-bnfw-notification.php:337
-#: includes/admin/class-bnfw-notification.php:1374
+#: includes/admin/class-bnfw-notification.php:365
+#: includes/admin/class-bnfw-notification.php:1453
 msgid "Media - Comment Reply"
 msgstr "Media - Reactie Reageren"
 
-#: includes/admin/class-bnfw-notification.php:355
+#: includes/admin/class-bnfw-notification.php:370
+msgid "Media - Moved to Trash"
+msgstr ""
+
+#. translators: %s Custom post type lable name.
+#: includes/admin/class-bnfw-notification.php:398
 msgid "Custom Post Type"
 msgstr "Berichttype"
 
-#: includes/admin/class-bnfw-notification.php:357
-#: includes/admin/class-bnfw-notification.php:1389
+#: includes/admin/class-bnfw-notification.php:400
+#: includes/admin/class-bnfw-notification.php:1466
 msgid "New "
 msgstr "Nieuw"
 
-#: includes/admin/class-bnfw-notification.php:357
+#: includes/admin/class-bnfw-notification.php:400
 msgid " Published"
 msgstr "Gepubliceerd"
 
-#: includes/admin/class-bnfw-notification.php:359
+#: includes/admin/class-bnfw-notification.php:402
 msgid "Updated"
 msgstr "Bijgewerkt"
 
-#: includes/admin/class-bnfw-notification.php:361
+#: includes/admin/class-bnfw-notification.php:404
 msgid "Pending Review"
 msgstr "Wachtend op review"
 
-#: includes/admin/class-bnfw-notification.php:363
-#: includes/admin/class-bnfw-notification.php:1401
+#: includes/admin/class-bnfw-notification.php:406
+#: includes/admin/class-bnfw-notification.php:1478
 msgid "New Private "
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:365
+#: includes/admin/class-bnfw-notification.php:408
 msgid "Scheduled"
 msgstr "Gepland"
 
-#: includes/admin/class-bnfw-notification.php:372
+#: includes/admin/class-bnfw-notification.php:415
 msgid "Comment Approved"
 msgstr "Reactie goedgekeurd"
 
-#: includes/admin/class-bnfw-notification.php:394
+#: includes/admin/class-bnfw-notification.php:420
+msgid "Post Moved to Trash"
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:442
 msgid "Custom Taxonomy"
 msgstr "Taxonomie:"
 
-#: includes/admin/class-bnfw-notification.php:400
+#: includes/admin/class-bnfw-notification.php:448
 msgid "New"
 msgstr "Nieuw"
 
-#: includes/admin/class-bnfw-notification.php:419
+#: includes/admin/class-bnfw-notification.php:467
 msgid ""
 "This notification doesn't support additional email fields due to a "
 "limitation in WordPress."
@@ -469,225 +427,234 @@ msgstr ""
 "Deze melding ondersteunt geen extra e-mailvelden vanwege een beperking in "
 "WordPress."
 
-#: includes/admin/class-bnfw-notification.php:426
+#: includes/admin/class-bnfw-notification.php:474
 msgid "Email Formatting"
 msgstr "Formattering"
 
-#: includes/admin/class-bnfw-notification.php:427
+#: includes/admin/class-bnfw-notification.php:475
 msgid ""
 "How do you want to format the sent email? HTML is recommended as it'll show "
 "images and links correctly."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:448
+#: includes/admin/class-bnfw-notification.php:481
+#: includes/admin/class-bnfw-settings.php:258
+msgid "HTML Formatting"
+msgstr "HTML-opmaak"
+
+#: includes/admin/class-bnfw-notification.php:487
+#: includes/admin/class-bnfw-settings.php:263
+msgid "Plain Text"
+msgstr "Platte tekst"
+
+#: includes/admin/class-bnfw-notification.php:496
 msgid "Additional Email Fields"
 msgstr "Additionele e-mailvelden"
 
-#: includes/admin/class-bnfw-notification.php:449
+#: includes/admin/class-bnfw-notification.php:497
 msgid ""
 "This should be fairly self explanatory but if you're unsure, tick this "
 "checkbox and have a look at the available options. You can always untick it "
 "again should you decide you don't need to use it."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:454
+#: includes/admin/class-bnfw-notification.php:502
 msgid "Set \"From\" Name & Email, Reply To, CC, BCC"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:461
+#: includes/admin/class-bnfw-notification.php:509
 msgid "From Name and Email"
 msgstr "Naam en e-mailadres zijn verplicht bij het plaatsen van een reactie"
 
-#: includes/admin/class-bnfw-notification.php:462
+#: includes/admin/class-bnfw-notification.php:510
 msgid ""
 "If you want to send the email from your site name and email address instead "
 "of the default \"WordPress\" from \"wordpress@domain.com\", this is where "
 "you can do it."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:466
+#: includes/admin/class-bnfw-notification.php:514
 msgid "Site Name"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:468
+#: includes/admin/class-bnfw-notification.php:516
 msgid "Site Email"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:475
+#: includes/admin/class-bnfw-notification.php:523
 msgid "Reply To"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:476
+#: includes/admin/class-bnfw-notification.php:524
 msgid ""
 "If you want any replies to your email notification to go to another person, "
 "fill in this box with their name and email address."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:480
+#: includes/admin/class-bnfw-notification.php:528
 msgid "Name"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:482
+#: includes/admin/class-bnfw-notification.php:530
 msgid "Email"
 msgstr "E-mail"
 
-#: includes/admin/class-bnfw-notification.php:488
+#: includes/admin/class-bnfw-notification.php:536
 msgid "CC"
 msgstr "CC:"
 
-#: includes/admin/class-bnfw-notification.php:489
+#: includes/admin/class-bnfw-notification.php:537
 msgid "Publicly copy in any other users or user roles to this email."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:494
-#: includes/admin/class-bnfw-notification.php:508
-#: includes/admin/class-bnfw-notification.php:557
-#: includes/admin/class-bnfw-notification.php:575
+#: includes/admin/class-bnfw-notification.php:542
+#: includes/admin/class-bnfw-notification.php:556
+#: includes/admin/class-bnfw-notification.php:605
+#: includes/admin/class-bnfw-notification.php:623
 msgid "Select User Roles / Users"
 msgstr "Selecteer Gebruikersrollen / gebruikers"
 
-#: includes/admin/class-bnfw-notification.php:502
+#: includes/admin/class-bnfw-notification.php:550
 msgid "BCC"
 msgstr "BCC:"
 
-#: includes/admin/class-bnfw-notification.php:503
+#: includes/admin/class-bnfw-notification.php:551
 msgid "Privately copy in any other users or user roles to this email."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:518
+#: includes/admin/class-bnfw-notification.php:566
 msgid "Send to Author"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:519
+#: includes/admin/class-bnfw-notification.php:567
 msgid ""
 "E.g. If you want a new post published notification to go to the post author, "
 "tick this box."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:526
+#: includes/admin/class-bnfw-notification.php:574
 msgid "Send this notification to the Author"
 msgstr "Stuur deze melding naar de auteur"
 
-#: includes/admin/class-bnfw-notification.php:536
+#: includes/admin/class-bnfw-notification.php:584
 msgid ""
 "E.g. If you're an editor and regularly update your posts, you might not want "
 "to be emailed about this all the time. Ticking this box will prevent you "
 "from receiving emails about your own changes."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:542
-msgid "Do not send this Notification to the User that triggered it"
+#: includes/admin/class-bnfw-notification.php:590
+msgid "Do not send this notification to the User that triggered it"
 msgstr ""
-"Stuur deze kennisgeving niet naar de gebruiker die deze heeft geactiveerd"
 
-#: includes/admin/class-bnfw-notification.php:551
+#: includes/admin/class-bnfw-notification.php:599
 msgid "Send To"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:552
+#: includes/admin/class-bnfw-notification.php:600
 msgid "Choose the users and/or user roles to send this email notification to."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:565
+#: includes/admin/class-bnfw-notification.php:613
 msgid "Except For"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:568
+#: includes/admin/class-bnfw-notification.php:616
 msgid ""
 "Choose the users and/or user roles that this notification should not be sent "
 "to."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:593
+#: includes/admin/class-bnfw-notification.php:641
 msgid ""
 "You have chosen to send this notification to over 200 users. Please check "
 "the email sending rate limit at your host before sending."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:603
-#: includes/admin/class-bnfw-notification.php:1129
+#: includes/admin/class-bnfw-notification.php:651
+#: includes/admin/class-bnfw-notification.php:1202
 msgid "Subject"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:604
+#: includes/admin/class-bnfw-notification.php:652
 msgid "Notification subject. You can use "
 msgstr "Onderwerp van melding. Je kunt gebruiken"
 
-#: includes/admin/class-bnfw-notification.php:604
-#: includes/admin/class-bnfw-notification.php:618
+#: includes/admin/class-bnfw-notification.php:652
+#: includes/admin/class-bnfw-notification.php:666
 msgid " here."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:617
+#: includes/admin/class-bnfw-notification.php:665
 msgid "Message Body"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:618
+#: includes/admin/class-bnfw-notification.php:666
 msgid "Notification message. You can use "
 msgstr "Meldingsbericht. Je kunt gebruiken"
 
-#: includes/admin/class-bnfw-notification.php:626
+#: includes/admin/class-bnfw-notification.php:674
 msgid "Need some more help?"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:636
+#: includes/admin/class-bnfw-notification.php:684
 msgid "Insert Default Content"
 msgstr "Voeg standaardinhoud in"
 
-#: includes/admin/class-bnfw-notification.php:640
+#: includes/admin/class-bnfw-notification.php:688
 msgid "Read Documentation"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:644
+#: includes/admin/class-bnfw-notification.php:692
 msgid "Find Shortcodes"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:655
+#: includes/admin/class-bnfw-notification.php:703
 msgid ""
 "Stop additional paragraph and line break HTML from being inserted into my "
 "notifications"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:710
+#: includes/admin/class-bnfw-notification.php:766
 msgid ""
 "You must choose at least one User or User Role to send the notification to "
 "before you can save"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:825
+#: includes/admin/class-bnfw-notification.php:889
 msgid "Test Notification Sent."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:915
+#: includes/admin/class-bnfw-notification.php:980
 msgid "Notification saved."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:934
-#: includes/admin/class-bnfw-notification.php:992
-#: includes/admin/class-bnfw-notification.php:994
+#: includes/admin/class-bnfw-notification.php:999
+#: includes/admin/class-bnfw-notification.php:1065
+#: includes/admin/class-bnfw-notification.php:1067
 msgid "Save"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:942
+#: includes/admin/class-bnfw-notification.php:1007
 msgid ""
 "Use this to enable or disable notifications. If you want to disable a "
 "default WordPress notification, just create it on the left, then disable it "
 "here."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:949
+#: includes/admin/class-bnfw-notification.php:1014
 msgid "Notification Enabled"
 msgstr "Melding ingeschakeld"
 
-#: includes/admin/class-bnfw-notification.php:956
+#: includes/admin/class-bnfw-notification.php:1021
 msgid "Notification Disabled"
 msgstr "Melding uitgeschakeld"
 
-#: includes/admin/class-bnfw-notification.php:967
+#: includes/admin/class-bnfw-notification.php:1040
 msgid "Send Me a Test Email"
 msgstr "Stuur mij een test e-mail"
 
-#: includes/admin/class-bnfw-notification.php:969
+#: includes/admin/class-bnfw-notification.php:1042
 msgid ""
 "This will send you (the currently logged in user) a notification so that you "
 "can check for any issues with formatting – it’s doesn't mean that a "
@@ -695,294 +662,282 @@ msgid ""
 "improve email delivery"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:969
+#: includes/admin/class-bnfw-notification.php:1042
 msgid "here"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:969
+#: includes/admin/class-bnfw-notification.php:1042
 msgid ". Shortcodes will not be replaced with content."
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:980
+#: includes/admin/class-bnfw-notification.php:1053
 msgid "Delete Permanently"
 msgstr "Permanent verwijderen"
 
-#: includes/admin/class-bnfw-notification.php:982
+#: includes/admin/class-bnfw-notification.php:1055
 msgid "Move to Trash"
 msgstr "In de prullenbak"
 
-#: includes/admin/class-bnfw-notification.php:1127
+#: includes/admin/class-bnfw-notification.php:1200
 msgid "Notification Type"
 msgstr "Type melding"
 
-#: includes/admin/class-bnfw-notification.php:1128
+#: includes/admin/class-bnfw-notification.php:1201
 msgid "Enabled?"
 msgstr "Actief?"
 
-#: includes/admin/class-bnfw-notification.php:1130
+#: includes/admin/class-bnfw-notification.php:1203
 msgid "User Roles / Users"
 msgstr "Gebruikersrollen"
 
-#: includes/admin/class-bnfw-notification.php:1131
+#: includes/admin/class-bnfw-notification.php:1204
 msgid "Excluded User Roles / Users"
 msgstr "Uitgesloten gebruikersrollen / gebruikers"
 
-#: includes/admin/class-bnfw-notification.php:1172
+#: includes/admin/class-bnfw-notification.php:1251
 msgid ", Post Author"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:1338
+#: includes/admin/class-bnfw-notification.php:1417
 msgid "Privacy – Confirm Action: Export Data Request – For User"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:1341
+#: includes/admin/class-bnfw-notification.php:1420
 msgid "Privacy – Confirm Action: Erase Data Request – For User"
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:1389
+#: includes/admin/class-bnfw-notification.php:1466
 msgid "Published"
 msgstr "Gepubliceerd"
 
-#: includes/admin/class-bnfw-notification.php:1392
+#: includes/admin/class-bnfw-notification.php:1469
 msgid "Updated "
 msgstr "Bijgewerkt!"
 
-#: includes/admin/class-bnfw-notification.php:1395
+#: includes/admin/class-bnfw-notification.php:1472
 msgid " Pending Review"
 msgstr "Wachtend op review"
 
-#: includes/admin/class-bnfw-notification.php:1398
+#: includes/admin/class-bnfw-notification.php:1475
 msgid " Scheduled"
 msgstr "Gepland"
 
-#: includes/admin/class-bnfw-notification.php:1404
+#: includes/admin/class-bnfw-notification.php:1481
 msgid " Comment"
 msgstr "Reactie"
 
-#: includes/admin/class-bnfw-notification.php:1410
+#: includes/admin/class-bnfw-notification.php:1487
 msgid " Comment Reply"
 msgstr "Reageer Reageer"
 
-#: includes/admin/class-bnfw-notification.php:1413
+#: includes/admin/class-bnfw-notification.php:1490
 msgid " Comment Approved"
 msgstr "Reactie goedgekeurd"
 
-#: includes/admin/class-bnfw-notification.php:1418
+#: includes/admin/class-bnfw-notification.php:1495
 msgid "New Term"
 msgstr "Nieuwe term"
 
-#: includes/admin/class-bnfw-notification.php:1420
+#: includes/admin/class-bnfw-notification.php:1497
 msgid "New Term in "
 msgstr ""
 
-#: includes/admin/class-bnfw-notification.php:1440
+#: includes/admin/class-bnfw-notification.php:1517
 msgid "Enable Notifications"
 msgstr "Notificaties aanzetten"
 
-#: includes/admin/class-bnfw-notification.php:1441
+#: includes/admin/class-bnfw-notification.php:1518
 msgid "Disable Notifications"
 msgstr "Meldingen uitschakelen"
 
-#: includes/admin/class-bnfw-notification.php:1502
+#: includes/admin/class-bnfw-notification.php:1580
 msgid "Enable Notification"
 msgstr "Melding inschakelen"
 
-#: includes/admin/class-bnfw-notification.php:1510
+#: includes/admin/class-bnfw-notification.php:1589
 msgid "Disable Notification"
 msgstr "Uitschakelen melding"
 
-#: includes/admin/class-bnfw-notification.php:1568
+#: includes/admin/class-bnfw-notification.php:1618
 msgid "Enabled 1 Notification."
 msgstr "Ingeschakeld 1 Melding."
 
-#: includes/admin/class-bnfw-notification.php:1572
+#: includes/admin/class-bnfw-notification.php:1623
 msgid "Disabled 1 Notification."
 msgstr "Uitgeschakeld 1 Melding."
 
-#: includes/admin/class-bnfw-notification.php:1578
-#, php-format
+#: includes/admin/class-bnfw-notification.php:1629
+msgid "You don't have permission to perform this action."
+msgstr ""
+
+#: includes/admin/class-bnfw-notification.php:1633
+msgid "Nonce expired. Please try again."
+msgstr ""
+
+#. translators: %s: enabled notification count
+#: includes/admin/class-bnfw-notification.php:1681
 msgid "Enabled %s Notification."
 msgid_plural "Enabled %s Notifications."
 msgstr[0] "%s melding ingeschakeld."
 msgstr[1] "%s meldingen ingeschakeld."
 
-#: includes/admin/class-bnfw-notification.php:1588
-#, php-format
+#. translators: %s: disabled notification count
+#: includes/admin/class-bnfw-notification.php:1697
 msgid "Disabled %s Notification."
 msgid_plural "Disabled %s Notifications."
 msgstr[0] "%s melding uitgeschakeld."
 msgstr[1] "%s meldingen uitgeschakeld."
 
-#: includes/admin/class-bnfw-notification.php:1602
+#: includes/admin/class-bnfw-notification.php:1715
 msgid ""
 "If you send out notifications with BNFW but don't receive them, you may need "
 "to install an SMTP plugin to <a href=\"https://betternotificationsforwp.com/"
-"documentation/getting-started/how-to-improve-email-delivery/\" target="
-"\"_blank\">improve email deliverability</a>. I recommend using <a href="
-"\"https://wordpress.org/plugins/post-smtp/\" target=\"_blank\">Post SMTP</a> "
-"as it's easy to set-up or <a href=\"https://wordpress.org/plugins/email-log/"
-"\" target=\"_blank\">Email Log</a> to just log and view emails that are sent."
+"documentation/getting-started/how-to-improve-email-delivery/\" "
+"target=\"_blank\">improve email deliverability</a>. I recommend using <a "
+"href=\"https://wordpress.org/plugins/post-smtp/\" target=\"_blank\">Post "
+"SMTP</a> as it's easy to set-up or <a href=\"https://wordpress.org/plugins/"
+"email-log/\" target=\"_blank\">Email Log</a> to just log and view emails "
+"that are sent."
 msgstr ""
 
-#: includes/engine/class-bnfw-engine.php:18
+#: includes/admin/class-bnfw-settings.php:46
+msgid "BNFW Settings"
+msgstr "BNFW instellingen"
+
+#: includes/admin/class-bnfw-settings.php:54
+msgid "Save Settings"
+msgstr "Instellingen opslaan"
+
+#: includes/admin/class-bnfw-settings.php:81
+msgid "Documentation"
+msgstr ""
+
+#: includes/admin/class-bnfw-settings.php:88
+msgid "Premium Add-ons"
+msgstr ""
+
+#: includes/admin/class-bnfw-settings.php:95
+msgid "Priority Support"
+msgstr ""
+
+#: includes/admin/class-bnfw-settings.php:157
+msgid "Suppress SPAM comment notification"
+msgstr "SPAM bericht melding onderdrukken"
+
+#: includes/admin/class-bnfw-settings.php:157
+msgid ""
+"Comments that are correctly marked as SPAM by a 3rd party plugin (such as "
+"Akismet) will not generate a notification if this is ticked."
+msgstr ""
+
+#: includes/admin/class-bnfw-settings.php:162
+msgid "Don't send notifications for comments marked as SPAM"
+msgstr "Stuur geen meldingen voor opmerkingen die als SPAM zijn gemarkeerd"
+
+#: includes/admin/class-bnfw-settings.php:175
+msgid "Default Email Format"
+msgstr "Standaard e-mail indeling"
+
+#: includes/admin/class-bnfw-settings.php:175
+msgid ""
+"This will apply to all emails sent out via WordPress, even those from other "
+"plugins. For more details, please see the "
+msgstr ""
+"Dit is van toepassing op alle e-mails die via WordPress worden verzonden, "
+"zelfs die van andere plug-ins. Zie het"
+
+#: includes/admin/class-bnfw-settings.php:190
+msgid "Enable Content Shortcodes?"
+msgstr ""
+
+#: includes/admin/class-bnfw-settings.php:190
+msgid "Shortcodes in the post/page content are disabled by default."
+msgstr ""
+
+#: includes/admin/class-bnfw-settings.php:195
+msgid "Enable shortcode output in the page/post content"
+msgstr ""
+
+#: includes/admin/class-bnfw-settings.php:208
+msgid "Allow Usage Tracking?"
+msgstr ""
+
+#: includes/admin/class-bnfw-settings.php:213
+msgid ""
+"Allow Better Notifications for WP to anonymously track how this plugin is "
+"used and help make the plugin better."
+msgstr ""
+
+#: includes/class-bnfw-import.php:81 includes/import.php:69
+msgid " for "
+msgstr "voor"
+
+#: includes/class-bnfw-import.php:81 includes/import.php:69
+msgid " (Auto Imported)"
+msgstr "(Automatisch ge-importeert)"
+
+#: includes/engine/class-bnfw-engine.php:26
 msgid "Test Email:"
 msgstr "Test e-mail:"
 
-#: includes/engine/class-bnfw-engine.php:19
+#: includes/engine/class-bnfw-engine.php:27
 msgid ""
 "This is a test email. All shortcodes below will show in place but not be "
 "replaced with content."
 msgstr ""
 
-#: includes/engine/class-bnfw-engine.php:1583
+#: includes/engine/class-bnfw-engine.php:1782
 msgid "Error: Download link is not available please contact support"
 msgstr ""
 
-#: includes/helpers/ajax-helpers.php:34 includes/helpers/helpers.php:38
+#: includes/helpers/class-bnfw-ajax.php:47 includes/helpers/helpers.php:68
 msgid "User Roles"
 msgstr "Gebruikersrollen"
 
-#: includes/helpers/ajax-helpers.php:57 includes/helpers/helpers.php:59
-#: includes/helpers/helpers.php:64
+#: includes/helpers/class-bnfw-ajax.php:69 includes/helpers/helpers.php:89
+#: includes/helpers/helpers.php:94
 msgid "Users"
 msgstr ""
 
-#: includes/helpers/helpers.php:103
+#: includes/helpers/helpers.php:133
 msgid "Non WordPress Users"
 msgstr ""
 
-#: includes/import.php:69
-msgid " for "
-msgstr "voor"
+#~ msgid "Do not send this Notification to the User that triggered it"
+#~ msgstr ""
+#~ "Stuur deze kennisgeving niet naar de gebruiker die deze heeft geactiveerd"
 
-#: includes/import.php:69
-msgid " (Auto Imported)"
-msgstr "(Automatisch ge-importeert)"
-
-#: includes/libraries/EDD_SL_Plugin_Updater.php:228
 #, php-format
-msgid ""
-"There is a new version of %1$s available. %2$sView version %3$s details%4$s."
-msgstr ""
+#~ msgid "New user registration on your site %s:"
+#~ msgstr "Nieuwe gebruiker geregistreerd op de site %s:"
 
-#: includes/libraries/EDD_SL_Plugin_Updater.php:236
 #, php-format
-msgid ""
-"There is a new version of %1$s available. %2$sView version %3$s details%4$s "
-"or %5$supdate now%6$s."
-msgstr ""
+#~ msgid "Username: %s"
+#~ msgstr "Gebruikersnaam: %s"
 
-#: includes/libraries/EDD_SL_Plugin_Updater.php:474
-msgid "You do not have permission to install plugin updates"
-msgstr ""
-
-#: includes/libraries/EDD_SL_Plugin_Updater.php:474
-msgid "Error"
-msgstr ""
-
-#: includes/license/class-bnfw-license-setting.php:18
-#: includes/license/class-bnfw-license-setting.php:19
-msgid "Add-on Licenses"
-msgstr ""
-
-#: includes/license/class-bnfw-license-setting.php:38
-msgid "BNFW Add-on Licenses"
-msgstr ""
-
-#: includes/license/class-bnfw-license-setting.php:47
-msgid "Save License"
-msgstr ""
-
-#: includes/license/class-bnfw-license-setting.php:55
-msgid ""
-"<br>You have no BNFW Premium Add-ons installed yet.<br>You can buy add-ons "
-"from the <a href=\""
-msgstr ""
-
-#: includes/license/class-bnfw-license-setting.php:130
-msgid "Deactivate License"
-msgstr ""
-
-#: includes/license/class-bnfw-license.php:140
 #, php-format
-msgid "%1$s License Key"
-msgstr ""
+#~ msgid "E-mail: %s"
+#~ msgstr "E-mailadres: %s"
 
-#: includes/overrides.php:41 includes/overrides.php:135
 #, php-format
-msgid "New user registration on your site %s:"
-msgstr "Nieuwe gebruiker geregistreerd op de site %s:"
+#~ msgid "[%s] New User Registration"
+#~ msgstr "[%s] Registratie nieuwe gebruiker"
 
-#: includes/overrides.php:42 includes/overrides.php:117
-#: includes/overrides.php:136 includes/overrides.php:152
 #, php-format
-msgid "Username: %s"
-msgstr "Gebruikersnaam: %s"
+#~ msgid "[%s] Your username and password info"
+#~ msgstr "[%s] Uw gebruikersnaam en wachtwoordinformatie"
 
-#: includes/overrides.php:43 includes/overrides.php:137
 #, php-format
-msgid "E-mail: %s"
-msgstr "E-mailadres: %s"
+#~ msgid "Password: %s"
+#~ msgstr "Wachtwoord: %s"
 
-#. translators: Password change notification email subject. %s: Site title
-#: includes/overrides.php:48 includes/overrides.php:139
 #, php-format
-msgid "[%s] New User Registration"
-msgstr "[%s] Registratie nieuwe gebruiker"
+#~ msgid "[%s] Your username and password"
+#~ msgstr "[%s] Je gebruikersnaam en wachtwoord"
 
-#: includes/overrides.php:118
-msgid "To set your password, visit the following address:"
-msgstr ""
-
-#: includes/overrides.php:123
 #, php-format
-msgid "[%s] Your username and password info"
-msgstr "[%s] Uw gebruikersnaam en wachtwoordinformatie"
-
-#: includes/overrides.php:153
-#, php-format
-msgid "Password: %s"
-msgstr "Wachtwoord: %s"
-
-#: includes/overrides.php:156
-#, php-format
-msgid "[%s] Your username and password"
-msgstr "[%s] Je gebruikersnaam en wachtwoord"
-
-#. translators: %s: user name
-#: includes/overrides.php:184
-#, php-format
-msgid "Password changed for user: %s"
-msgstr "Wachtwoord gewijzigd voor gebruiker: %s"
-
-#. translators: %s: site title
-#: includes/overrides.php:189
-#, php-format
-msgid "[%s] Password Changed"
-msgstr ""
-
-#. Plugin Name of the plugin/theme
-msgid "Better Notifications for WP"
-msgstr ""
-
-#. Plugin URI of the plugin/theme
-msgid "https://wordpress.org/plugins/bnfw/"
-msgstr ""
-
-#. Description of the plugin/theme
-msgid ""
-"Supercharge your WordPress notifications using a WYSIWYG editor and "
-"shortcodes. Default and new notifications available. Add more power with Add-"
-"ons."
-msgstr ""
-
-#. Author of the plugin/theme
-msgid "Made with Fuel"
-msgstr ""
-
-#. Author URI of the plugin/theme
-msgid "https://madewithfuel.com/"
-msgstr ""
+#~ msgid "Password changed for user: %s"
+#~ msgstr "Wachtwoord gewijzigd voor gebruiker: %s"
 
 #~ msgid "New User - Welcome Email"
 #~ msgstr "Verzend welkomstberichtl aan de nieuwe gebruiker."

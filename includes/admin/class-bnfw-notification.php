@@ -822,7 +822,7 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 				'disable-current-user' => isset( $_POST['disable-current-user'] ) ? sanitize_text_field( wp_unslash( $_POST['disable-current-user'] ) ) : 'false',
 				'disable-autop'        => isset( $_POST['disable-autop'] ) ? sanitize_text_field( wp_unslash( $_POST['disable-autop'] ) ) : 'false',
 				'only-post-author'     => isset( $_POST['only-post-author'] ) ? sanitize_text_field( wp_unslash( $_POST['only-post-author'] ) ) : 'false',
-				'comment-author'     => isset( $_POST['comment-author'] ) ? sanitize_text_field( $_POST['comment-author'] ) : 'false',
+				'comment-author'     => isset( $_POST['comment-author'] ) ? sanitize_text_field( wp_unslash( $_POST['comment-author'] ) ) : 'false',
 				'users'                => array(),
 				'exclude-users'        => array(),
 			);
@@ -859,7 +859,7 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 			}
 
 			if ( isset( $_POST['bnfw-tab-admin-status'] ) ) {
-				update_post_meta( $post_id, 'bnfw-tab-addon-status', $_POST['bnfw-tab-admin-status'] );
+				update_post_meta( $post_id, 'bnfw-tab-addon-status', sanitize_text_field( wp_unslash( $_POST['bnfw-tab-admin-status'] ) ) );
 			} else {
 				delete_post_meta( $post_id, 'bnfw-tab-addon-status' );
 			}
@@ -1712,7 +1712,7 @@ if ( ! class_exists( 'BNFW_Notification', false ) ) {
 			?>
 			<div data-dismissible="disable-bnfw-help-notice-forever" class="updated notice notice-success is-dismissible">
 				<p>
-					<?php echo wp_kses_post( __( 'If you send out notifications with BNFW but don\'t receive them, you may need to install an SMTP plugin to <a href="https://betternotificationsforwp.com/documentation/getting-started/how-to-improve-email-delivery/" target="_blank">improve email deliverability</a>. I recommend using <a href="https://wordpress.org/plugins/post-smtp/" target="_blank">Post SMTP</a> as it\'s easy to set-up or <a href="https://wordpress.org/plugins/email-log/" target="_blank">Email Log</a> to just log and view emails that are sent.', 'bnfw' ) ); ?>
+					<?php echo wp_kses_post( __( 'If you send out notifications with BNFW but don\'t receive them, you may need to install an SMTP plugin to <a href="https://betternotificationsforwp.com/documentation/getting-started/how-to-improve-email-delivery/" target="_blank">improve email delivery</a>. I recommend using <a href="https://wordpress.org/plugins/post-smtp/" target="_blank">Post SMTP</a> as it\'s easy to set-up and contains an email log.', 'bnfw' ) ); ?>
 				</p>
 			</div>
 			<?php

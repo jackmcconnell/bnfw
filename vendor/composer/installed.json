@@ -1,0 +1,44 @@
+{
+    "packages": [
+        {
+            "name": "easy-digital-downloads/edd-sl-sdk",
+            "version": "1.0.4",
+            "version_normalized": "1.0.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/awesomemotive/edd-sl-sdk.git",
+                "reference": "67188096ea33a00585d5adde06201d006071a92e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/awesomemotive/edd-sl-sdk/zipball/67188096ea33a00585d5adde06201d006071a92e",
+                "reference": "67188096ea33a00585d5adde06201d006071a92e",
+                "shasum": ""
+            },
+            "require-dev": {
+                "codedungeon/phpunit-result-printer": "dev-master",
+                "phpunit/phpunit": "^8",
+                "yoast/phpunit-polyfills": "^1.0.5",
+                "yoast/wp-test-utils": "^1.0"
+            },
+            "time": "2026-09-15T18:46:34+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "EasyDigitalDownloads\\Updater\\": "src/"
+                }
+            },
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "support": {
+                "source": "https://github.com/awesomemotive/edd-sl-sdk/tree/1.0.4",
+                "issues": "https://github.com/awesomemotive/edd-sl-sdk/issues"
+            },
+            "install-path": "../easy-digital-downloads/edd-sl-sdk"
+        }
+    ],
+    "dev": false,
+    "dev-package-names": []
+}

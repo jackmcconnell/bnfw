@@ -147,7 +147,8 @@ if ( ! class_exists( 'BNFW_Settings', false ) ) {
 			// Register - Suppress SPAM Checkbox.
 			register_setting(
 				'bnfw-settings',
-				'bnfw_suppress_spam'
+				'bnfw_suppress_spam',
+				array( 'sanitize_callback' => 'absint' )
 			);
 
 			// Suppress notifications for SPAM comments.
@@ -165,7 +166,8 @@ if ( ! class_exists( 'BNFW_Settings', false ) ) {
 			// Register - Email Format setting.
 			register_setting(
 				'bnfw-settings',
-				'bnfw_email_format'
+				'bnfw_email_format',
+				array( 'sanitize_callback' => array( $this, 'sanitize_email_format' ) )
 			);
 
 			add_settings_field(
@@ -176,10 +178,11 @@ if ( ! class_exists( 'BNFW_Settings', false ) ) {
 				'bnfw_general_options_section' // Associate with which settings section?.
 			);
 
-			// Register - Email Format setting.
+			// Register - Enable Shortcodes setting.
 			register_setting(
 				'bnfw-settings',
-				'bnfw_enable_shortcodes'
+				'bnfw_enable_shortcodes',
+				array( 'sanitize_callback' => 'absint' )
 			);
 
 			add_settings_field(
@@ -196,7 +199,8 @@ if ( ! class_exists( 'BNFW_Settings', false ) ) {
 			// Register - Allow tracking setting.
 			register_setting(
 				'bnfw-settings',
-				'bnfw_allow_tracking'
+				'bnfw_allow_tracking',
+				array( 'sanitize_callback' => 'sanitize_text_field' )
 			);
 
 			add_settings_field(
@@ -214,6 +218,16 @@ if ( ! class_exists( 'BNFW_Settings', false ) ) {
 		 * Callback funtion for general options.
 		 */
 		public function bnfw_general_options_callback() {
+		}
+		/**
+		 * Sanitize the email format setting to one of the allowed values.
+		 *
+		 * @param string $value Submitted value.
+		 *
+		 * @return string 'html' or 'text'.
+		 */
+		public function sanitize_email_format( $value ) {
+			return ( 'text' === $value ) ? 'text' : 'html';
 		}
 		/**
 		 * Suppress SPAM checkbox.

@@ -1421,7 +1421,9 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 
 				foreach ( $users as $user ) {
 					if ( null !== $exclude ) {
-						if ( $user->ID === $exclude ) {
+						// get_users() returns the ID as a string, while $exclude
+						// is an int, so cast both to compare reliably.
+						if ( (int) $user->ID === (int) $exclude ) {
 							continue;
 						}
 					}
@@ -1767,8 +1769,8 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			}
 
 			global $wpdb;
-			$table      = $wpdb->prefix . 'posts';
-			$query      = 'SELECT ID FROM ' . $table . ' WHERE  `post_type` =  "user_request" AND `ID` = ' . $request_id;
+			$request_id = absint( $request_id );
+			$query      = $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE `post_type` = 'user_request' AND `ID` = %d", $request_id );
 			$query      = apply_filters( 'export_downloadable_url_query', $query, $request_id );
 			$get_id     = $wpdb->get_var( $query ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared
 			$file       = get_post_meta( $get_id, '_export_file_name', true );
@@ -1779,7 +1781,7 @@ if ( ! class_exists( 'BNFW_Engine', false ) ) {
 			if ( $dl_url ) {
 				return $dl_url;
 			} else {
-				return __( 'Error: Download link is not available please contact support' );
+				return __( 'Error: Download link is not available please contact support', 'bnfw' );
 			}
 		}
 		/**

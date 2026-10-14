@@ -31,6 +31,16 @@ if ( ! class_exists( 'BNFW_Import', false ) ) {
 		);
 
 		/**
+		 * Parsed content map from the old plugin's settings, keyed by event name.
+		 *
+		 * Defaults to null so the lazy-parse guard in map_notification_content()
+		 * (which uses isset()) still triggers parse_content() on first use.
+		 *
+		 * @var array|null
+		 */
+		private $content_map = null;
+
+		/**
 		 * Import notification from old plugin.
 		 *
 		 * @since 1.0

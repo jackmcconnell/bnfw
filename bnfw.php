@@ -3,8 +3,8 @@
  * Plugin Name: Better Notifications for WP
  * Plugin URI: https://wordpress.org/plugins/bnfw/
  * Description: Supercharge your WordPress notifications using a WYSIWYG editor and shortcodes. Default and new notifications available. Add more power with Add-ons.
- * Version: 1.9.9.2
- * Requires at least: 4.8
+ * Version: 1.10
+ * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: Made with Fuel
  * Author URI: https://betternotificationsforwp.com/
@@ -17,7 +17,7 @@
  */
 
 /**
- * Copyright © 2025 Made with Fuel Ltd. (hello@betternotificationsforwp.com)
+ * Copyright © 2026 Made with Fuel Ltd. (hello@betternotificationsforwp.com)
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
  * published by the Free Software Foundation.
@@ -40,7 +40,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 *
 		 * @var string
 		 */
-		public $bnfw_version = '1.9.9.2';
+		public $bnfw_version = '1.10';
 		/**
 		 * Class Constructor.
 		 *
@@ -99,17 +99,20 @@ if ( ! class_exists( 'BNFW', false ) ) {
 		 */
 		public function includes() {
 
-			// Load license related classes.
-			if ( ! class_exists( 'EDD_SL_Plugin_Updater' ) ) {
-				require_once 'includes/libraries/class-edd-sl-plugin-updater.php';
-			}
-
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 			require_once 'vendor/persist-admin-notices-dismissal/persist-admin-notices-dismissal.php';
 
-			require_once 'includes/license/class-bnfw-license.php';
-			require_once 'includes/license/class-bnfw-license-setting.php';
+			// Load the EDD Software Licensing SDK. It provides licensing and
+			// automatic updates for the premium add-ons, which register
+			// themselves through the `edd_sl_sdk_registry` action.
+			$edd_sl_sdk = __DIR__ . '/vendor/easy-digital-downloads/edd-sl-sdk/edd-sl-sdk.php';
+			if ( file_exists( $edd_sl_sdk ) ) {
+				require_once $edd_sl_sdk;
+			}
+
+			// Registers premium add-ons with the SDK and migrates legacy keys.
+			require_once 'includes/license/class-bnfw-licensing.php';
 
 			// Load Engine.
 			require_once 'includes/engine/class-bnfw-engine.php';
@@ -143,6 +146,7 @@ if ( ! class_exists( 'BNFW', false ) ) {
 			global $wp_version;
 
 			register_activation_hook( __FILE__, array( $this, 'activate' ) );
+			register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
 
 			add_action( 'init', array( $this, 'bnfw_init' ) );
 			add_action( 'admin_init', array( 'PAnD', 'init' ) );
@@ -358,6 +362,19 @@ if ( ! class_exists( 'BNFW', false ) ) {
 			require_once dirname( __FILE__ ) . '/includes/class-bnfw-import.php';
 			$importer = new BNFW_Import();
 			$importer->import();
+		}
+
+		/**
+		 * Plugin deactivation cleanup.
+		 *
+		 * Removes the scheduled add-on licence re-validation event so it does not
+		 * linger while the plugin is inactive. Re-scheduled automatically on the
+		 * next load when active.
+		 *
+		 * @since 1.10
+		 */
+		public function deactivate() {
+			wp_clear_scheduled_hook( 'bnfw_revalidate_licenses' );
 		}
 
 		/**
